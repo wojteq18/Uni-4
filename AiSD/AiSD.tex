@@ -87,4 +87,31 @@
     \includegraphics[width=0.5\textwidth]{/home/wojteq18/Pobrane/Merge_sort_algorithm_diagram.svg.png}
     \label{fig:example_image}
 \end{figure}
+\vspace{2\baselineskip} \par
+Istnieje również iteracyjna wersja algorytmu Merge, sort, która została \par
+przedstawiona poniżej w postaci pseudokodu.
+\begin{algorithm}[H]
+    \caption{IterativeMergeSort}\label{alg:iterative_merge}
+    \begin{algorithmic}[1]
+        \Procedure{IterativeMergeSort}{A[1..n]}
+            \For{$size = 1$ \textbf{to} $n-1$ \textbf{by} $size \times 2$}
+                \For{$left = 0$ \textbf{to} $n-1$ \textbf{by} $2 \times size$}
+                    \State $mid \gets \min(left + size - 1, n - 1)$
+                    \State $right \gets \min(left + 2 \times size - 1, n - 1)$
+                    \State \Call{Merge}{A, left, mid, right}
+                \EndFor
+            \EndFor
+        \EndProcedure
+    \end{algorithmic}
+\end{algorithm}
+\vspace{1\baselineskip}
+\textbf{Złożoność czasowa Iterative Merge Sort:} $O(n \log n)$ - dzieje się tak, \par
+ponieważ size jest podwajany o 2 w każdej iteracji, więc potrzebujemy \par
+około $ \log_2 n$ iteracji, a w każdej z nich wykonujemy $O(n)$ operacji. \par
+\vspace{1\baselineskip}
+\textbf{Złożoność pamięciowa Iterative Merge Sort:} $O(n)$
+
+
+
+
 \end{document}

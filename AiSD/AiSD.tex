@@ -1,25 +1,94 @@
 \documentclass{article}
-\usepackage[utf8]{inputenc} % Ustawienie kodowania UTF-8
-\usepackage[T1]{fontenc}     % Poprawne kodowanie znaków w wyjściowym PDF
-\usepackage{lmodern}         % Czcionka wspierająca polskie znaki
-\usepackage[polish]{babel}   % Obsługa języka polskiego
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage[polish]{babel}
 \usepackage{amsmath}
+\usepackage{tikz}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+\usepackage{hyperref}
+\usepackage{float}
+\usepackage{graphicx}
 
-\title{Przykładowy dokument LaTeX}
-\author{Twoje Imię}
-\date{\today}
+
+
+\title{Algorytmy i Struktury Danych}
+\author{Wojciech Typer}
+\date{}
 
 \begin{document}
-
 \maketitle
 
-\section{Wstęp}
-To jest przykładowy dokument LaTeX.
+\begin{center}
+    \section*{Wykład I}
+\end{center}
 
-\subsection{Równanie matematyczne}
-Poniżej znajduje się równanie matematyczne:
-\[
-E = mc^2
-\]
+\begin{algorithm}[H]
+\caption{Insertion Sort}\label{alg:insertion_sort}
+\begin{algorithmic}[1]
+\Procedure{InsertionSort}{A, n}
+    \For{$i = 1$ to $n-1$}
+        \State $key = A[i]$
+        \State $j = i - 1$
+        \While{$j \geq 0$ and $A[j] > key$}
+            \State $A[j+1] = A[j]$
+            \State $j = j - 1$
+        \EndWhile
+        \State $A[j+1] = key$
+    \EndFor
+\EndProcedure
+\end{algorithmic}
+\end{algorithm} 
+\vspace{1\baselineskip}
+\textbf{Złożoność czasowa:} $O(n^2)$ \par
+\textbf{Best case:} w najlepszym przypadku złożoność czasowa będzie wynosić $O(n)$ \par
+\textbf{Złożoność pamięciowa:} $O(1)$
+\vspace{2\baselineskip}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{/home/wojteq18/Pobrane/zdjecia/insert-sort.png}
+    \label{fig:example_image}
+\end{figure}
+\vspace{3\baselineskip}
 
+\begin{algorithm}[H]
+    \caption{Merge Sort}\label{alg:merge_sort}
+    \begin{algorithmic}[1]
+    \Procedure{MergeSort}{A, 1, n}
+        \If{|A[1..n]| == 1} 
+            \State \Return{A[1..n]}
+        \Else
+            \State $B = \text{MergeSort}(A, 1, \lfloor n/2 \rfloor)$
+            \State $C = \text{MergeSort}(A, \lfloor n/2 \rfloor, n)$
+            \State \Return{Merge(B, C)}
+        \EndIf
+    \EndProcedure
+    \end{algorithmic}    
+\end{algorithm}
+\begin{algorithm}[H]
+    \caption{Merge}\label{alg:merge}
+    \begin{algorithmic}[1]
+    \Procedure{Merge}{X[1..k], Y[1..n]}
+        \If{$X = \emptyset$}
+            \State \Return{$Y$}
+        \ElsIf{$Y = \emptyset$}
+            \State \Return{$X$}
+        \ElsIf{$X[1] \leq Y[1]$}
+            \State \Return{$[X[1]] \times \text{Merge}(X[2..k], Y[1..n])$}   
+        \Else
+            \State \Return{$[Y[1]] \times \text{Merge}(X[1..k], Y[2..n])$}
+        \EndIf
+    \EndProcedure
+    \end{algorithmic}       
+\end{algorithm}
+\vspace{1\baselineskip}
+\textbf{Złożoność czesowa Merge Sort:} $O(n \log n)$ \par
+\textbf{Złożoność pamięciowa Merge Sort:} $O(n)$
+\vspace{2\baselineskip}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.5\textwidth]{/home/wojteq18/Pobrane/Merge_sort_algorithm_diagram.svg.png}
+    \label{fig:example_image}
+\end{figure}
 \end{document}

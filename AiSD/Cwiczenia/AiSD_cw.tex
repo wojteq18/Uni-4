@@ -53,4 +53,78 @@ $n! = 10^6  \rightarrow n = 9, n! = 1.8 * 10^9  \rightarrow n = 13, n! = 3.1 * 1
 5. $44n^2 * log(n)  \rightarrow O(n^2 * log(n))$ \par
 6. $10^n  \rightarrow O(10^n)$ \par
 7. $33^n  \rightarrow O(33^n)$ \par 
+\vspace{1\baselineskip}
+\textbf{zadanie 1/ lista2} \par
+\begin{tikzpicture}[level distance=1.5cm,
+    level 1/.style={sibling distance=6cm},
+    level 2/.style={sibling distance=3cm},
+    level 3/.style={sibling distance=1.5cm}]
+    
+  \node {f(27)}
+      child {node {f(9)}
+          child {node {f(3)}
+              child {node {f(1)}}
+              child {node {f(1)}}
+          }
+          child {node {f(3)}
+              child {node {f(1)}}
+              child {node {f(1)}}
+          }
+      }
+      child {node {f(9)}
+          child {node {f(3)}
+              child {node {f(1)}}
+              child {node {f(1)}}
+          }
+          child {node {f(3)}
+              child {node {f(1)}}
+              child {node {f(1)}}
+          }
+      };
+  \end{tikzpicture}
+    \par
+    \vspace{1\baselineskip}
+    Funkcja f(n) dwukrotnie wywołuje samą siebie dla n/3. Drzewo rekurencji  \par
+    dla $n = 3^3$ zostało przedstawione powyżej. \par
+    Funkcja dzieli n przez 3 w każdym kroku, aż do osiągnięcia n = 1. \par
+    Głębokość drzewa rekurencji wynosi zatem: $log_3(n)$ \par
+    Na każdym poziomie drzewa liczba wywołań funkcji się podwaja, \par
+    i idąć od góry jest to: $2^0 + 2^1 + 2^2 + ... + 2^{log_3(n)}$ \par
+    co daje: $2^{log_3(n) + 1} - 1$ \par
+    zatem złożoność obliczeniowa wynosi: $O(2^{log_3(n)})$ \par
+    \vspace{1\baselineskip}
+    \textbf{zadanie 2/ lista2} \par
+    $h(n) = O(p(n))$, jeśli istnieją takie stałe $c_1, c_2, n_0 \leq 0$, że: \par
+    dla każdego n zachodzi: \par
+    $c_1p(n) \leq h(n) \leq c_2p(n)$ \par
+    Musimy pokazać, że: $max(f(n), g(n)) = O(f(n) + g(n))$ \par
+    Ograniczenie z góry: \par
+    $max(f(n), g(n)) \leq f(n) + g(n)$ \par
+    Największa z dwóch liczb f(n) i g(n) nigdy nie przekroczy ich sumy, \par
+    czyli mamy ograniczenie górne: $max(f(n), g(n)) = 1 * (f(n) + g(n))$ \par
+    czyli możemy przyjąć $c_2 = 1$ \par
+    Ograniczenie z dołu: \par
+    $max(f(n), g(n)) \geq 1/2 * (f(n) + g(n))$ \par
+    Ponieważ jeśli $f(n) \geq g(n)$ to $f(n) \geq \frac{1}{2}(f(n) + g(n))$, \par
+    Więc możemy przyjąć $c_1 = \frac{1}{2}$ \par
+    Zatem istnieją stałe $c_1$, $c_2 \geq 0$, spełniające definicje O, \par
+    więc $max(f(n), g(n)) = O(f(n) + g(n))$ \par
+    c.n.w \par
+    \vspace{1\baselineskip}
+    \textbf{zadanie 3/ lista2} \par
+    1. $P(i, j) = O(1)$ \par
+    Złożoność pętli wewnętrzenj while: $O(n - 1)$ \par
+    Złożoność pętli zewnętrznej for to: $\sum_{i = 1}^{n} O(n-1)$ \par
+    Jest to suma ciągu arytmetycznego $\frac{(n-1)n}{2} = O(n^2)$ \par
+    Zatem złożoność algorytmu to: $O(n^2)$ \par
+    \vspace{1\baselineskip}
+    2. $R(i, j) = O(j)$ \par
+    Złożoność pętli wewnętrznej while: \par
+    j rośnie wykładniczo: j, 2j, 4j, 8j...\par
+    Zatem koszt każdej iteracji to O(j) + O(2j) + ... O(n) \par
+    Jest to ciąg geometryczny, którego suma jest proporcjonalna do  \par
+    największego wyrazu: O(n) \par
+    Złożoność pętli zewnętrznej for to: $\sum_{i = 1}^{n} O(n)$ \par
+    Więc tak jak w poprzednim przypadku złożoność tego algorytmu to: $O(n^2)$ \par
+    \vspace{1\baselineskip}
 \end{document}

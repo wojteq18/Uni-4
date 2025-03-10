@@ -6,9 +6,18 @@ import (
 )
 
 func main() {
-	fmt.Println("jjj")
-	q := queues.NewFifoQueue[int]()
-	q.Push(1)
-	w := q.Remove()
-	fmt.Println(w)
+	FifoQueue := queues.NewFifoQueue[int]()
+	LifoQueue := queues.NewLifoQueue[int]()
+
+	for i := 0; i < 50; i++ {
+		FifoQueue.Push(i)
+		LifoQueue.Push(i)
+	}
+
+	for i := 0; i < 52; i++ {
+		a := FifoQueue.Remove()
+		fmt.Println("FifoQueue: ", a)
+		b := LifoQueue.Remove()
+		fmt.Println("LifoQueue: ", b)
+	}
 }

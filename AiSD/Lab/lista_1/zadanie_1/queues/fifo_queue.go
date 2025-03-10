@@ -1,13 +1,13 @@
 package queues
 
-type Node[T any] struct { //Node represents a single element in queue
+type NodeFifo[T any] struct { //Node represents a single element in queue
 	value T
-	next  *Node[T]
+	next  *NodeFifo[T]
 }
 
 type FifoQueue[T any] struct { //represents fifo queue
-	front *Node[T]
-	back  *Node[T]
+	front *NodeFifo[T]
+	back  *NodeFifo[T]
 	size  int
 }
 
@@ -20,7 +20,7 @@ func NewFifoQueue[T any]() *FifoQueue[T] { //creates new fifo queue
 }
 
 func (q *FifoQueue[T]) Push(value T) { //pushes element to fifo queue
-	newNode := &Node[T]{value: value, next: nil}
+	newNode := &NodeFifo[T]{value: value, next: nil}
 	if q.back != nil {
 		q.back.next = newNode //if back is not nil, then set next of back to new node
 	} else {
@@ -30,7 +30,7 @@ func (q *FifoQueue[T]) Push(value T) { //pushes element to fifo queue
 	q.size++
 }
 
-func (q *FifoQueue[T]) Remove() T {
+func (q *FifoQueue[T]) Remove() T { //removes element from fifo queue
 	if q.size == 0 {
 		panic("Queue is empty")
 	} else {

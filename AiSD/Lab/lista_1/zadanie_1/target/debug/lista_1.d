@@ -1,1 +1,0 @@
-/home/wojteq18/Uni/AiSD/Lab/lista_1/zadanie_1/target/debug/lista_1: /home/wojteq18/Uni/AiSD/Lab/lista_1/zadanie_1/src/fifo_queue.rs /home/wojteq18/Uni/AiSD/Lab/lista_1/zadanie_1/src/lifo_queue.rs /home/wojteq18/Uni/AiSD/Lab/lista_1/zadanie_1/src/main.rs

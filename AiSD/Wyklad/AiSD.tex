@@ -109,8 +109,77 @@ przedstawiona poniżej w postaci pseudokodu.
 ponieważ size jest podwajany o 2 w każdej iteracji, więc potrzebujemy \par
 około $ \log_2 n$ iteracji, a w każdej z nich wykonujemy $O(n)$ operacji. \par
 \vspace{1\baselineskip}
-\textbf{Złożoność pamięciowa Iterative Merge Sort:} $O(n)$
-
+\textbf{Złożoność pamięciowa Iterative Merge Sort:} $O(n)$ \par
+\vspace{1\baselineskip}
+\textbf{Notacja asymptotyczna}
+O:f(n) = O(g(n)) $\rightarrow (\exists c > 0) (\exists n_0 \in N) : \forall n \geq n_0 \rightarrow 0 \leq f(n) \leq c \cdot g(n)$ \par
+\vspace{1\baselineskip}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.5\textwidth]{/home/wojteq18/Pobrane/zdjecia/images.png}
+    \label{fig:example_image}
+\end{figure}
+\vspace{1\baselineskip}
+$f(n) = O(g(n)) \rightarrow lim_{n \to \infty} \frac{|f(n)|}{|g(n)|} < \infty$ \par
+\vspace{1\baselineskip}
+\textbf{Notacja asymptotyczna - własności} \par
+\vspace{1\baselineskip}
+a) $f(n) = n^3 + O(n^2) \rightarrow (\exists h(n) = O(n^2))(f(n) = n^3 + h(n))$ \par
+\vspace{1\baselineskip}
+b) $n^2 + O(n) = O(n^2) \rightarrow (\forall f(n) = O(n))(\exists h(n) = O(n^2))(n^2 + f(n)-h(n))$ \par
+\vspace{1\baselineskip}
+\textbf{Notacja $\Omega$} \par
+\vspace{1\baselineskip}
+$f(n) = \Omega (g(n)) \rightarrow(\exists c > 0)(\exists n_0 \in N)(\forall n \geq n_0)(c * g(n) \leq |f(n))$ \par
+\vspace{1\baselineskip}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.5\textwidth]{/home/wojteq18/Pobrane/zdjecia/1a7d9c3f882e7a237b30f5eb6defa1aa45c6ab22.png}
+    \label{fig:example_image}
+\end{figure}
+\vspace{7\baselineskip}
+\textbf{Notacja $\Omega$ - własności} \par
+\vspace{1\baselineskip}
+a) $n^3 = \Omega (2n^2)$ \par
+\vspace{1\baselineskip}
+b) $n = \Omega (log(n))$ \par
+\vspace{1\baselineskip}
+c) $2n^2 = \Omega (n^2)$ \par
+\vspace{1\baselineskip}
+\textbf{Notacja $\Theta$} \par
+\vspace{1\baselineskip}
+$f(n) = \Theta (g(n)) \rightarrow (\exists c_1, c_2 > 0)(\exists n_0 \in N)(\forall n  \geq n_0)(c_1 g(n) \leq $ \par $|f(n) \leq c_2 g(n))$ \par
+\vspace{1\baselineskip}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.5\textwidth]{/home/wojteq18/Pobrane/zdjecia/theeta.png}
+    \label{fig:example_image}
+\end{figure}
+\vspace{1\baselineskip}
+$\Theta (f(n)) = O(f(n)) \cap \Omega (f(n))$ \par
+\vspace{1\baselineskip}
+\textbf{Notacja o- małe} \par
+\vspace{1\baselineskip}
+$f(n) = o(g(n)) \rightarrow (\forall c > 0)(\exists n_0 \in N)(\forall n \geq n_0)(|f(n)| < c * |g(n)|)$ \par
+\vspace{1\baselineskip}
+\textbf{Notacja o- małe - przykłady} \par
+\vspace{1\baselineskip}
+a) $117n log(n) = o(n^2)$ \par
+\vspace{1\baselineskip}
+b) $ n^2 = o(n^3)$ \par
+\vspace{1\baselineskip}
+\textbf{Notacja $\omega$} \par
+\vspace{1\baselineskip}
+$f(n) = \omega (g(n)) \rightarrow (\forall c > 0)(\exists n_0 \in N)(\forall n \geq n_0)(|f(n)| > c * |g(n)|)$ \par
+\vspace{1\baselineskip}
+$lim_{n \to \infty} \frac{|f(n)|}{|g(n)|} = \infty$ \par
+\vspace{1\baselineskip}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.5\textwidth]{/home/wojteq18/Pobrane/zdjecia/allnotations.png}
+    \label{fig:example_image}
+\end{figure}
+\vspace{1\baselineskip}
 
 
 

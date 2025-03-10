@@ -180,6 +180,39 @@ $lim_{n \to \infty} \frac{|f(n)|}{|g(n)|} = \infty$ \par
     \label{fig:example_image}
 \end{figure}
 \vspace{1\baselineskip}
+\textbf{Rekurencje} \par
+\vspace{1\baselineskip}
+a) Metoda podstawiania (metoda dowodzenia indukcyjnego) \par
+    \hspace{20pt}1. Zgadnij odpowiedź (bez stałych) \par
+    \hspace{20pt}2. Sprawdź przez indukcję, czy dobrze zgadliśmy \par
+    \hspace{20pt}3. Znajdź stałe \par
+\vspace{1\baselineskip}
+Przykład 1: \par
+\vspace{1\baselineskip}
+$T(n) = 4T(\frac{n}{2}) + n$   \par
+Pierwszy strzał: $T(n) = O(n^3)$ \par
+Cel: pokazać, że $(\exists c > 0) T(n) \leq c * n^3$ \par
+Krok początkowy: $T(1) = \Theta (1) = c * 1^3 = c$ \par
+Krok indukcyjny: zał. że, $(\forall_(k < n)) (T(k) \leq c * k^3) = $ \par
+Dowód: $T(n) = 4T(\frac{n}{2}) + n \leq 4c * (\frac{n}{2})^3 + n = \frac{1}{2}cn^3 + n =$ \par
+$= cn^3 - \frac{1}{2}cn^3 + n = cn^3 - (\frac{1}{2}cn^3 - n) \leq cn^3$ \par
+Pokazaliśmy, że $T(n) = O(n^2)$ \par
+\vspace{1\baselineskip}
+Spróbujmy wzmocnić zał. indukcyjne: $T(n) \leq c_1 n^2 - c_2 n$ \par
+$T(n) \leq 4T(\frac{n}{2}) + n \leq 4(c_1 (\frac{n}{2})^2 - c_2 \frac{n}{2}) + n = $ \par
+$ = c_1 n^2 - 2c_2 n + n = c_1 n^2 - (2c_2 - 1)n \leq c_1 n^2 - c_2 n$ \par
+Musimy dobrać takie $c_1 i c _2$, aby $2c_1 \geq c_2$ \par
+Wówczas otrzymamy $T(1) = O(1) \leq c_1 1^2 - c_2 1$ \par
+\vspace{9\baselineskip}
+Przykład 2: \par
+\vspace{1\baselineskip}
+$T(n) = 2T(\sqrt{n}) + log(n)$ \par
+Załóżmy, że n jest potęgą dwójki $n = 2^m \rightarrow m = log(n)$ \par
+$T(2^m) = 2T(2^{m/2}) + m$ \par
+oznaczmy $T(2^m) = S(m)$ \par
+$T(2^m) = 2T(2^{m/2}) + m \rightarrow 2S(m/2) + m$ \par
+$S(m) = O(m log(m))$ \par
+$T(n) = O(log(n) log(log(n)))$ (formalnie powinniśmy to udowodnić) \par  
 
 
 

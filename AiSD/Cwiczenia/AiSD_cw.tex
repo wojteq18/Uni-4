@@ -37,7 +37,7 @@ Ten fragment jest już bardzo łatwo udowodnić indukcyjnie.  \par
 \textbf{zadanie 2/ lista1} \par
 znając $f(n) = t$, musimy znależć n \par
 przeliczmy jednostki czasu na mikrosekundy: \par
-$1s = 10^6 \mu s$, $30min = 1.8 * 10^9 \mu s$ i $1 wiek = 3.1 * 10^15 \mu s$\par
+$1s = 10^6 \mu s$, $30min = 1.8 * 10^9 \mu s$ i $1 wiek = 3.1 * 10^{15} \mu s$\par
 zatem: \par
 $log_{10}(n) = 10^6  \rightarrow n = 10^{60},$ \par $ log_{10}(n) = 1.8 * 10^9  \rightarrow n = 10^1.8 * 10^9,$ \par $ log_{10}(n) = 3.1 * 10^{15}  \rightarrow n = 10^3.1 * 10^{15}$ \par
 $\sqrt{n} = 10^6  \rightarrow n = 10^{12}, \sqrt{n} = 1.8 * 10^9  \rightarrow n = 3.24 * 10^{18},$ \par $ \sqrt{n} = 3.1 * 10^{15}  \rightarrow n = 9.61 * 10^{30}$ \par
@@ -54,6 +54,9 @@ $n! = 10^6  \rightarrow n = 9, n! = 1.8 * 10^9  \rightarrow n = 13, n! = 3.1 * 1
 6. $10^n  \rightarrow O(10^n)$ \par
 7. $33^n  \rightarrow O(33^n)$ \par 
 \vspace{1\baselineskip}
+\textbf{zadanie 4 lista1} \par
+$f(x) \in O(g(x)) \leftrightarrow  \lim_{x \to \infty} \frac{f(x)}{g(x)} < \infty$ \par
+1. 
 \textbf{zadanie 1/ lista2} \par
 \begin{tikzpicture}[level distance=1.5cm,
     level 1/.style={sibling distance=6cm},
@@ -94,10 +97,10 @@ $n! = 10^6  \rightarrow n = 9, n! = 1.8 * 10^9  \rightarrow n = 13, n! = 3.1 * 1
     zatem złożoność obliczeniowa wynosi: $O(2^{log_3(n)})$ \par
     \vspace{1\baselineskip}
     \textbf{zadanie 2/ lista2} \par
-    $h(n) = O(p(n))$, jeśli istnieją takie stałe $c_1, c_2, n_0 \leq 0$, że: \par
+    $h(n) = \Theta(p(n))$, jeśli istnieją takie stałe $c_1, c_2, n_0 \leq 0$, że: \par
     dla każdego n zachodzi: \par
     $c_1p(n) \leq h(n) \leq c_2p(n)$ \par
-    Musimy pokazać, że: $max(f(n), g(n)) = O(f(n) + g(n))$ \par
+    Musimy pokazać, że: $max(f(n), g(n)) = \Theta(f(n) + g(n))$ \par
     Ograniczenie z góry: \par
     $max(f(n), g(n)) \leq f(n) + g(n)$ \par
     Największa z dwóch liczb f(n) i g(n) nigdy nie przekroczy ich sumy, \par
@@ -107,8 +110,8 @@ $n! = 10^6  \rightarrow n = 9, n! = 1.8 * 10^9  \rightarrow n = 13, n! = 3.1 * 1
     $max(f(n), g(n)) \geq 1/2 * (f(n) + g(n))$ \par
     Ponieważ jeśli $f(n) \geq g(n)$ to $f(n) \geq \frac{1}{2}(f(n) + g(n))$, \par
     Więc możemy przyjąć $c_1 = \frac{1}{2}$ \par
-    Zatem istnieją stałe $c_1$, $c_2 \geq 0$, spełniające definicje O, \par
-    więc $max(f(n), g(n)) = O(f(n) + g(n))$ \par
+    Zatem istnieją stałe $c_1$, $c_2 \geq 0$, spełniające definicje $\Theta$, \par
+    więc $max(f(n), g(n)) = \Theta(f(n) + g(n))$ \par
     c.n.w \par
     \vspace{1\baselineskip}
     \textbf{zadanie 3/ lista2} \par

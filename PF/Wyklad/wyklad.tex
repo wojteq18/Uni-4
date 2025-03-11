@@ -1,0 +1,248 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage[polish]{babel}
+\usepackage{amsmath}
+\usepackage{tikz}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+\usepackage{hyperref}
+\usepackage{float}
+\usepackage{graphicx}
+\usepackage{amsfonts}
+\usepackage{fancyvrb}
+
+\title{Programowanie funkcyjne}
+\author{Wojciech Typer}
+\date{}
+
+\begin{document}
+
+\maketitle
+
+W katalogu przykłady pojawiać się będą przykłady z wykładów. 
+
+\vspace{1\baselineskip}
+
+\textbf{Funkcja lambda} 
+
+\[
+\text{exp} = (\lambda a: \text{Typ} \rightarrow (a \rightarrow a))
+\]
+
+\[
+\text{exp} (\text{Int}) :: \text{Int} \rightarrow \text{Int}
+\]
+
+\[
+\text{exp} (\text{Double}) :: \text{Double} \rightarrow \text{Double}
+\]
+
+\vspace{1\baselineskip}
+
+\textbf{Matematyczny zapis inkrementacji} 
+
+\[
+\text{inc } x = x + 1
+\]
+
+\[
+>:t \quad \text{inc}
+\]
+
+\[
+\text{inc} :: \text{hum}(a) \implies (a \rightarrow a)
+\]
+
+\[
+\text{exp} = (\forall a: \text{hum} \rightarrow (a \rightarrow a))
+\]
+
+\[
+\text{exp} (\text{Int}) :: \text{Int} \rightarrow \text{Int}
+\]
+
+\[
+\text{exp} (\text{Bool}) \leftarrow \text{(błąd)}
+\]
+
+\vspace{15\baselineskip}
+
+\textbf{Typy w Haskellu}
+
+\vspace{1\baselineskip}
+
+\begin{itemize}
+    \item Typy proste:
+    \begin{itemize}
+        \item \texttt{Int}
+        \item \texttt{Double}
+        \item \texttt{Char}
+        \item \texttt{Bool}
+    \end{itemize}
+    
+    \item Typy złożone:
+    \begin{itemize}
+        \item Listy
+        \item Krotki
+        \item Funkcje
+    \end{itemize}
+\end{itemize}
+\vspace{1\baselineskip}
+\textbf{Funkcja collatz'a} \par
+\vspace{1\baselineskip}
+Funkcja collatz'a jest nierozstrzygnięty dotychczas problem o wyjątkowo  \par
+prostym jak wiele innych problemów teorii liczb sformułowaniu.
+\vspace{1\baselineskip}
+
+\[
+c_{n+1} =
+\begin{cases} 
+\frac{1}{2} c_n & \text{gdy } c_n \text{ jest parzysta} \\
+3c_n + 1 & \text{gdy } c_n \text{ jest nieparzysta}
+\end{cases}
+\]
+
+lub
+
+\[
+c_{n+1} = \frac{1}{2} c_n - \frac{1}{4} (5c_n + 2) ((-1)^{c_n} - 1).
+\]
+\vspace{2\baselineskip}
+\textbf{przykłady/W2 $\rightarrow$ funkcja collatz'a} \par
+\vspace{1\baselineskip}
+\textbf{Listy w Haskellu}
+
+\vspace{1\baselineskip}
+
+Definicja list w Haskellu:
+\[
+[a] = \text{lista elementów } a
+\]
+
+\[
+= \{[a_{1}, ..., a_{k}]: a_{1}, ..., a_{k}, k \in \mathbb{N} \}
+\]
+
+\vspace{1\baselineskip}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{/home/wojteq18/Pobrane/zdjecia/llist.png}
+    \caption{Przykładowa lista w Haskellu}
+    \label{fig:example_image}
+\end{figure}
+
+\vspace{1\baselineskip}
+
+Struktura listy:
+\[
+x_0 : [x_1, x_2, ..., x_k] = [x_0, x_1, ..., x_k]
+\]
+
+\vspace{1\baselineskip}
+
+Lista pusta:
+\[
+[] \quad \text{(lista pusta)}
+\]
+
+\vspace{1\baselineskip}
+
+Przykłady list:
+\[
+[1, 2, 3] \quad \text{można zapisać jako} \quad 1:2:3:[]
+\]
+
+\vspace{1\baselineskip}
+
+Dodawanie (konkatenacja) dwóch list:
+\[
+[1, 2, 3] + [4, 5] = [1, 2, 3, 4, 5]
+\]
+
+\vspace{1\baselineskip}
+\textbf{Prelude} \par
+\vspace{1\baselineskip}
+Prelude to standardowa biblioteka Haskella \par
+\vspace{1\baselineskip}
+\begin{itemize}
+    \item Dodawanie elementu na początku listy
+        \begin{Verbatim}[frame=single]
+>:t (1:[2,3])
+(1:[2,3]) :: Num a => [a]
+        \end{Verbatim}
+    \item Konkatenacja list
+        \begin{Verbatim}[frame=single]
+>:t [1,2]++[3,4]
+[1,2]++[3,4] :: Num a => [a]
+        \end{Verbatim}
+\end{itemize}
+
+\subsubsection{Podstawowe funkcje operujące na listach}
+\begin{itemize}
+    \item \texttt{length :: [a] \(\to\) Int}
+        \begin{itemize}
+            \item \texttt{length [] = 0}
+            \item \texttt{length (x:xs) = 1 + length xs}
+        \end{itemize}
+    \item \texttt{head :: [a] \(\to\) a} \newline
+        zwraca pierwszy element listy
+        \begin{itemize}
+            \item \texttt{head (x:xs) = x}
+            \item \texttt{head [] = error "empty list"}
+        \end{itemize}
+    \item \texttt{tail :: [a] \(\to\) [a]} \newline
+        zwraca listę bez pierwszego elementu
+        \begin{itemize}
+            \item \texttt{tail (x:xs) = xs}
+            \item \texttt{tail [] = error "empty list"}
+        \end{itemize}
+    \item \texttt{last :: [a] \(\to\) a} \newline
+        zwraca ostatni element listy
+        \begin{itemize}
+            \item \texttt{last [x] = x}
+            \item \texttt{last (x:xs) = last xs}
+            \item \texttt{last [] = error "empty list"}
+        \end{itemize}
+    \item \texttt{filter :: (a \(\to\) Bool) \(\to\) [a] \(\to\) [a]}
+        \begin{itemize}
+            \item \texttt{filter p [] = []}
+            \item \texttt{filter p (x:xs) = if p x then x : filter p xs else filter p xs}
+            \item \texttt{filter (\(\lambda n \to n > 0\)) [-1,2,-3,4] = [2,4]}
+            \item \texttt{filter even [1..10] = [2,4,6,8,10]}
+        \end{itemize}
+        Jak zdefiniować funkcję \textbf{filter}:
+        \begin{Verbatim}[frame=single]
+filter p [] = []
+filter p (x:xs)
+    | p x = x : filter p xs
+    | otherwise = filter p xs
+        \end{Verbatim}
+    \item \texttt{map :: (a \(\to\) b) \(\to\) [a] \(\to\) [b]} \newline
+        zwraca listę, która powstaje poprzez zastosowanie funkcji do każdego elementu listy
+        \begin{itemize}
+            \item \texttt{map f [] = []}
+            \item \texttt{map f (x:xs) = f x : map f xs}
+            \item \texttt{map (\(\lambda n \to n*n\)) [1,2,3] = [1,4,9]}
+            \item \texttt{map (\(\lambda n \to n^3\)) [1..10] = [1,8,27,64,125,216,343,512,729,1000]}
+        \end{itemize}
+        gdzie \textbf{[1..10]} to skrót od \textbf{[1,2,3,4,5,6,7,8,9,10]}.
+\end{itemize}
+\vspace{1\baselineskip}
+\textbf{List comprehension} \par
+\vspace{1\baselineskip}
+$[f x_1 x_2 x_3 | x_1 \leftarrow xs, x_2 \leftarrow ys, x_3 \leftarrow zs]$ \par
+$[f x_1 x_2 x_3 | x_1 \leftarrow xs, x_2 \leftarrow, x_1 < x_2, x_3 \leftarrow zs]$
+\vspace{1\baselineskip}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{/home/wojteq18/Pobrane/zdjecia/lc.png}
+    \label{fig:example_image}
+\end{figure}
+\vspace{1\baselineskip}
+\textbf{Przykład: } trójki pitagorejskie \par
+\vspace{1\baselineskip}
+$[(x, y, z) | z \leftarrow [1..100], y \leftarrow [1..z], x \leftarrow [1..y], x^2 + y^2 + z^2$, gcd x y == 1] \par
+\end{document}

@@ -64,3 +64,14 @@ func Merge(list1, list2 UndirectionalList) UndirectionalList {
 		return list1
 	}
 }
+
+func Cointains(list UndirectionalList, value int) bool {
+	current := list.head
+	for current.next != list.head {
+		if current.value == value {
+			return true
+		}
+		current = current.next
+	}
+	return false
+}

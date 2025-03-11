@@ -14,7 +14,7 @@ func main() {
 		LifoQueue.Push(i)
 	}
 
-	for i := 0; i < 52; i++ {
+	for i := 0; i < 40; i++ {
 		a := FifoQueue.Remove()
 		fmt.Println("FifoQueue: ", a)
 		b := LifoQueue.Remove()

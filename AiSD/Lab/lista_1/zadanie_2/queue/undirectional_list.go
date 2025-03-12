@@ -22,7 +22,6 @@ func (q *UndirectionalList) Push(value int) {
 		}
 		newNode.next = q.head
 		current.next = newNode
-		q.head = newNode
 	}
 	q.size++
 }
@@ -36,7 +35,7 @@ func (q *UndirectionalList) Remove() int {
 		q.head = nil
 	} else {
 		current := q.head
-		for current.next != q.head {
+		for current.next != q.head { // Find the last element
 			current = current.next
 		}
 		current.next = q.head.next
@@ -57,21 +56,30 @@ func Merge(list1, list2 UndirectionalList) UndirectionalList {
 		return list1
 	} else {
 		current := list2.head
-		for current.next != list2.head {
+		for current.next != list2.head { // Add all elements from the second list to the first list
 			Insert(&list1, current.value)
 			current = current.next
 		}
+		Insert(&list1, current.value) // Add the last element
 		return list1
 	}
 }
 
-func Cointains(list UndirectionalList, value int) bool {
+func Contains(list UndirectionalList, value int) (bool, int) {
+	comparsion := 0
+	if list.head == nil {
+		return false, 1
+	}
 	current := list.head
-	for current.next != list.head {
+	for { // Check if the list contains the value
+		comparsion++
 		if current.value == value {
-			return true
+			return true, comparsion
 		}
 		current = current.next
+		if current == list.head {
+			break
+		}
 	}
-	return false
+	return false, comparsion
 }

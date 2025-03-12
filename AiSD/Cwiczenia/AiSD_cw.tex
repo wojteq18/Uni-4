@@ -53,10 +53,7 @@ $n! = 10^6  \rightarrow n = 9, n! = 1.8 * 10^9  \rightarrow n = 13, n! = 3.1 * 1
 5. $44n^2 * log(n)  \rightarrow O(n^2 * log(n))$ \par
 6. $10^n  \rightarrow O(10^n)$ \par
 7. $33^n  \rightarrow O(33^n)$ \par 
-\vspace{1\baselineskip}
-\textbf{zadanie 4 lista1} \par
-$f(x) \in O(g(x)) \leftrightarrow  \lim_{x \to \infty} \frac{f(x)}{g(x)} < \infty$ \par
-1. 
+
 \textbf{zadanie 1/ lista2} \par
 \begin{tikzpicture}[level distance=1.5cm,
     level 1/.style={sibling distance=6cm},
@@ -97,7 +94,7 @@ $f(x) \in O(g(x)) \leftrightarrow  \lim_{x \to \infty} \frac{f(x)}{g(x)} < \inft
     zatem złożoność obliczeniowa wynosi: $O(2^{log_3(n)})$ \par
     \vspace{1\baselineskip}
     \textbf{zadanie 2/ lista2} \par
-    $h(n) = \Theta(p(n))$, jeśli istnieją takie stałe $c_1, c_2, n_0 \leq 0$, że: \par
+    $h(n) = \Theta(p(n))$, jeśli istnieją takie stałe $c_1, c_2, n_0 \geq 0$, że: \par
     dla każdego n zachodzi: \par
     $c_1p(n) \leq h(n) \leq c_2p(n)$ \par
     Musimy pokazać, że: $max(f(n), g(n)) = \Theta(f(n) + g(n))$ \par

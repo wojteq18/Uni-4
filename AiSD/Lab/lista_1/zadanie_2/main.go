@@ -22,27 +22,33 @@ func main() {
 	for i := 0; i < 20; i++ {
 		fmt.Println(list3.Remove())
 	}
-	fmt.Println(rand.IntN(100), ",")
-	var T [10000]int
+
+	var T [10000]int //array with 10000 random numbers
 	for i := 0; i < 10000; i++ {
 		T[i] = rand.IntN(100000)
 	}
 	fmt.Println(T[100])
-	L := queue.UndirectionalList{}
+	L := queue.UndirectionalList{} //list with 10000 random numbers
 	for i := 0; i < 10000; i++ {
 		queue.Insert(&L, T[i])
 	}
-	/*amount := 0
-	for i := 0; i <= 1000; i++ {
-		randNumber := rand.IntN(100000)
-		for j := 0; j < 10000; j++ {
-			amount++
-			if queue.Cointains(L, T[randNumber]) {
-				break
-			}
-		}
-
+	all1 := 0
+	for i := 0; i < 10000; i++ { //case 1 - random number from T
+		randNumber := rand.IntN(10000)
+		_, comps := queue.Contains(L, T[randNumber])
+		all1 += comps
 	}
-	avg := amount / 1000
-	fmt.Println(avg)*/
+	fmt.Println("Srednia 1 : ", all1/10000)
+
+	all2 := 0
+	for i := 0; i < 10000; i++ { //case 2 - random number from 0 to 100000
+		randNumber := rand.IntN(100000)
+		_, comps := queue.Contains(L, randNumber)
+		all2 += comps
+	}
+	fmt.Println("Srednia 2 : ", all2/10000)
+	testList := queue.UndirectionalList{}
+	test2List := queue.UndirectionalList{}
+	testList.Push(1)
+	test2List.Push(10)
 }

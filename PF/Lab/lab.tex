@@ -1,15 +1,19 @@
-\documentclass{article}
-\usepackage[utf8]{inputenc}
-\usepackage[T1]{fontenc}
-\usepackage{lmodern}
-\usepackage[polish]{babel}
-\usepackage{amsmath}
-\usepackage{tikz}
-\usepackage{algorithm}
-\usepackage{algpseudocode}
-\usepackage{hyperref}
-\usepackage{float}
-\usepackage{graphicx}
+\documentclass[11pt,a4paper]{article}
+
+% Kodowanie i obsługa języka polskiego
+\usepackage[utf8]{inputenc}      % Kodowanie wejścia
+\usepackage[T1]{fontenc}         % Kodowanie fontów
+\usepackage[polish]{babel}       % Obsługa języka polskiego
+
+% Pakiety matematyczne i inne przydatne
+\usepackage{amsmath, amssymb, amsthm}  % Pakiety do matematyki
+\usepackage{graphicx}                  % Obsługa grafiki
+\usepackage{hyperref}                  % Linki i spis treści
+\usepackage{geometry}                  % Ustawienie marginesów
+\usepackage{algorithm}               % Algorytmy
+\usepackage{algpseudocode}           % Pseudokod
+\usepackage{fancyvrb}                  % boxy wokol sekcji
+\usepackage{listings}               
 
 
 
@@ -34,5 +38,110 @@ power = $/x \rightarrow /y \rightarrow y ^ x$ \par
 p2 = $/y \rightarrow y ^ 4$ \par
 p3 = $/y \rightarrow y ^ 3$ \par
 \vspace{1\baselineskip}
-\textbf{zadanie 2}
+\textbf{zadanie 4} \par
+\vspace{1\baselineskip}
+plus = $\lambda$ xy -> x + y \par
+multi = $\lambda$ xy -> x * y \par
+\vspace{1\baselineskip}
+\textbf{zadanie 5} \par
+\vspace{1\baselineskip}
+haskell: \par
+$\lambda x \rightarrow 1 + x * (x + 1)$ \par
+python: \par
+f = lambda x: 1 + x * (x + 1) \par
+\vspace{1\baselineskip}
+\textbf{zadanie 6} \par
+\vspace{1\baselineskip}
+Ustalmy zbiory \( A, B, C \). Niech
+
+\[
+\text{curry} : C^{B \times A} \to (C^B)^A
+\]
+
+będzie funkcją zadaną wzorem:
+
+\[
+\text{curry}(\varphi) = \lambda a \in A \to (\lambda b \in B \to \varphi(b, a)).
+\]
+
+oraz niech
+
+\[
+\text{uncurry} : (C^B)^A \to C^{B \times A}
+\]
+
+będzie zadana wzorem:
+
+\[
+\text{uncurry}(\psi)(b, a) = (\psi(a))(b).
+\]
+
+\begin{enumerate}
+    \item Pokaż, że \( \text{curry} \circ \text{uncurry} = \text{id}_{(C^B)^A} \) oraz \( \text{uncurry} \circ \text{curry} = \text{id}_{C^{B \times A}} \).
+
+    \item Wywnioskuj z tego, że \( |(C^B)^A| = |C^{B \times A}| \). Przypomnij sobie dowód tego twierdzenia, który poznałeś na pierwszym semestrze studiów.
+
+    \item Spróbuj zdefiniować w języku Haskell odpowiedniki funkcji \texttt{curry} i \texttt{uncurry}.
+\end{enumerate}
+
+\bigskip
+\hrule
+\bigskip
+
+\begin{enumerate}
+    \item Pokażemy, że \( \text{curry} \circ \text{uncurry} = \text{id}_{(C^B)^A} \) oraz \( \text{uncurry} \circ \text{curry} = \text{id}_{C^{B \times A}} \).
+        \begin{itemize}
+            \item \( \text{curry} \circ \text{uncurry} \)
+                \begin{equation}
+                    \begin{aligned}
+                        (\text{curry} \circ \text{uncurry})(\psi)
+                        &= \text{curry}(\text{uncurry}(\psi)) \\
+                        &= \text{curry}(\lambda a \in A \to (\lambda b \in B \to \psi(a)(b))) \\
+                        &= \lambda a \in A \to (\lambda b \in B \to \psi(a)(b)).
+                    \end{aligned}
+                \end{equation}
+
+            \item \( \text{uncurry} \circ \text{curry} \)
+                \begin{equation}
+                    \begin{aligned}
+                        (\text{uncurry} \circ \text{curry})(\varphi)
+                        &= \text{uncurry}(\text{curry}(\varphi)) \\
+                        &= \text{uncurry}(\lambda a \in A \to (\lambda b \in B \to \varphi(b, a))) \\
+                        &= \lambda b \in B \to (\lambda a \in A \to \varphi(b, a)).
+                    \end{aligned}
+                \end{equation}
+        \end{itemize}
+        Z powyższych równań wynika, że \( \text{curry} \circ \text{uncurry} = \text{id}_{(C^B)^A} \) oraz \( \text{uncurry} \circ \text{curry} = \text{id}_{C^{B \times A}} \). \qed
+    \item Możemy pokazać że \texttt{curry} i \texttt{uncurry} są iniekcjami niewprost, nakładając odpowiednio przeciwne funkcje na obie strony równości:
+                \begin{itemize}
+            \item Załóżmy, że \( \text{curry}(\varphi_1) = \text{curry}(\varphi_2) \). Wtedy:
+                \begin{equation}
+                    \begin{aligned}
+                        \text{curry}(\varphi_1)(a)(b) &= \text{curry}(\varphi_2)(a)(b) \\
+                        \varphi_1(b, a) &= \varphi_2(b, a) \\
+                        \varphi_1 &= \varphi_2.
+                    \end{aligned}
+                \end{equation}
+            \item Załóżmy, że \( \text{uncurry}(\psi_1) = \text{uncurry}(\psi_2) \). Wtedy:
+                \begin{equation}
+                    \begin{aligned}
+                        \text{uncurry}(\psi_1)(b, a) &= \text{uncurry}(\psi_2)(b, a) \\
+                        \psi_1(a)(b) &= \psi_2(a)(b) \\
+                        \psi_1 &= \psi_2.
+                    \end{aligned}
+                \end{equation}
+        \end{itemize}
+        A więc istnieje biekcja między \( (C^B)^A \) i \( C^{B \times A} \), co oznacza, że te zbiory mają taką samą moc. \qed
+    \item W języku Haskell funkcje \texttt{curry} i \texttt{uncurry} można zdefiniować następująco:
+        \begin{Verbatim}[frame=single]
+curry :: ((b, a) -> c) -> a -> b -> c
+curry f x y = f (y, x)
+        \end{Verbatim}
+        \begin{Verbatim}[frame=single]
+uncurry :: (a -> b -> c) -> (a, b) -> c
+uncurry f (x, y) = f x y
+        \end{Verbatim}
+
+\end{enumerate}
+
 \end{document}

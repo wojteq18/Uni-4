@@ -3,32 +3,33 @@ package main
 import (
 	"fmt"
 	"math/rand/v2"
-	"zadanie_2/queue"
+	"zadanie_3/queue"
 )
 
 func main() {
-	list1 := queue.UndirectionalList{}
+	list1 := queue.CircularDll{}
+	list2 := queue.CircularDll{}
 
-	for i := 11; i < 22; i++ { //adding 10 elements to the list
+	for i := 11; i < 21; i++ {
 		queue.Insert(&list1, i)
 	}
-	list2 := queue.UndirectionalList{}
 
-	for i := 31; i < 42; i++ { //adding 10 elements to the list
+	for i := 31; i < 41; i++ {
 		queue.Insert(&list2, i)
 	}
 
 	list3 := queue.Merge(&list1, &list2)
+	fmt.Println("hejla")
 	for i := 0; i < 20; i++ {
-		fmt.Println("l3: ", list3.Remove())
+		fmt.Println("element z l3: ", list3.Remove())
 	}
 
-	var T [10000]int //array with 10000 random numbers
+	var T [10000]int
 	for i := 0; i < 10000; i++ {
 		T[i] = rand.IntN(100000)
 	}
-	fmt.Println(T[100])
-	L := queue.UndirectionalList{} //list with 10000 random numbers
+
+	L := queue.CircularDll{} //list with 10000 random numbers
 	for i := 0; i < 10000; i++ {
 		queue.Insert(&L, T[i])
 	}

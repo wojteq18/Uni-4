@@ -1,33 +1,37 @@
 package queue
 
-type Node struct { // Node is a struct that contains an integer value and a pointer to the next node
+type Node struct {
 	value int
 	next  *Node
+	prev  *Node
 }
 
-type UndirectionalList struct { // UndirectionalList is a struct that contains a pointer to the head node and the size of the list
+type CircularDll struct {
 	head *Node
 	size int
 }
 
-func (q *UndirectionalList) Push(value int) {
-	newNode := &Node{value: value} // Create a new node
+func (q *CircularDll) Push(value int) {
+	newNode := &Node{value: value}
 	if q.head == nil {
+		newNode.next = newNode
+		newNode.prev = newNode
 		q.head = newNode
-		newNode.next = newNode // Point the next node to itself
 	} else {
 		current := q.head
 		for current.next != q.head {
 			current = current.next
 		}
-		newNode.next = q.head
 		current.next = newNode
+		newNode.prev = current
+		newNode.next = q.head
+		q.head.prev = newNode
 	}
 	q.size++
 }
 
-func (q *UndirectionalList) Remove() int {
-	if q.size == 0 {
+func (q *CircularDll) Remove() int {
+	if q.head == nil {
 		panic("The list is empty")
 	}
 	value := q.head.value
@@ -39,42 +43,40 @@ func (q *UndirectionalList) Remove() int {
 			current = current.next
 		}
 		current.next = q.head.next
+		current.prev = q.head.prev
 		q.head = q.head.next
 	}
 	q.size--
 	return value
 }
 
-func Insert(list *UndirectionalList, value int) {
+func Insert(list *CircularDll, value int) {
 	list.Push(value)
 }
 
-func Merge(list1, list2 *UndirectionalList) *UndirectionalList {
+func Merge(list1, list2 *CircularDll) *CircularDll {
 	if list1.size == 0 {
 		return list2
 	} else if list2.size == 0 {
 		return list1
 	} else {
-		lastElement1 := list1.head
-		for lastElement1.next != list1.head { // Find the last element of the first list
-			lastElement1 = lastElement1.next
-		}
+		// Connect the last element of the first list with the first element of the second list
+		lastElement1 := list1.head.prev
+		lastElement2 := list2.head.prev
 
-		lastElement2 := list2.head
-		for lastElement2.next != list2.head { // Find the last element of the second list
-			lastElement2 = lastElement2.next
-		}
-
-		// Merge the lists
 		lastElement1.next = list2.head
+		list2.head.prev = lastElement1
+
 		lastElement2.next = list1.head
+		list1.head.prev = lastElement2
 
 		list1.size += list2.size
 		return list1
 	}
+
 }
 
-func Contains(list UndirectionalList, value int) (bool, int) {
+func Contains(list CircularDll, value int) (bool, int) {
 	comparsion := 0
 	if list.head == nil {
 		return false, 1

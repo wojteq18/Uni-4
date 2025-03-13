@@ -1,0 +1,136 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage[polish]{babel}
+\usepackage{amsmath}
+\usepackage{tikz}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+\usepackage{hyperref}
+\usepackage{float}
+\usepackage{graphicx}
+
+\title{Technologie sieciowe - lista 1}
+\author{Wojciech Typer}
+\date{}
+
+\begin{document}
+\maketitle
+\vspace{1\baselineskip}
+\textbf{Pingowanie serwerów (rozmiar pakietów: 64 bajty)}
+\vspace{1\baselineskip}
+\begin{itemize}
+    \item Serwer w Polsce - Politechnika Wrocławska
+    \begin{itemize}
+        \item ttl = 52
+        \item time $\approx$ 6.05 ms 
+        \item hops = $64 - 52 = 12$
+    \end{itemize}
+    \item Serwer w USA - google.com
+    \begin{itemize}
+        \item ttl = 58
+        \item time $\approx$ 11.75 ms
+        \item hops = $64 - 58 = 6$
+    \end{itemize}
+    \item Serwer w Australii - sydney.edu.au
+    \begin{itemize}
+        \item ttl = 105
+        \item time $\approx$ 319 ms
+        \item hops = $128 - 105 = 23$
+    \end{itemize}
+    \item Serwer w Czechach - cuni.cz 
+    \begin{itemize}
+        \item ttl = 53
+        \item time $\approx$ 19.1 ms
+        \item hops = $64 - 53 = 11$
+    \end{itemize} 
+    \item Serwer w Chinach - fudan.edu.cn 
+    \begin{itemize}
+        \item ttl = 221
+        \item time $\approx$ 416.75 ms
+        \item hops = $256 - 221 = 35$
+    \end{itemize}
+    \item Serwer w Japonii - www.kyoto-u.ac.jp
+    \begin{itemize}
+        \item ttl = 52
+        \item time $\approx$ 34.7 ms
+        \item hops = $64 - 52 = 12$
+    \end{itemize}
+    \item Serwer w Niemczech - www.hu-berlin.de
+    \begin{itemize}
+        \item ttl = 48
+        \item time $\approx$ 43.7 ms
+        \item hops = $64 - 48 = 16$
+    \end{itemize}
+\end{itemize}
+\vspace{1\baselineskip}
+\textbf{Obserwacje:}
+\vspace{1\baselineskip}
+\begin{itemize}
+    \item Liczba przeskoków (hops)
+    \begin{itemize}
+        \item Najmniejsza liczba przeskoków (hops = 6) wystąpiła w przypadku serwera Google w usa, co może wynikać z wielu serwerów cache'ujących Google w Europie
+        \item Największa liczba przeskoków (hops = 35) wystąpiła w serwerach w Chinach, co sugeruje, że pakiet przeszedł przez wiele pośrednich routerów i
+        prawdopodobnie przez chińską sieć zaporową ("Great Firewall")
+        \item Serwery w sąsiednich krajach (Czechy, Niemcy) mają stosunkowo małą liczbę przeskoków, co jest zgodne z ich bliską geograficzną lokalizacją
+    \end{itemize}
+    \item Opóźnienia (time) a odegłości geograficzne
+    \begin{itemize}
+        \item Najkrótsze czas odpowiedzi miał serwer w Polsce (Politechniki Wrocławskiej), co jest zgodne z bliską lokalizacją geograficzną
+        \item Najdłuższy czas odpowiedzi miał serwer chiński, co może być skutkiem restrykcji sieciowych w Chinach
+        \item Serwer w Australii miał stosunkowo długi czas odpowiedzi, co jest zgodne z dużą odległością geograficzną
+    \end{itemize}
+\end{itemize}
+\vspace{1\baselineskip}
+\textbf{Pingowanie serwerów (rozmiar pakietów: 1472 bajtów)}
+\vspace{1\baselineskip}
+\begin{itemize}
+
+    \item Serwer w USA - google.com
+    \begin{itemize}
+        \item ttl = 58
+        \item time $\approx$ 12.35 ms
+        \item hops = $64 - 58 = 6$
+    \end{itemize}
+
+    \item Serwer w Czechach - cuni.cz 
+    \begin{itemize}
+        \item ttl = 53
+        \item time $\approx$ 21.5 ms
+        \item hops = $64 - 53 = 11$
+    \end{itemize} 
+    \item Serwer w Chinach - fudan.edu.cn 
+    \begin{itemize}
+        \item ttl = 221
+        \item time $\approx$ 416.5 ms
+        \item hops = $256 - 221 = 35$
+    \end{itemize}
+    \item Serwer w Japonii - www.kyoto-u.ac.jp
+    \begin{itemize}
+        \item ttl = 52
+        \item time $\approx$ 36.5 ms
+        \item hops = $64 - 52 = 12$
+    \end{itemize}
+    \item Serwer w Niemczech - www.hu-berlin.de
+    \begin{itemize}
+        \item ttl = 48
+        \item time $\approx$ 53.6 ms
+        \item hops = $64 - 48 = 16$
+    \end{itemize}
+\end{itemize}
+\vspace{1\baselineskip}
+\textbf{Obserwacje: }
+\vspace{1\baselineskip}
+\begin{itemize}
+    \item Problemy z dostarczeniem pakietów do niektórych serwerów: Na serwery Politechniki Wrocławskiej i Uniwerystety w Sydney nie udało
+    się przesłać tak dużych pakietów, prawdopodobnie z powodu ograniczeń MTU (Maximum Transmission Unit) lub obecności firewalli
+    \item Czas odpowiedzi od serwerów, które otrzymały pakiet wzrósł, co może sugerować, że większe pakiety wymagają dłuższego czasu
+    przetworzenia przez routery
+    \item Liczba przeskoków (hops) pozostała taka sama, co sugeruje, że jest niezależna od rozmiaru pakietów
+\end{itemize}
+\vspace{1\baselineskip}
+\textbf{Traceroute: }
+\vspace{1\baselineskip}
+
+\end{document}

@@ -39,9 +39,7 @@ func (q *CircularDll) Remove() int {
 		q.head = nil
 	} else {
 		current := q.head
-		for current.next != q.head { // Find the last element
-			current = current.next
-		}
+		current.prev.next = q.head.next
 		current.next = q.head.next
 		current.prev = q.head.prev
 		q.head = q.head.next

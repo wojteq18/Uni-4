@@ -1,0 +1,153 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage[polish]{babel}
+\usepackage{amsmath}
+\usepackage{tikz}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+\usepackage{hyperref}
+\usepackage{float}
+\usepackage{graphicx}
+
+\title{Wstęp do sztucznej inteligencji}
+\author{Wojciech Typer}
+\date{}
+
+\begin{document}
+\maketitle
+\vspace{1\baselineskip}
+\textbf{Przestrzeń stanów}  \par
+\vspace{1\baselineskip}
+Przestrzeń stanów to uporządkowana czwórka (V, E, S, F), gdzie: \par
+\begin{itemize}
+    \item V $\rightarrow$ zbiór wierzchołków reprezentujących stany powstałe w trakcie rozwiązywania problemów
+    \item E $\rightarrow$ zbiór krawędzi reprezentujących możliwe przejścia między stanami
+    \item S $\rightarrow$ niepusty podzbiór V, zawierający stany początkowe problemu
+    \item F $\rightarrow$ niepusty podzbiór V, zawierający stany docelowe problemu (mogą być zdefiniowane wprost lub przez własności które chcemy osiągnąć)
+    \item Rozwiązaniem będziemy nazywać ścieżkę w grafie od stanu początkowego do stanu docelowego
+\end{itemize}
+\vspace{1\baselineskip}
+\textbf{Podstawowe problemy przy przeszukiwaniu przestrzeni stanów}  \par
+\vspace{1\baselineskip}
+\begin{itemize}
+    \item Czy algorytm gwarantuje znalezienie rozwiązania?
+    \item Czy algorytm zawsze się kończy?
+    \item Czy algorytm znajduje optymalne rozwiązanie?
+    \item Jaka jest złożoność czasowa i pamięciowa algorytmu?
+    \item Jak można poprawić złożoność czasową i pamięciową?
+\end{itemize}
+\vspace{1\baselineskip}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.5\textwidth]{/home/wojteq18/Pobrane/zdjecia/stany.jpg}
+    \label{fig:example_image}
+\end{figure}
+\vspace{1\baselineskip}
+\textbf{Sformułowanie zadania dla algorytmów przeszukiwania}  \par
+\vspace{1\baselineskip}
+\begin{itemize}
+    \item Precyzyjna definicja przestrzeni stanów
+    \item określenie stanu początkowego
+    \item określenie reguł przejścia między stanami (operatory akcji lub funkcja następnika)
+    \item zbiór stanów docelowych lub funkcja weryfikacji osiągnięcia celu
+    \item funkcja kosztu ścieżki
+\end{itemize}
+\vspace{1\baselineskip}
+\textbf{Kierunki przeszukiwania}  \par
+\vspace{1\baselineskip}
+\begin{itemize}
+    \item w przód (od stanu początkowego do celu)
+    \item w tył (od stanu celu do początku)
+    \item przeszukiwanie dwukierunkowe
+\end{itemize}
+\vspace{1\baselineskip}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.7\textwidth]{/home/wojteq18/Pobrane/zdjecia/wsi2.png}
+    \label{fig:example_image}
+\end{figure}
+\vspace{1\baselineskip}
+
+\vspace{1\baselineskip}
+\textbf{Strategie przeszukiwania} \par
+\vspace{1\baselineskip}
+\begin{itemize}
+    \item Przeszukiwanie w głąb
+        \begin{itemize}
+            \item zaczynamy w wierzchołu początkowym
+            \item dla aktualnego wierzchołka v:
+                \begin{itemize}
+                    \item oznacz v jako zbadany
+                    \item jeśli v jest celem zakończ procedurę
+                    \item jeśli niezbadany jest wierzchołek do którego można przejść to przejdź do niego
+                    \item jeśli nie ma już niezbadanych sąsiadów to wróć do wierzchołka z którego przyszedłeś
+                \end{itemize}
+                Zalety: łatwość implementacji, małe wymagania pamięciowe \par
+                Wady: znalezione rozwiązanie nie musi być optymalne
+        \end{itemize}
+        \begin{figure}[H]
+            \centering
+            \includegraphics[width=0.7\textwidth]{/home/wojteq18/Pobrane/zdjecia/dfs.jpg}
+            \label{fig:dfs_image}
+        \end{figure}
+    \item Przeszukiwanie w głąb ze stosem
+        \begin{itemize}
+            \item zaczynamy w wierzchołku początkowym
+            \item dla aktualnego wierzchołka v:
+                \begin{itemize}
+                    \item oznacz v jako zbadany
+                    \item jeśli v jest celem zakończ procedurę
+                    \item dla każdego sąsiada v, który jest niezbadany, dodaj go na stos i oznacz jako odwiedzony
+                    \item jako następny, weź wierzchołek ze szczytu stosu
+                \end{itemize}
+                Zalety: łatwość implementacji, łatwe struktury pamięciowe \par
+                Wady: znalezione rozwiązanie nie musi być optymalne
+        \end{itemize}
+    \item Przeszukiwanie wszerz
+        \begin{itemize}
+            \item zaczynamy w wierzchołku początkowym
+            \item dla aktualnego wierzchołka v:
+                \begin{itemize}
+                    \item oznacz v jako zbadany
+                    \item jeśli v jest celem zakończ procedurę
+                    \item dla każdego sąsiada v, który jest niezbadany, dodaj go do kolejki i oznacz jako odwiedzony
+                    \item jako następny, weź wierzchołek z początku kolejki
+                \end{itemize}
+                Zalety: znalezione rozwiązanie jest optymalne \par
+                Wady: duże wymagania pamięciowe
+        \end{itemize}
+        \begin{figure}[H]
+            \centering
+            \includegraphics[width=0.7\textwidth]{/home/wojteq18/Pobrane/zdjecia/bs.jpg}
+            \label{fig:dfs_image}
+        \end{figure}
+    \item Best-First-Search
+        \begin{itemize}
+            \item Rozszerzenie przeszukiwania wszerz po dodaniu funkcji kosztu, która eksploruje graf poprzez rozwinięcie najbardziej obiecującego węzła wybranego zgodnie z określoną regułą.
+                \begin{itemize}
+                    \item zaczymay w wierzchołku początkowym, którego koszt ustwiamy na 0
+                    \item dla akutalnego wierzchołka v:
+                        \begin{itemize}
+                            \item oznacz v jako zbadany
+                            \item jeśli v jest celem zakończ procedurę
+                            \item dla każdego sąsiada v który jest odwiedzony, jeśli koszt v plus koszt przejścia są mniejsze niż jego dotychczasowy koszt
+                            to zmodyfikuj go w kolejce priorytetowej nadając nowy mniejszy koszt
+                            \item dla każdego sąsiada v, który jest niezbadany, dodaj go do kolejki priorytetowej z kosztem v plus koszt przejścia oraz oznacz jako odwiedzony
+                            \item jako następny, weź wierzchołek z kolejki priorytetowej o najmniejszym koszcie
+                        \end{itemize}
+                \end{itemize}
+                Zalety: znalezienie rozwiązania jest optymalne, ze względu na koszt ścieżki \par
+                Wady: kolejka priorytetowa jest trudniejsza w implementacji i ma większą złożoność czasową
+        \end{itemize}
+        \begin{figure}[H]
+            \centering
+            \includegraphics[width=0.7\textwidth]{/home/wojteq18/Pobrane/zdjecia/image-52.png}
+            \label{fig:dfs_image}
+        \end{figure}
+    \item A* Search 
+
+\end{itemize}
+
+\end{document}

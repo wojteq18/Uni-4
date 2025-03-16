@@ -1,5 +1,7 @@
 package queue
 
+import "math/rand/v2"
+
 type Node struct {
 	value int
 	next  *Node
@@ -40,9 +42,8 @@ func (q *CircularDll) Remove() int {
 	} else {
 		current := q.head
 		current.prev.next = q.head.next
-		current.next = q.head.next
-		current.prev = q.head.prev
-		q.head = q.head.next
+		current.next.prev = q.head.prev
+		q.head = current.next
 	}
 	q.size--
 	return value
@@ -80,15 +81,30 @@ func Contains(list CircularDll, value int) (bool, int) {
 		return false, 1
 	}
 	current := list.head
-	for { // Check if the list contains the value
-		comparsion++
-		if current.value == value {
-			return true, comparsion
+	direction := rand.IntN(2)
+	if direction == 0 { //go forward
+		for {
+			comparsion++
+			if current.value == value {
+				return true, comparsion
+			}
+			current = current.next
+			if current == list.head {
+				break
+			}
 		}
-		current = current.next
-		if current == list.head {
-			break
+	} else { //go backward
+		for {
+			comparsion++
+			if current.value == value {
+				return true, comparsion
+			}
+			current = current.prev
+			if current == list.head {
+				break
+			}
 		}
 	}
+
 	return false, comparsion
 }

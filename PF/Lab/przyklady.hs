@@ -59,3 +59,24 @@ countCoprimes n m i j
 --zadanie 16 c)        
 dcpList :: [Double]
 dcpList = [dcp1 k | k <- [100, 200..10000]]
+
+--zadanie 17
+nub' :: Eq a => [a] -> [a] --Eq a oznacza, że zawiera elementy porównywalne
+nub' [] = [] --jeżeli lista jest pusta, to zwracamy pustą tablicę
+nub' (x:xs) --wyciągamy pierwszy element z listy
+    | x `elem` xs = nub' xs --jeżeli element już występuje w tablicy, to go pomijamy i rekurencyjnie wywołujemy funkcję dla reszty tablicy
+    | otherwise = x : nub' xs --jeżeli element nie występuje w tablicy, to dodajemy go do tablicy wynikowej i rekurencyjnie wywołujemy funkcję dla reszty tablicy
+
+--zadanie 18
+inits' :: [a] -> [[a]] --zwraca tablicę tablic
+inits' [] = [[]] --jeżeli tablica jest pusta, to zwracamy tablicę z jednym elementem, którym jest pusta tablica
+inits' (x:xs) = [] : map (x:) (inits' xs) --dla każdego elementu w tablicy wywołujemy funkcję rekurencyjnie
+--dla reszty tablicy, a następnie dodajemy ten element do każdego wyniku
+
+--zadanie 19
+tails' :: [a] -> [[a]] --zwraca tablicę tablic
+tails' [] = [[]] --jeżeli tablica jest pusta, to zwracamy tablicę z jednym elementem, którym jest pusta tablica
+tails' xs = tails' (tail xs) ++ [xs] --tail zwraca tablicę, bez pierwszego elementu.
+--dla każdej tablicy wywołujemy rekurencyjnie funkcję, a jej ostatni element dodajemy na końcu tablicy (++)
+-- tails' [1,2,3] = tails' [2,3] ++ [[1,2,3]] = tails' [3] ++ [[2,3]] ++ [[1,2,3]] = 
+-- =tails' [] ++ [[3]] ++ [[2,3]] ++ [[1,2,3]] = [[]] ++ [[3]] ++ [[2,3]] ++ [[1,2,3]] = [[], [3], [2,3], [1,2,3]]

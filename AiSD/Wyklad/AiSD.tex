@@ -213,6 +213,30 @@ oznaczmy $T(2^m) = S(m)$ \par
 $T(2^m) = 2T(2^{m/2}) + m \rightarrow 2S(m/2) + m$ \par
 $S(m) = O(m log(m))$ \par
 $T(n) = O(log(n) log(log(n)))$ (formalnie powinniśmy to udowodnić) \par  
+\vspace{1\baselineskip}
+\textbf{Drzewo rekursji} \par
+\vspace{1\baselineskip}
+Przykład : $T(n) = T(\frac{n}{2}) +T (\frac{n}{4}) + n^2$ \par
+\vspace{1\baselineskip}
+\begin{center}
+    \begin{tikzpicture}
+        [level distance=1.5cm,
+        level 1/.style={sibling distance=4cm},
+        level 2/.style={sibling distance=2cm}]
+        \node {$n^2$}
+            child {node {$\frac{n^2}{4}$}
+                child {node {$\frac{n^2}{16}$}}
+                child {node {$\frac{n^2}{64}$}}
+            }
+            child {node {$\frac{n^2}{16}$}
+                child {node {$\frac{n^2}{64}$}}
+                child {node {$\frac{n^2}{256}$}}
+            };
+          \node[draw=none] at (-4.5,0) {$n^2$};
+          \node[draw=none] at (-4.5,-1.5) {$\frac{5}{16}n^2$};
+          \node[draw=none] at (-4.5,-3) {$\frac{25}{256}n^2$};
+    \end{tikzpicture}
+\end{center}
 
 
 

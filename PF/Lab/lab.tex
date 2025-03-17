@@ -222,7 +222,42 @@ Dla limit = $10^5$ otrzymamy:
 
 \bigskip
 \section*{zadanie 16}
+Definiujemy funkcje: $dcp(n) = \frac{1}{n^2} |\{(k, l)\ \in\ \{1, 2, ..., n\}:\ gcd(k, l) = 1\}|$
+\begin{itemize}
+    \item Implementacja funkcji za pomocą list comprehension: \par
+    \begin{verbatim}
+    dcp1 :: Int -> Double
+    dcp1 n = fromIntegral a / fromIntegral b
+        where a = length [(k, l) | k <- [1..n], l <- [1..n], gcd k l == 1]
+              b = n^2
+    \end{verbatim}
 
+    \item Implementacja funkcji rekurencyjnej
+    \begin{verbatim}
+        dcp' :: Int -> Double
+        dcp' n = fromIntegral (countCoprimes n n 1 1) / fromIntegral (n ^ 2)
+        
+        countCoprimes :: Int -> Int -> Int -> Int -> Int
+        countCoprimes n m i j
+            | i > m = 0 --koniec
+            | j > m = countCoprimes n m (i + 1) 1 --przejscie do nowego weirsza
+            | gcd i j == 1 = 1 + countCoprimes n m i (j + 1) --liczmy wzglednie pierwsza pare
+            | otherwise = countCoprimes n m i (j + 1) --nie jest wzglednie pierwsza
+    \end{verbatim}
 
-
+    \item $lim_{n \to \infty} dcp(n)$ \par
+    kolejne wartości: \par
+    \begin{verbatim}
+        [0.6087,0.611575,0.6088333333333333,0.60846875,0.608924,
+        0.6083305555555556,0.608234693877551,
+        0.6085921875,0.6082111111111111,0.608383,0.6084586776859504,
+        0.6080354166666667,0.6080988165680473,
+        0.6082525510204082,0.6081613333333333,0.607993359375,0.6083678200692042,
+        0.6080601851851852,0.6080096952908587,
+        0.60829375,0.6080823129251701,0.6079518595041322,0.6081570888468809,
+        0.6081019097222222,0.6079608,0.6081087278106508]
+    \end{verbatim}
+    Widzimy, że wraz ze wzrostem n, wartość dcp(n) zbiega do $\approx 0.608$. \par
+    Możemy wysnuć hipotezę, że $lim_{n \to \infty} dcp(n) = \frac{6}{\pi^2}$.
+\end{itemize}
 \end{document}

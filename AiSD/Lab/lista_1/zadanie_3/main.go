@@ -19,7 +19,6 @@ func main() {
 	}
 
 	list3 := queue.Merge(&list1, &list2)
-	fmt.Println("hejla")
 	for i := 0; i < 20; i++ {
 		fmt.Println("element z l3: ", list3.Remove())
 	}

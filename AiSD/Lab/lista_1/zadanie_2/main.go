@@ -27,7 +27,7 @@ func main() {
 	for i := 0; i < 10000; i++ {
 		T[i] = rand.IntN(100000)
 	}
-	fmt.Println(T[100])
+	//fmt.Println(T[100])
 	L := queue.UndirectionalList{} //list with 10000 random numbers
 	for i := 0; i < 10000; i++ {
 		queue.Insert(&L, T[i])

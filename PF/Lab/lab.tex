@@ -5,17 +5,19 @@
 \usepackage[T1]{fontenc}         % Kodowanie fontów
 \usepackage[polish]{babel}       % Obsługa języka polskiego
 
+% Ustawienia marginesów i odstępów
+\usepackage{geometry}
+\geometry{margin=2.5cm}
+\usepackage{parskip}  % Czytelniejsze akapity (bez wcięć)
+
 % Pakiety matematyczne i inne przydatne
-\usepackage{amsmath, amssymb, amsthm}  % Pakiety do matematyki
-\usepackage{graphicx}                  % Obsługa grafiki
-\usepackage{hyperref}                  % Linki i spis treści
-\usepackage{geometry}                  % Ustawienie marginesów
+\usepackage{amsmath,amssymb,amsthm}  % Pakiety do matematyki
+\usepackage{graphicx}                % Obsługa grafiki
+\usepackage{hyperref}                % Linki i spis treści
 \usepackage{algorithm}               % Algorytmy
 \usepackage{algpseudocode}           % Pseudokod
-\usepackage{fancyvrb}                  % boxy wokol sekcji
-\usepackage{listings}               
-
-
+\usepackage{fancyvrb}                % boxy wokol sekcji
+\usepackage{listings}
 
 \title{Programowanie funkcyjne - laboratoria}
 \author{Wojciech Typer}
@@ -23,41 +25,55 @@
 
 \begin{document}
 \maketitle
-\vspace{1\baselineskip}
-\textbf{zadanie 1}
-\vspace{1\baselineskip}
-power x y = power $y^x$ \par
-p2 = power 4 $\rightarrow$ power 4 y = $y^4$ \par
-p3 = power 3 \par
-(p2 . p3) 2 = p2(p32) = p 2 8 = $8^4$ = 4096 \par
-p2 :: Int -> Int \par
-p3 :: Int -> Int \par
-(p2 . p3) :: Int -> Int \par
-Wyrażenia lambda: \par
-power = $/x \rightarrow /y \rightarrow y ^ x$ \par
-p2 = $/y \rightarrow y ^ 4$ \par
-p3 = $/y \rightarrow y ^ 3$ \par
-\vspace{1\baselineskip}
-\textbf{zadanie 4} \par
-\vspace{1\baselineskip}
-plus = $\lambda$ xy -> x + y \par
-multi = $\lambda$ xy -> x * y \par
-\vspace{1\baselineskip}
-\textbf{zadanie 5} \par
-\vspace{1\baselineskip}
-haskell: \par
-$\lambda x \rightarrow 1 + x * (x + 1)$ \par
-python: \par
-f = lambda x: 1 + x * (x + 1) \par
-\vspace{1\baselineskip}
-\textbf{zadanie 6} \par
-\vspace{1\baselineskip}
-Ustalmy zbiory \( A, B, C \). Niech
 
+\section*{zadanie 1}
+power x y = power $y^x$
+
+p2 = power 4 $\rightarrow$ power 4 y = $y^4$
+
+p3 = power 3
+
+(p2 . p3) 2 = p2(p3 2) = p2 8 = $8^4$ = 4096
+
+p2 :: Int -> Int
+
+p3 :: Int -> Int
+
+(p2 . p3) :: Int -> Int
+
+Wyrażenia lambda:
+
+power = $\lambda x \rightarrow \lambda y \rightarrow y ^ x$
+
+p2 = $\lambda y \rightarrow y ^ 4$
+
+p3 = $\lambda y \rightarrow y ^ 3$
+
+\bigskip
+
+\section*{zadanie 4}
+plus = $\lambda x y \rightarrow x + y$
+
+multi = $\lambda x y \rightarrow x * y$
+
+\bigskip
+
+\section*{zadanie 5}
+\textbf{haskell}:
+
+$\lambda x \rightarrow 1 + x * (x + 1)$
+
+\textbf{python}:
+
+f = lambda x: 1 + x * (x + 1)
+
+\bigskip
+
+\section*{zadanie 6}
+Ustalmy zbiory \( A, B, C \). Niech
 \[
 \text{curry} : C^{B \times A} \to (C^B)^A
 \]
-
 będzie funkcją zadaną wzorem:
 
 \[
@@ -90,58 +106,123 @@ będzie zadana wzorem:
 
 \begin{enumerate}
     \item Pokażemy, że \( \text{curry} \circ \text{uncurry} = \text{id}_{(C^B)^A} \) oraz \( \text{uncurry} \circ \text{curry} = \text{id}_{C^{B \times A}} \).
-        \begin{itemize}
-            \item \( \text{curry} \circ \text{uncurry} \)
-                \begin{equation}
-                    \begin{aligned}
-                        (\text{curry} \circ \text{uncurry})(\psi)
-                        &= \text{curry}(\text{uncurry}(\psi)) \\
-                        &= \text{curry}(\lambda a \in A \to (\lambda b \in B \to \psi(a)(b))) \\
-                        &= \lambda a \in A \to (\lambda b \in B \to \psi(a)(b)).
-                    \end{aligned}
-                \end{equation}
+    \begin{itemize}
+        \item \( \text{curry} \circ \text{uncurry} \)
+        \[
+            (\text{curry} \circ \text{uncurry})(\psi)
+            = \text{curry}(\text{uncurry}(\psi))
+            = \text{curry}(\lambda a \in A \to (\lambda b \in B \to \psi(a)(b)))
+            = \lambda a \in A \to (\lambda b \in B \to \psi(a)(b)).
+        \]
+        \item \( \text{uncurry} \circ \text{curry} \)
+        \[
+            (\text{uncurry} \circ \text{curry})(\varphi)
+            = \text{uncurry}(\text{curry}(\varphi))
+            = \text{uncurry}(\lambda a \in A \to (\lambda b \in B \to \varphi(b, a)))
+            = \lambda b \in B \to (\lambda a \in A \to \varphi(b, a)).
+        \]
+    \end{itemize}
 
-            \item \( \text{uncurry} \circ \text{curry} \)
-                \begin{equation}
-                    \begin{aligned}
-                        (\text{uncurry} \circ \text{curry})(\varphi)
-                        &= \text{uncurry}(\text{curry}(\varphi)) \\
-                        &= \text{uncurry}(\lambda a \in A \to (\lambda b \in B \to \varphi(b, a))) \\
-                        &= \lambda b \in B \to (\lambda a \in A \to \varphi(b, a)).
-                    \end{aligned}
-                \end{equation}
-        \end{itemize}
-        Z powyższych równań wynika, że \( \text{curry} \circ \text{uncurry} = \text{id}_{(C^B)^A} \) oraz \( \text{uncurry} \circ \text{curry} = \text{id}_{C^{B \times A}} \). \qed
     \item Możemy pokazać że \texttt{curry} i \texttt{uncurry} są iniekcjami niewprost, nakładając odpowiednio przeciwne funkcje na obie strony równości:
-                \begin{itemize}
-            \item Załóżmy, że \( \text{curry}(\varphi_1) = \text{curry}(\varphi_2) \). Wtedy:
-                \begin{equation}
-                    \begin{aligned}
-                        \text{curry}(\varphi_1)(a)(b) &= \text{curry}(\varphi_2)(a)(b) \\
-                        \varphi_1(b, a) &= \varphi_2(b, a) \\
-                        \varphi_1 &= \varphi_2.
-                    \end{aligned}
-                \end{equation}
-            \item Załóżmy, że \( \text{uncurry}(\psi_1) = \text{uncurry}(\psi_2) \). Wtedy:
-                \begin{equation}
-                    \begin{aligned}
-                        \text{uncurry}(\psi_1)(b, a) &= \text{uncurry}(\psi_2)(b, a) \\
-                        \psi_1(a)(b) &= \psi_2(a)(b) \\
-                        \psi_1 &= \psi_2.
-                    \end{aligned}
-                \end{equation}
-        \end{itemize}
-        A więc istnieje biekcja między \( (C^B)^A \) i \( C^{B \times A} \), co oznacza, że te zbiory mają taką samą moc. \qed
+    \begin{itemize}
+        \item Załóżmy, że \( \text{curry}(\varphi_1) = \text{curry}(\varphi_2) \). Wtedy:
+        \[
+            \text{curry}(\varphi_1)(a)(b) = \text{curry}(\varphi_2)(a)(b)
+            \quad\Rightarrow\quad
+            \varphi_1(b, a) = \varphi_2(b, a)
+            \quad\Rightarrow\quad
+            \varphi_1 = \varphi_2.
+        \]
+        \item Załóżmy, że \( \text{uncurry}(\psi_1) = \text{uncurry}(\psi_2) \). Wtedy:
+        \[
+            \text{uncurry}(\psi_1)(b, a) = \text{uncurry}(\psi_2)(b, a)
+            \quad\Rightarrow\quad
+            \psi_1(a)(b) = \psi_2(a)(b)
+            \quad\Rightarrow\quad
+            \psi_1 = \psi_2.
+        \]
+    \end{itemize}
+    A więc istnieje biekcja między \( (C^B)^A \) i \( C^{B \times A} \), co oznacza, że te zbiory mają taką samą moc.
+
     \item W języku Haskell funkcje \texttt{curry} i \texttt{uncurry} można zdefiniować następująco:
-        \begin{Verbatim}[frame=single]
+\begin{Verbatim}[frame=single]
 curry :: ((b, a) -> c) -> a -> b -> c
 curry f x y = f (y, x)
-        \end{Verbatim}
-        \begin{Verbatim}[frame=single]
+\end{Verbatim}
+\begin{Verbatim}[frame=single]
 uncurry :: (a -> b -> c) -> (a, b) -> c
 uncurry f (x, y) = f x y
-        \end{Verbatim}
-
+\end{Verbatim}
 \end{enumerate}
+
+\bigskip
+
+\section*{zadanie 13}
+\begin{itemize}
+    \item Funkcja phi Eulera:
+\begin{verbatim}
+phi :: Int -> Int
+phi n = length [x | x <- [1..n - 1], gcd x n == 1]
+\end{verbatim}
+    tworzy tablicę liczb od 1 do n-1 i następnie filtruje te, które są względnie pierwsze z n. length zwraca długość tej tablicy, co można utożsamiać z mocą zbioru.
+
+    \item Funkcja $\sum_{k \mid n} \phi(k)$:
+\begin{verbatim}
+phi2 :: Int -> Int
+phi2 n = sum [phi x | x <- [1..n], n `mod` x == 0]
+\end{verbatim}
+    tworzy tablicę liczb od 1 do n, filtruje te, które są dzielnikami liczby n i liczy sumę funkcji phi dla tych liczb. Zauważmy, że $\sum_{k \mid n} \phi(k) = n$, ponieważ każdą liczbę można zapisać jako sumę liczb względnie pierwszych w jej dzielnikach.
+\end{itemize}
+
+\bigskip
+
+\section*{zadanie 14}
+Liczba doskonała: $n = \sum \{d: 1 \leq d < n,\ d\mid n\}$
+
+Na początku zdefiniujmy funkcję, która sprawdza czy dana liczba jest doskonała:
+\begin{verbatim}
+isPerfect :: Int -> Bool
+isPerfect n = n == sum [k | k <- [1..n-1], n `mod` k == 0]
+\end{verbatim}
+
+Następnie zdefiniujmy funkcję, która zwróci wszystkie liczby doskonałe mniejsze od n:
+\begin{verbatim}
+allPerfect :: Int -> [Int]
+allPerfect n = [k | k <- [1..n], isPerfect k]
+\end{verbatim}
+
+Dla n = 10000 otrzymamy: [6, 28, 496, 8128]
+
+\bigskip
+
+\section*{zadanie 15}
+Na początku zdefiniujmy funkcję, która zwraca sumę dzielników:
+\begin{verbatim}
+sumOfDivisors :: Int -> Int
+sumOfDivisors n = sum [k | k <- [1..n-1], n `mod` k == 0]
+\end{verbatim}
+
+Następnie zdefiniujmy funkcję, która sprawdza, czy 2 liczby są zaprzyjaźnione:
+\begin{verbatim}
+areSociable :: Int -> Int -> Bool
+areSociable a b = sumOfDivisors a == b && sumOfDivisors b == a && a /= b
+\end{verbatim}
+
+Na koniec, zdefiniujmy funkcję, która zwróci wszystkie pary liczb zaprzyjaźnionych, mniejsze od podanego limitu:
+\begin{verbatim}
+socialPairs :: Int -> [(Int, Int)]
+socialPairs limit =
+    [(a, b) | a <- [1..limit],
+              let b = sumOfDivisors a,
+              areSociable a b && a < b && b < limit]
+\end{verbatim}
+
+Dla limit = $10^5$ otrzymamy:
+[(220,284),(1184,1210),(2620,2924),(5020,5564),(6232,6368),(10744,10856), \par (12285,14595),(17296,18416)...]
+
+\bigskip
+\section*{zadanie 16}
+
+
 
 \end{document}

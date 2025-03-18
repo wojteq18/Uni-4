@@ -10,6 +10,8 @@
 \usepackage{hyperref}
 \usepackage{float}
 \usepackage{graphicx}
+\usepackage{mathtools}
+
 
 
 
@@ -388,5 +390,201 @@ Na czym ona polega?
                 T(n) = \Theta(\log n)
             \]
 \end{itemize}
+\vspace{1\baselineskip}
+\subsubsection*{Divide \& Conquer}
+
+\textbf{Problem:} Obliczenie $x^n$.  
+
+Rozwiązanie naiwną metodą iteracyjną:  
+\[
+x^n = x \cdot x \cdot \dots \cdot x \quad \Rightarrow \quad \Theta(n)
+\]
+
+Rozwiązanie za pomocą Divide \& Conquer:  
+
+\[
+x^n =
+\begin{cases}
+    (x^{\frac{n}{2}}) \cdot (x^{\frac{n}{2}}), & \text{gdy } n \text{ jest parzyste} \\
+    (x^{\frac{n-1}{2}}) \cdot (x^{\frac{n-1}{2}}) \cdot x, & \text{gdy } n \text{ jest nieparzyste}
+\end{cases}
+\]
+
+Rekurencyjna złożoność czasowa:
+\[
+T(n) = T(n/2) + \Theta(1) = \Theta(\log n)
+\]
+
+---
+
+\textbf{Problem:} Obliczenie $n$-tej liczby Fibonacciego  
+
+Metoda rekurencyjna:
+\[
+F(n) = F(n-1) + F(n-2)
+\]
+Ma ona złożoność wykładniczą:
+\[
+\Theta (\phi^n), \quad \text{gdzie } \phi = \frac{1 + \sqrt{5}}{2}
+\]
+
+Drzewo rekurencyjne dla $F_4$:
+
+\begin{center}
+\begin{tikzpicture}[level distance=1.5cm,
+    level 1/.style={sibling distance=6cm},
+    level 2/.style={sibling distance=3cm},
+    level 3/.style={sibling distance=1.5cm}]
+    
+  \node {$F_4$}
+      child {node {$F_3$}
+          child {node {$F_2$}
+              child {node {$F_1$}}
+              child {node {$F_0$}}
+          }
+          child {node {$F_1$}}
+      }
+      child {node {$F_2$}
+          child {node {$F_1$}}
+          child {node {$F_0$}}
+      };
+
+\end{tikzpicture}
+\end{center}
+
+\textbf{Wzór jawny:}
+\[
+F_n = \frac{1}{\sqrt{5}} \left( \phi^n - (-\phi)^{-n} \right)
+\]
+
+
+Obliczanie $F_n$ macierzą:
+Zamiast rekurencji można użyć potęgowania macierzy, co daje optymalną złożoność.  
+Dla każdego $n \geq 0$ zachodzi:
+
+\[
+\begin{bmatrix}
+    1 & 1 \\
+    1 & 0
+\end{bmatrix}^n
+=
+\begin{bmatrix}
+    F_{n+1} & F_n \\
+    F_n & F_{n-1}
+\end{bmatrix}
+\]
+
+Potęgowanie macierzy metodą szybkiego potęgowania daje czas:
+\[
+\Theta(\log n)
+\]
+co jest znaczną poprawą w porównaniu do wykładniczej rekurencji.
+
+\textbf{Mnożenie liczb binarnych metodą Divide \& Conquer}
+
+\textbf{Wejście:} $x, y$  
+\textbf{Wyjście:} $x \cdot y$
+
+Każdą liczbę można rozbić na dwie połowy:
+\[
+x = x_L \cdot 2^{\frac{n}{2}} + x_R
+\]
+\[
+y = y_L \cdot 2^{\frac{n}{2}} + y_R
+\]
+
+Podstawiając do iloczynu:
+\[
+xy = (x_L \cdot 2^{\frac{n}{2}} + x_R) \cdot (y_L \cdot 2^{\frac{n}{2}} + y_R)
+\]
+
+Po rozwinięciu:
+\[
+xy = x_L y_L \cdot 2^n + (x_L y_R + x_R y_L) \cdot 2^{\frac{n}{2}} + x_R y_R
+\]
+
+Rekurencyjna zależność czasowa:
+\[
+T(n) = 4T(n/2) + \Theta(n)
+\]
+
+Zastosowanie \textbf{Master Theorem} daje:
+\[
+T(n) = \Theta(n^2)
+\]
+co pokazuje, że metoda ta nie poprawia złożoności względem standardowego mnożenia. 
+
+\vspace{1\baselineskip}
+\textbf{Optymalizacja: metoda Gaussa}
+
+Zamiast wykonywać 4 mnożenia rekursywne, można zastosować zasadę Gaussa:
+\[
+xy = x_L y_L \cdot 2^n + ((x_L + x_R)(y_L + y_R) - x_L y_L - x_R y_R) \cdot 2^{\frac{n}{2}} + x_R y_R
+\]
+
+Dzięki temu zamiast 4 mnożeń wykonujemy tylko 3:
+\[
+T(n) = 3T(\frac{n}{2}) + \Theta(n)
+\]
+
+Zastosowanie \textbf{Master Theorem} daje:
+\[
+T(n) = \Theta(n^{\log_2 3})
+\]
+
+\begin{algorithm}[H]
+    \caption{Multiply - Mnożenie dużych liczb binarnych metodą Gaussa}
+    \label{alg:multiply}
+    \begin{algorithmic}[1]
+        \Procedure{multiply}{x, y}
+            \State $n \gets \max(|x|, |y|)$ 
+            \If{$n = 1$} 
+                \State \Return{$x \cdot y$}
+            \EndIf
+            \State $m \gets \lceil {n/2} \rceil$
+            \State $x_L, x_R \gets$ 
+            \State $y_L, y_R \gets$ 
+            \State $p_1 \gets \Call{multiply}{x_L, y_L}$
+            \State $p_2 \gets \Call{multiply}{x_R, y_R}$
+            \State $p_3 \gets \Call{multiply}{(x_L + x_R), (y_L + y_R)}$
+            \State \Return{$p_1 \cdot 2^{2m} + (p_3 - p_1 - p_2) \cdot 2^m + p_2$}
+        \EndProcedure
+    \end{algorithmic}
+\end{algorithm}
+\textbf{QuickSort}
+\begin{algorithm}[H]
+    \caption{QuickSort - Sortowanie szybkie}
+    \label{alg:quicksort}
+    \begin{algorithmic}[1]
+        \Procedure{quicksort}{A, low, high}
+            \If{$low < high$}
+                \State $p \gets \Call{partition}{A, low, high}$
+                \State \Call{quicksort}{A, low, p - 1}
+                \State \Call{quicksort}{A, p + 1, high}
+            \EndIf
+        \EndProcedure
+        \\
+        \Procedure{partition}{A, low, high}
+            \State $pivot \gets A[high]$
+            \State $i \gets low - 1$
+            \For{$j \gets low$ \textbf{to} $high - 1$}
+                \If{$A[j] \leq pivot$}
+                    \State $i \gets i + 1$
+                    \State \Call{swap}{A[i], A[j]}
+                \EndIf
+            \EndFor
+            \State \Call{swap}{A[i + 1], A[high]}
+            \State \Return{$i + 1$}
+        \EndProcedure
+    \end{algorithmic}
+\end{algorithm}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.7\textwidth]{/home/wojteq18/Pobrane/zdjecia/quick.png}
+    \label{fig:example_image}
+\end{figure}
+
+
+
 
 \end{document}

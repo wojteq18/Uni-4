@@ -80,3 +80,16 @@ tails' xs = tails' (tail xs) ++ [xs] --tail zwraca tablicę, bez pierwszego elem
 --dla każdej tablicy wywołujemy rekurencyjnie funkcję, a jej ostatni element dodajemy na końcu tablicy (++)
 -- tails' [1,2,3] = tails' [2,3] ++ [[1,2,3]] = tails' [3] ++ [[2,3]] ++ [[1,2,3]] = 
 -- =tails' [] ++ [[3]] ++ [[2,3]] ++ [[1,2,3]] = [[]] ++ [[3]] ++ [[2,3]] ++ [[1,2,3]] = [[], [3], [2,3], [1,2,3]]
+
+--zadanie 20
+splits :: [a] -> [([a], [a])] --zwraca tablicę par tablic
+splits xs = [(take n xs, drop n xs) | n <- [0..length xs]] --take n xs pobiera n pierwszych elementów, drop n pomija pierwsze n elementów
+
+--zadanie 21
+partition' :: (a -> Bool) -> [a] -> ([a], [a])
+partition' _ [] = ([], []) --jeżeli lista wejściowa jest pusta, to zwracamy dwie puste tablice
+partition' p (x:xs) = if p x then (x:l, r) --jeżeli element spełnia warunek, to trafia do pierwszej tablicy
+                        else (l, x:r) --jeżeli element nie spełnia warunku, to trafia do drugiej tablicy
+                        where (l, r) = partition' p xs --reszte tablicy dzielimy rekurencyjnie
+
+

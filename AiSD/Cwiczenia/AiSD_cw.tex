@@ -94,23 +94,42 @@ $n! = 10^6  \rightarrow n = 9, n! = 1.8 * 10^9  \rightarrow n = 13, n! = 3.1 * 1
     zatem złożoność obliczeniowa wynosi: $O(2^{log_3(n)})$ \par
     \vspace{1\baselineskip}
     \textbf{zadanie 2/ lista2} \par
-    $h(n) = \Theta(p(n))$, jeśli istnieją takie stałe $c_1, c_2, n_0 \geq 0$, że: \par
-    dla każdego n zachodzi: \par
+    $h(n) = \Theta(p(n))$, jeśli istnieją takie stałe $c_1, c_2, n_0 $, że: \par
+    dla każdego $n$ zachodzi: \par
     $c_1p(n) \leq h(n) \leq c_2p(n)$ \par
-    Musimy pokazać, że: $max(f(n), g(n)) = \Theta(f(n) + g(n))$ \par
-    Ograniczenie z góry: \par
-    $max(f(n), g(n)) \leq f(n) + g(n)$ \par
-    Największa z dwóch liczb f(n) i g(n) nigdy nie przekroczy ich sumy, \par
-    czyli mamy ograniczenie górne: $max(f(n), g(n)) = 1 * (f(n) + g(n))$ \par
-    czyli możemy przyjąć $c_2 = 1$ \par
-    Ograniczenie z dołu: \par
-    $max(f(n), g(n)) \geq 1/2 * (f(n) + g(n))$ \par
+    i $\exists n_0$ takie, że $f(n_0)$ i $g(n_0)$ są dodatnie. \par
+    \par
+    Zauważmy przy tym, że funkcje $f$ i $g$ są niemalejące oraz asymptotycznie \par nieujemne, tzn. istnieje $n_0$, takie że dla każdego $n \geq n_0$ zachodzi \par $f(n) \geq 0$ oraz $g(n) \geq 0$. \par
+    \par
+    \vspace{1\baselineskip}
+    Wtedy: \par
+    $\forall n \geq n_0$ zachodzi: $f(n) \geq f(n_0)$ i $g(n) \geq g(n_0)$. \par 
+    \par
+    Musimy pokazać, że: $max(f(n), g(n)) = \Theta(f(n) + g(n))$. \par
+    \par
+    \vspace{1\baselineskip}
+    \textbf{Ograniczenie z góry:} \par
+    $max(f(n), g(n)) \leq f(n) + g(n)$. \par
+    \par
+    Największa z dwóch liczb $f(n)$ i $g(n)$ nigdy nie przekroczy ich sumy, \par
+    czyli mamy ograniczenie górne: $max(f(n), g(n)) = 1 \cdot (f(n) + g(n))$, \par
+    czyli możemy przyjąć $c_2 = 1$. \par
+    \par
+    \vspace{1\baselineskip}
+    \textbf{Ograniczenie z dołu:} \par
+    $max(f(n), g(n)) \geq \frac{1}{2} \cdot (f(n) + g(n))$. \par
+    \par
     Ponieważ jeśli $f(n) \geq g(n)$ to $f(n) \geq \frac{1}{2}(f(n) + g(n))$, \par
-    Więc możemy przyjąć $c_1 = \frac{1}{2}$ \par
-    Zatem istnieją stałe $c_1$, $c_2 \geq 0$, spełniające definicje $\Theta$, \par
-    więc $max(f(n), g(n)) = \Theta(f(n) + g(n))$ \par
+    więc możemy przyjąć $c_1 = \frac{1}{2}$. \par
+    \par
+    Zatem istnieją stałe $c_1$, $c_2 \geq 0$, spełniające definicję $\Theta$, \par
+    więc $max(f(n), g(n)) = \Theta(f(n) + g(n))$. \par
+    \par
     c.n.w \par
     \vspace{1\baselineskip}
+
+
+
     \textbf{zadanie 3/ lista2} \par
     1. $P(i, j) = O(1)$ \par
     Złożoność pętli wewnętrzenj while: $O(n - 1)$ \par

@@ -127,9 +127,6 @@ $n! = 10^6  \rightarrow n = 9, n! = 1.8 * 10^9  \rightarrow n = 13, n! = 3.1 * 1
     \par
     c.n.w \par
     \vspace{1\baselineskip}
-
-
-
     \textbf{zadanie 3/ lista2} \par
     1. $P(i, j) = O(1)$ \par
     Złożoność pętli wewnętrzenj while: $O(n - 1)$ \par
@@ -146,4 +143,47 @@ $n! = 10^6  \rightarrow n = 9, n! = 1.8 * 10^9  \rightarrow n = 13, n! = 3.1 * 1
     Złożoność pętli zewnętrznej for to: $\sum_{i = 1}^{n} O(n)$ \par
     Więc tak jak w poprzednim przypadku złożoność tego algorytmu to: $O(n^2)$ \par
     \vspace{1\baselineskip}
+    \textbf{Przypomnienie Master Theorem:} \par
+    \vspace{1\baselineskip}
+    $T(n) = aT(\frac{n}{b}) + \Theta(n^d)$ \par
+    gdzie: 
+    \begin{itemize}
+        \item a $\rightarrow$ liczba podproblemów w rekursji \par
+        \item b $\rightarrow$ współczynnik zmniejszenia rozmiaru problemu \par
+        \item d $\rightarrow$ wykładnik w potędze n kosztu pracy poza rekurencją \par
+    \end{itemize} \par
+    Wówczas: \par
+    \begin{itemize}
+        \item $\Theta(n^d)$, jeśli $d > log_b(a)$ \par
+        \item $\Theta(n^d \cdot log(n))$, jeśli $d = log_b(a)$ \par
+        \item $\Theta(n^{log_b(a)})$, jeśli $d < log_b(a)$ \par
+    \end{itemize} \par
+    \vspace{1\baselineskip}
+    \textbf{zadanie 4/ lista2} \par
+    \vspace{1\baselineskip}
+    \begin{itemize}
+        \item $T(n) = 2T(\frac{n}{2}) + 1$ \par
+        a = 2, b = 2, d = 0 \par
+        $log_2(2) = 1$ \par
+        $d < log_b(a)$ \par
+        Zatem z zasady Master Theorem: \par
+        $T(n) = \Theta(n^{log_b(a)}) = \Theta(n)$ \par
+        \item $T(n) = 2T(\frac{n}{2}) + n$ \par
+        a = 2, b = 2, d = 1 \par
+        $log_b(a) = log_2(2) = 1$ \par
+        $log_b(a) = d$ \par
+        Zatem z zasady Master Theorem: \par
+        $T(n) = \Theta(n \cdot log(n))$ \par
+        \item $T(n) = 3T(\frac{n}{2}) + n \cdot log(n)$ \par
+        a = 3, b = 2, f(n) = n $\cdot log(n)$ \par
+        $log_2(3) \approx 1.58$ \par
+        Teraz porównajmy tempo wzrostu licząc granicę: $\lim_{n \to \infty} \frac{n^{log_2(3)}}{n \cdot log(n)}$ \par
+        $lim_{n \to \infty} \frac{n^{0.58}}{log(n)}$ \par
+        Z zasady de l'Hospitala: \par
+        $lim_{n \to \infty} \frac{0.58n^{-0.42}}{\frac{1}{n}}$ \par
+        $lim_{n \to \infty} 0.58n^{0.58} = \infty$ \par
+        Zatem widzimy, że $n^{log_b(a)}$ rośnie szybciej niż $f(n)$ \par
+        Zatem z zasady Master Theorem: \par
+        $T(n) = \Theta(n^{log_2(3)}) = \Theta(n^{1.58})$ \par
+    \end{itemize}
 \end{document}

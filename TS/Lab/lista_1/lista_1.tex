@@ -17,123 +17,215 @@
 
 \begin{document}
 \maketitle
+
 \vspace{1\baselineskip}
-\textbf{Pingowanie serwerów (rozmiar pakietów: 64 bajty)}
+
+\textbf{Opis programów}
+\begin{itemize}
+  \item \textbf{Ping} $\rightarrow$ program używany do sprawdzania dostępności hosta w sieci IP.
+  Wysyła pakiety ICMP Echo Request do docelowego adresu IP i mierzy czas odpowiedzi.
+  Przydatny jest do mierzenia opóźnień i sprawdza, czy host jest osiągalny.
+  \item \textbf{Traceroute} $\rightarrow$ program używany do analizy trasy pakietu do docelowego hosta,
+  wyświetlając kolejno przechodzone routery. Używa pakietów ICMP lub UDP z rosnącym TTL (time-to-live),
+  aby ujawnić każdy węzeł pośredni.
+  \item \textbf{Wireshark} $\rightarrow$ program służący do przechwytywania i analizy pakietów sieciowych.
+  Umożliwia monitorowanie ruchu w czasie rzeczywistym, filtrowanie danych i diagnozowanie problemów
+  sieciowych. W wersji terminalowej dostępny jako tshark.
+\end{itemize}
+
+\textbf{Pingowanie serwerów}
+\begin{itemize}
+  \item Serwer w Polsce - Politechnika Wrocławska
+    \begin{figure}[H]
+      \centering
+      \includegraphics[width=1.0\textwidth]{/home/wojteq18/Obrazy/Screenshots/Screenshot From 2025-03-19 19-11-33.png}
+      \label{fig:ping_politechnika}
+    \end{figure}
+    \vspace{1\baselineskip}
+
+  \item Serwer google.com
+    \begin{figure}[H]
+      \centering
+      \includegraphics[width=1.0\textwidth]{/home/wojteq18/Obrazy/Screenshots/Screenshot From 2025-03-19 19-17-10.png}
+      \label{fig:ping_google}
+    \end{figure}
+
+  \item Serwer w Australii - sydney.edu.au
+    \begin{figure}[H]
+      \centering
+      \includegraphics[width=1.0\textwidth]{/home/wojteq18/Obrazy/Screenshots/Screenshot From 2025-03-19 19-17-55.png}
+      \label{fig:ping_sydney}
+    \end{figure}
+
+  \item Serwer w Czechach - cuni.cz
+    \begin{figure}[H]
+      \centering
+      \includegraphics[width=1.0\textwidth]{/home/wojteq18/Obrazy/Screenshots/Screenshot From 2025-03-19 19-19-12.png}
+      \label{fig:ping_cuni}
+    \end{figure}
+    \vspace{3\baselineskip}
+
+  \item Serwer w Chinach - fudan.edu.cn
+    \begin{figure}[H]
+      \centering
+      \includegraphics[width=1.0\textwidth]{/home/wojteq18/Obrazy/Screenshots/Screenshot From 2025-03-19 19-19-51.png}
+      \label{fig:ping_fudan}
+    \end{figure}
+
+  \item Serwer w Japonii - www.kyoto-u.ac.jp
+    \begin{figure}[H]
+      \centering
+      \includegraphics[width=1.0\textwidth]{/home/wojteq18/Obrazy/Screenshots/Screenshot From 2025-03-19 19-20-36.png}
+      \label{fig:ping_kyoto}
+    \end{figure}
+
+  \item Serwer w Niemczech - www.hu-berlin.de
+    \begin{figure}[H]
+      \centering
+      \includegraphics[width=1.0\textwidth]{/home/wojteq18/Obrazy/Screenshots/Screenshot From 2025-03-19 19-21-11.png}
+      \label{fig:ping_hu_berlin}
+    \end{figure}
+\end{itemize}
+
+\vspace{5\baselineskip}
+
+\textbf{Obserwacje: }
+
 \vspace{1\baselineskip}
 \begin{itemize}
-    \item Serwer w Polsce - Politechnika Wrocławska
+  \item Liczba przeskoków (hops)
     \begin{itemize}
-        \item ttl = 52
-        \item time $\approx$ 6.05 ms 
-        \item hops = $64 - 52 = 12$
+      \item Najmniejsza liczba przeskoków (hops = 6) wystąpiła w przypadku serwera Google, co może sugerować, że Google ma serwery na terenie Polski (lub w bliskiej odległości od Wrocławia).
+      \item Największa liczba przeskoków (hops = 35) wystąpiła w serwerach w Chinach, co sugeruje, że pakiet przeszedł przez wiele pośrednich routerów i prawdopodobnie przez chińską sieć zaporową ("Great Firewall").
+      \item Serwery w sąsiednich krajach (Czechy, Niemcy) mają stosunkowo małą liczbę przeskoków, co jest zgodne z ich bliską geograficzną lokalizacją.
     \end{itemize}
-    \item Serwer google.com
+
+  \item Opóźnienia (time) a odegłości geograficzne
     \begin{itemize}
-        \item ttl = 58
-        \item time $\approx$ 11.75 ms
-        \item hops = $64 - 58 = 6$
-    \end{itemize}
-    \item Serwer w Australii - sydney.edu.au
-    \begin{itemize}
-        \item ttl = 105
-        \item time $\approx$ 319 ms
-        \item hops = $128 - 105 = 23$
-    \end{itemize}
-    \item Serwer w Czechach - cuni.cz 
-    \begin{itemize}
-        \item ttl = 53
-        \item time $\approx$ 19.1 ms
-        \item hops = $64 - 53 = 11$
-    \end{itemize} 
-    \item Serwer w Chinach - fudan.edu.cn 
-    \begin{itemize}
-        \item ttl = 221
-        \item time $\approx$ 416.75 ms
-        \item hops = $256 - 221 = 35$
-    \end{itemize}
-    \item Serwer w Japonii - www.kyoto-u.ac.jp
-    \begin{itemize}
-        \item ttl = 52
-        \item time $\approx$ 34.7 ms
-        \item hops = $64 - 52 = 12$
-    \end{itemize}
-    \item Serwer w Niemczech - www.hu-berlin.de
-    \begin{itemize}
-        \item ttl = 48
-        \item time $\approx$ 43.7 ms
-        \item hops = $64 - 48 = 16$
+      \item Najkrótsze czas odpowiedzi miał serwer w Polsce (Politechniki Wrocławskiej), co jest zgodne z bliską lokalizacją geograficzną.
+      \item Najdłuższy czas odpowiedzi miał serwer chiński, co może być skutkiem restrykcji sieciowych w Chinach.
+      \item Serwer w Australii miał stosunkowo długi czas odpowiedzi, co jest zgodne z dużą odległością geograficzną.
     \end{itemize}
 \end{itemize}
+
+\vspace{1\baselineskip}
+
+\textbf{Maksymalny niefragmentowany pakiet} \newline
+
+Standardowym MTU (Maximum Transmission Unit) dla sieci Ethernet \par wynosi 1500 bajtów.
+
+\vspace{1\baselineskip}
+\textbf{Pingowanie serwerów z dużymi pakietami}
+
+\begin{itemize}
+  \item Serwer google.com
+    \begin{figure}[H]
+      \centering
+      \includegraphics[width=1.0\textwidth]{/home/wojteq18/Obrazy/Screenshots/Screenshot From 2025-03-19 20-03-54.png}
+      \label{fig:large_google}
+    \end{figure}
+
+  \item Serwer w Czechach - cuni.cz
+    \begin{figure}[H]
+      \centering
+      \includegraphics[width=1.0\textwidth]{/home/wojteq18/Obrazy/Screenshots/Screenshot From 2025-03-19 20-04-47.png}
+      \label{fig:large_cuni}
+    \end{figure}
+
+  \item Serwer w Chinach - fudan.edu.cn
+    \begin{figure}[H]
+      \centering
+      \includegraphics[width=1.0\textwidth]{/home/wojteq18/Obrazy/Screenshots/Screenshot From 2025-03-19 20-05-58.png}
+      \label{fig:large_fudan}
+    \end{figure}
+
+  \item Serwer w Japonii - www.kyoto-u.ac.jp
+    \begin{figure}[H]
+      \centering
+      \includegraphics[width=1.0\textwidth]{/home/wojteq18/Obrazy/Screenshots/Screenshot From 2025-03-19 20-06-38.png}
+      \label{fig:large_kyoto}
+    \end{figure}
+
+  \item Serwer w Niemczech - www.hu-berlin.de
+    \begin{figure}[H]
+      \centering
+      \includegraphics[width=1.0\textwidth]{/home/wojteq18/Obrazy/Screenshots/Screenshot From 2025-03-19 20-07-45.png}
+      \label{fig:large_hu_berlin}
+    \end{figure}
+\end{itemize}
+
 \vspace{1\baselineskip}
 \textbf{Obserwacje:}
-\vspace{1\baselineskip}
-\begin{itemize}
-    \item Liczba przeskoków (hops)
-    \begin{itemize}
-        \item Najmniejsza liczba przeskoków (hops = 6) wystąpiła w przypadku serwera Google w usa, co może wynikać z wielu serwerów cache'ujących Google w Europie
-        \item Największa liczba przeskoków (hops = 35) wystąpiła w serwerach w Chinach, co sugeruje, że pakiet przeszedł przez wiele pośrednich routerów i
-        prawdopodobnie przez chińską sieć zaporową ("Great Firewall")
-        \item Serwery w sąsiednich krajach (Czechy, Niemcy) mają stosunkowo małą liczbę przeskoków, co jest zgodne z ich bliską geograficzną lokalizacją
-    \end{itemize}
-    \item Opóźnienia (time) a odegłości geograficzne
-    \begin{itemize}
-        \item Najkrótsze czas odpowiedzi miał serwer w Polsce (Politechniki Wrocławskiej), co jest zgodne z bliską lokalizacją geograficzną
-        \item Najdłuższy czas odpowiedzi miał serwer chiński, co może być skutkiem restrykcji sieciowych w Chinach
-        \item Serwer w Australii miał stosunkowo długi czas odpowiedzi, co jest zgodne z dużą odległością geograficzną
-    \end{itemize}
-\end{itemize}
-\vspace{1\baselineskip}
-\textbf{Pingowanie serwerów (rozmiar pakietów: 1472 bajtów)}
-\vspace{1\baselineskip}
-\begin{itemize}
 
-    \item Serwer google.com
-    \begin{itemize}
-        \item ttl = 58
-        \item time $\approx$ 12.35 ms
-        \item hops = $64 - 58 = 6$
-    \end{itemize}
-
-    \item Serwer w Czechach - cuni.cz 
-    \begin{itemize}
-        \item ttl = 53
-        \item time $\approx$ 21.5 ms
-        \item hops = $64 - 53 = 11$
-    \end{itemize} 
-    \item Serwer w Chinach - fudan.edu.cn 
-    \begin{itemize}
-        \item ttl = 221
-        \item time $\approx$ 416.5 ms
-        \item hops = $256 - 221 = 35$
-    \end{itemize}
-    \item Serwer w Japonii - www.kyoto-u.ac.jp
-    \begin{itemize}
-        \item ttl = 52
-        \item time $\approx$ 36.5 ms
-        \item hops = $64 - 52 = 12$
-    \end{itemize}
-    \item Serwer w Niemczech - www.hu-berlin.de
-    \begin{itemize}
-        \item ttl = 48
-        \item time $\approx$ 53.6 ms
-        \item hops = $64 - 48 = 16$
-    \end{itemize}
-\end{itemize}
-1427 bajty to maksymalny rozmiar pakietu, który można przesłać bez fragmentacji w sieci. \par
-\vspace{1\baselineskip}
-\textbf{Obserwacje: }
 \vspace{1\baselineskip}
 \begin{itemize}
-    \item Problemy z dostarczeniem pakietów do niektórych serwerów: Na serwery Politechniki Wrocławskiej i Uniwerystety w Sydney nie udało
-    się przesłać tak dużych pakietów, prawdopodobnie z powodu ograniczeń MTU (Maximum Transmission Unit) lub obecności firewalli
-    \item Czas odpowiedzi od serwerów, które otrzymały pakiet wzrósł, co może sugerować, że większe pakiety wymagają dłuższego czasu
-    przetworzenia przez routery
-    \item Liczba przeskoków (hops) pozostała taka sama, co sugeruje, że jest niezależna od rozmiaru pakietów
+  \item Problemy z dostarczeniem pakietów do niektórych serwerów: Na serwery Politechniki Wrocławskiej i Uniwerystety w Sydney nie udało
+  się przesłać tak dużych pakietów, prawdopodobnie z powodu ograniczeń MTU (Maximum Transmission Unit) lub obecności firewalli.
+  \item Czas odpowiedzi od serwerów, które otrzymały pakiet wzrósł, co może sugerować, że większe pakiety wymagają dłuższego czasu
+  przetworzenia przez routery.
+  \item Liczba przeskoków (hops) pozostała taka sama, co sugeruje, że jest niezależna od rozmiaru pakietów.
 \end{itemize}
+
 \vspace{1\baselineskip}
-\textbf{Traceroute: } \par
+\textbf{Traceroute:}
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=1.0\textwidth]{/home/wojteq18/Obrazy/Screenshots/Screenshot From 2025-03-19 20-36-54.png}
+  \label{fig:traceroute_china}
+\end{figure}
+
+Najdłuższa trasa, jaką udało mi się znaleźć za pomocą programu traceroute, dociera do Chin, na serwer uniwersytetu w Fudan. 
+W niektórych punktach (np. 14, 15, 16) widzimy, że router nie odpowiedział na zapytanie, co może świadczyć o tym, że pakiet przeszedł przez sieci wirtualne
+(sieć VPN lub firewall, który nie odpowiada na ICMP).
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=1.0\textwidth]{/home/wojteq18/Obrazy/Screenshots/Screenshot From 2025-03-19 20-46-23.png}
+  \label{fig:traceroute_poland}
+\end{figure}
+
+Zgodnie z intuicją i wcześniejszymi wynikami, droga na serwer Politechniki Wrocławskiej zbadanej przez program Traceroute jest znacznie krótsza,
+choć wciąż natrafia na routery, które nie odpowiadają na zapytania ICMP.
+
 \vspace{1\baselineskip}
-Traceroute to program służący do badania trasy pakietów w sieci IP. 
-Internet nie zawsze jest symetryczny - pakiety ,,wychodzące" z komputera mogą podązać inną drogą niz pakiety ,,przychodzące". 
-W tym celu możemy wykorzsytać program Traceroute i mtr.
+\textbf{Wireshark:}
+
+Program WireShark (w wersji terminalowej tshark) pozwala na przesłanie \par wiadomości do innego urządzenia działającego w tej samej sieci:
+\begin{itemize}
+  \item na urządzeniu nadawcy:
+  \begin{verbatim}
+    > echo -n "hej :)" | nc -u 192.168.100.14 12345
+  \end{verbatim}
+  \item na urządzeniu odbiorcy:
+  \begin{verbatim}
+    > sudo tshark -i any -f "udp port 12345" -T fields -e data
+  \end{verbatim}
+\end{itemize}
+
+Odbiorca otrzyma wiadomość w zapisie heksadecymalnym, co jest zgodne z protokołem UDP. 
+W prosty sposób może ją jednak zdekodować do postaci tekstowej:
+\begin{verbatim}
+> echo -n "68656a203a29" | xxd -r -p
+> hej :)
+\end{verbatim}
+
+\vspace{11\baselineskip}
+\textbf{Wnioski: }
+\begin{itemize}
+  \item \textbf{Ping} umożliwia szybką weryfikację osiągalności danego hosta, a także pomiar opóźnienia dwukierunkowego (RTT).
+  \item \textbf{Wielkość pakietu} w istotny sposób przekłada się na opóźnienia. Zbyt duże pakiety wymagają fragmentacji, co może wydłużać RTT lub powodować brak odpowiedzi, zwłaszcza jeśli fragmentacja jest zabroniona (flaga \texttt{DF}).
+  \item \textbf{Największy niepofragmentowany pakiet} z reguły odpowiada wartości MTU dla danej ścieżki. W powyższych testach wyniósł on typowe 1500 bajtów (1472 + 28).
+  \item \textbf{Traceroute} obrazuje poszczególne routery na trasie, co znacząco ułatwia diagnozowanie problemów związanych z routingiem lub identyfikowanie źródeł opóźnień.
+  \item \textbf{Wireshark} pozwala na dogłębną obserwację przesyłanych pakietów (w tym procesu fragmentacji) i analizę szczegółów takich jak nagłówki czy flagi, co sprzyja precyzyjnemu diagnozowaniu usterek.
+  \item Odległość geograficzna wpływa na zwiększenie liczby \textit{skoków} i czas RTT. Dla serwerów położonych daleko wartość opóźnienia i liczba węzłów pośrednich rosły znacznie bardziej niż dla serwerów bliższych.
+  \item \textbf{Asymetryczność tras} występuje często na skutek różnych polityk routingu stosowanych przez operatorów – obserwowano to w kilku spośród przeprowadzonych testów.
+\end{itemize}
+
+Reasumując, narzędzia \textbf{ping}, \textbf{traceroute} i \textbf{Wireshark} \par stanowią spójny zestaw do diagnostyki sieci:
+\begin{itemize}
+  \item \textbf{ping} – zapewnia szybką weryfikację dostępności hosta i pomiar opóźnienia,
+  \item \textbf{traceroute} – pozwala ustalić dokładną drogę pakietu i zidentyfikować ewentualne wąskie gardła,
+  \item \textbf{Wireshark} – służy do szczegółowej analizy ruchu sieciowego, włączając w to fragmentację pakietów oraz informacje zawarte w nagłówkach.
+\end{itemize}
 \end{document}

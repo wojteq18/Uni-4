@@ -1,4 +1,4 @@
-\documentclass{article}
+\documentclass[12pt]{article}
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
 \usepackage{lmodern}
@@ -10,6 +10,7 @@
 \usepackage{hyperref}
 \usepackage{float}
 \usepackage{graphicx}
+\usepackage{booktabs} 
 
 \title{Technologie sieciowe - lista 1}
 \author{Wojciech Typer}
@@ -165,11 +166,30 @@ Standardowym MTU (Maximum Transmission Unit) dla sieci Ethernet \par wynosi 1500
   przetworzenia przez routery.
   \item Liczba przeskoków (hops) pozostała taka sama, co sugeruje, że jest niezależna od rozmiaru pakietów.
 \end{itemize}
+\vspace{1\baselineskip}
+\textbf{Podsumowanie pingowania} \newline
+\begin{table}[h]
+  \centering
+  \begin{tabular}{cccccc} % Ustawione 6 kolumn (c = wyśrodkowane)
+      \toprule
+      \textbf{\#} & \textbf{Odległość} & \textbf{Bites} & \textbf{Liczba skoków stamtąd} & \textbf{Liczba skoków tam} & \textbf{Opóźnienie ping'u} \\ 
+      \midrule
+      1  & Blisko         & 100  & 52 & 13 & 40ms   \\ 
+      2  & Blisko         & 1400 & 52 & 13 & 62ms \\ 
+      3  & Daleko         & 100  & 53 & 16 & 55ms  \\ 
+      4  & Daleko         & 1400 & 51 & 16 & 78ms  \\ 
+      5  & Bardzo daleko  & 100  & 51 & 22 & 70ms    \\ 
+      6  & Bardzo daleko  & 1400 & 51 & 22 & 73ms    \\ 
+      \bottomrule
+  \end{tabular}
+  \caption{Parametry sieciowe w zależności od odległości}
+  \label{tab:network_parameters}
+\end{table}
 
 \vspace{1\baselineskip}
 \textbf{Traceroute:}
 
-\begin{figure}[htbp]
+\begin{figure}[H]
   \centering
   \includegraphics[width=1.0\textwidth]{/home/wojteq18/Obrazy/Screenshots/Screenshot From 2025-03-19 20-36-54.png}
   \label{fig:traceroute_china}
@@ -179,7 +199,7 @@ Najdłuższa trasa, jaką udało mi się znaleźć za pomocą programu tracerout
 W niektórych punktach (np. 14, 15, 16) widzimy, że router nie odpowiedział na zapytanie, co może świadczyć o tym, że pakiet przeszedł przez sieci wirtualne
 (sieć VPN lub firewall, który nie odpowiada na ICMP).
 
-\begin{figure}[htbp]
+\begin{figure}[H]
   \centering
   \includegraphics[width=1.0\textwidth]{/home/wojteq18/Obrazy/Screenshots/Screenshot From 2025-03-19 20-46-23.png}
   \label{fig:traceroute_poland}
@@ -210,7 +230,7 @@ W prosty sposób może ją jednak zdekodować do postaci tekstowej:
 > hej :)
 \end{verbatim}
 
-\vspace{11\baselineskip}
+\vspace{1\baselineskip}
 \textbf{Wnioski: }
 \begin{itemize}
   \item \textbf{Ping} umożliwia szybką weryfikację osiągalności danego hosta, a także pomiar opóźnienia dwukierunkowego (RTT).
@@ -228,4 +248,5 @@ Reasumując, narzędzia \textbf{ping}, \textbf{traceroute} i \textbf{Wireshark} 
   \item \textbf{traceroute} – pozwala ustalić dokładną drogę pakietu i zidentyfikować ewentualne wąskie gardła,
   \item \textbf{Wireshark} – służy do szczegółowej analizy ruchu sieciowego, włączając w to fragmentację pakietów oraz informacje zawarte w nagłówkach.
 \end{itemize}
+%ZAINSTALOWAC SCAPY i wysłać wiadomosci do siebie
 \end{document}

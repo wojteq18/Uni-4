@@ -146,7 +146,52 @@ Przestrzeń stanów to uporządkowana czwórka (V, E, S, F), gdzie: \par
             \includegraphics[width=0.7\textwidth]{/home/wojteq18/Pobrane/zdjecia/image-52.png}
             \label{fig:dfs_image}
         \end{figure}
-    \item A* Search 
+    \item Algorytm A
+        \begin{itemize}
+            \item Funkcja oceny heurystycznej
+            Funkcją oceny heurystycznej nazywamy funkcję kosztów określoną na stanach postaci: \newline
+            $f(v) = g(v) + h(v)$ \newline
+            Gdzie g(v) jest aktualną odległością (kosztem) od stanu początkowego do stanu v \newline
+            a h(v) jest heurystycznym oszacowaniem odległości (kosztu) od stanu v do celu
+            \item Przykład $\rightarrow$ skoczki (chcemy uniknąć bicia)
+            \begin{figure}[H]
+                \centering
+                \includegraphics[width=0.7\textwidth]{/home/wojteq18/Pobrane/zdjecia/chess.png}
+                \label{fig:dfs_image}
+            \end{figure}
+            Ponieważ bardziej szukamy rozwiązania niż liczby ruchów, możemy też zastosować algorytm zachłanny \newline (nie liczyć ruchów, czyli g(v) = 0)
+            \vspace{5\baselineskip}
+            \item przykład $\rightarrow$ graf
+            \begin{figure}[H]
+                \centering
+                \includegraphics[width=0.7\textwidth]{/home/wojteq18/Pobrane/zdjecia/ex2.png}
+                \label{fig:dfs_image}
+            \end{figure}
+            Musimy przejść z punktu S do punktu G. Liczby w nawiasach to ocena heurystyki. \newline
+            Po sprawdzeniu całej przestrzeni stanów, okazuje się, że najlepszę rozwiązanie to: \newline
+            $ S \rightarrow A \rightarrow D \rightarrow F \rightarrow G $ \newline
+        \end{itemize}
+        \item Algorytm A*
+            \begin{itemize}
+                \item Jeżeli algorytm A wykorzystuje funkcję oceny heurystycznej taką, że dla każdego v zachodzi h(v) $\leq$ h*(v), 
+                to otrzymujemy algorytm A*
+                \item \textbf{Twierdzenie:} Algorytm A* jest dopuszczalny \newline
+                \textbf{D-d:} Niedoszacowanie funkcji h powoduje, że zaniżamy rzeczywisty koszt ścieżki, czyli nie może zajść sytuacja, 
+                że ominiemy optymalny wierzchołek w drodze do celu. Gdyby oszacowanie było zawyżone, to zanim rozpatrzylibyśmy ten 
+                wierzchołek przez inny, moglibyśmy dojść do celu
+                \vspace{3\baselineskip}
+                \item dla dwóch dopuszczalnych heurystyk $h_1 i h_2$, jeżeli dla dowolnego stanu v zachodzi: 
+                $h_1(v) \leq h_2(v)$, mówimy, że $h_2$ zawiera więcej informacji niż $h_1$
+                Jeżeli $h_2$ jest lepiej poinformowana niż $h_1$, to zbiór stanów odwiedzonych przez A* z heurystyką $h_2$ jest podzbiorem
+                zbioru stanów odwiedzonych przez A* z heurystyką $h_1$
+                \item więzy
+                \begin{itemize}
+                    \item Dla stanów definiujemy warunki dopuszczalności, które ograniczają nam ich liczbę
+                    \item Musimy wówczas zmodyfikować operacje przejścia między stanami, aby przechodzić między dopuszczalnymi
+                    \item Dzięki zmnijeszeniu liczby stanów, zmniejszamy zasoby potrzebne do znalezienia rozwiązania
+                    \item Najczęsciej zapisujemy ograniczenia (więzy) jako formuły logiczne narzucone na na własności stanów
+                \end{itemize}
+            \end{itemize}   
 
 \end{itemize}
 

@@ -51,3 +51,8 @@ myfoldr :: (t1 -> t2 -> t2) -> t2 -> [t1] -> t2
 myfoldr op e [] = e
 myfoldr op e (x:xs) = op x (myfoldr op e xs)
 --myfoldr to rekurencyjna funkcja, która składa tablice od prawej strony; przyjmuje 3 argumenty: funkcję i 2 tablice
+
+--isPrime
+isPrime :: Int -> Bool
+isPrime k = length [ x | x <- [2..k], k `mod` x == 0] == 1
+

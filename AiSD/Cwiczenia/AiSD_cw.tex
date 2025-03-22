@@ -135,13 +135,21 @@ $n! = 10^6  \rightarrow n = 9, n! = 1.8 * 10^9  \rightarrow n = 13, n! = 3.1 * 1
     Zatem złożoność algorytmu to: $O(n^2)$ \par
     \vspace{1\baselineskip}
     2. $R(i, j) = O(j)$ \par
-    Złożoność pętli wewnętrznej while: \par
-    j rośnie wykładniczo: j, 2j, 4j, 8j...\par
-    Zatem koszt każdej iteracji to O(j) + O(2j) + ... O(n) \par
-    Jest to ciąg geometryczny, którego suma jest proporcjonalna do  \par
-    największego wyrazu: O(n) \par
-    Złożoność pętli zewnętrznej for to: $\sum_{i = 1}^{n} O(n)$ \par
-    Więc tak jak w poprzednim przypadku złożoność tego algorytmu to: $O(n^2)$ \par
+    $R(i, j) = \Theta (j)$ \par
+    $\sum_{i=1}^{n} \sum_{k=1}^{\log_2{\frac{n}{i}}} \Theta(2^k \cdot i) = \sum_{i=1}{n} \cdot \Theta (i) \cdot \sum_{k=1}^{\log_2{\frac{n}{i}}} \cdot 2^k $\par
+    $= \sum_{i=1}^{n} \Theta ((\frac{1 - 2^{log_2 \frac{n}{i}} \cdot 2}{-1} -1)i)$ \par
+    $= \sum_{i=1}^{n} \Theta ((-(1- \frac{n}{i}) - 1) i)$ \par
+    $= \sum_{i=1}^{n} \Theta (\frac{n}{2} - 2i)$ \par
+    $= \Theta (\sum_{i=1}^{n} (\frac{n}{2} - 2i))$ \par
+    $= \Theta (\sum_{i=1}^{n} \frac{n}{2} - \sum_{i=1}^{n} 2i)$ \par
+    $= \Theta (\frac{n^2}{2} - 2 \cdot \frac{i(n+1)}{2})$ \par
+    $= \Theta (\frac{n^2}{2} - \frac{2n^2 + 2n}{2})$ \par
+    $= \Theta (- \frac{n^2}{2} - n)$ 
+
+
+
+
+
     \vspace{1\baselineskip}
     \textbf{Przypomnienie Master Theorem:} \par
     \vspace{1\baselineskip}
@@ -158,7 +166,7 @@ $n! = 10^6  \rightarrow n = 9, n! = 1.8 * 10^9  \rightarrow n = 13, n! = 3.1 * 1
         \item $\Theta(n^d \cdot log(n))$, jeśli $d = log_b(a)$ \par
         \item $\Theta(n^{log_b(a)})$, jeśli $d < log_b(a)$ \par
     \end{itemize} \par
-    \vspace{1\baselineskip}
+    \vspace{10\baselineskip}
     \textbf{zadanie 4/ lista2} \par
     \vspace{1\baselineskip}
     \begin{itemize}
@@ -185,5 +193,6 @@ $n! = 10^6  \rightarrow n = 9, n! = 1.8 * 10^9  \rightarrow n = 13, n! = 3.1 * 1
         Zatem widzimy, że $n^{log_b(a)}$ rośnie szybciej niż $f(n)$ \par
         Zatem z zasady Master Theorem: \par
         $T(n) = \Theta(n^{log_2(3)}) = \Theta(n^{1.58})$ \par
+        
     \end{itemize}
 \end{document}

@@ -11,6 +11,11 @@
 \usepackage{float}
 \usepackage{graphicx}
 \usepackage{mathtools}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amsmath}
+
+
 
 
 
@@ -584,7 +589,158 @@ T(n) = \Theta(n^{\log_2 3})
     \label{fig:example_image}
 \end{figure}
 
+\begin{algorithm}[H]
+    \caption{Hoare Partition}
+    \label{alg:quicksort}
+    \begin{algorithmic}[1]
+        \Procedure{hoare\_partition}{A, p, q}
+            \State $pivot \gets A\left[\left\lfloor \frac{p + q}{2} \right\rfloor\right]$
+            \State $i \gets p - 1$
+            \State $j \gets q + 1$
+            \While{true}
+                \Repeat
+                    \State $i \gets i + 1$
+                \Until{$A[i] \geq pivot$}
+                \Repeat
+                    \State $j \gets j - 1$
+                \Until{$A[j] \leq pivot$}
+                \If{$i \geq j$}
+                    \State \Return $j$
+                \EndIf
+                \State swap($A[i], A[j]$)
+            \EndWhile
+        \EndProcedure
+    \end{algorithmic}
+\end{algorithm}
+
+\par\textbf{Analiza worst-case QuickSorta}
+
+\par
+$T(n) = T(n - 1) + T(0) + \Theta(n) = T(n - 1) + \Theta(n)$
+
+\par
+Drzewo rekurencji (dla przypadku pesymistycznego, tj. jednostronny podział):
+
+\begin{center}
+\begin{tikzpicture}[
+    level distance=1.4cm,
+    every node/.style={circle,draw},
+    level 1/.style={sibling distance=5cm},
+    level 2/.style={sibling distance=3cm},
+    level 3/.style={sibling distance=2cm},
+    level 4/.style={sibling distance=1.5cm}
+    ]
+\node {$c_n$}
+  child {node {$c_{n-1}$}
+    child {node {$c_{n-2}$}
+      child {node {$c_{n-3}$}
+        child {node {$\cdots$}
+          child {node {$c_1$}
+            child[missing]
+            child[missing]
+          }
+          child[missing]
+        }
+        child[missing]
+      }
+      child[missing]
+    }
+    child[missing]
+  }
+  child {node {$\Theta(1)$}}; % prawa strona (najmniejsza partycja)
+\end{tikzpicture}
+\end{center}
+
+
+\par
+$T(n) \leq \sum_{i=1}^{n} c \cdot i = c \cdot \sum_{i=1}^{n} i = \Theta(n^2)$
+\vspace{1\baselineskip}
+
+\par\textbf{Analiza best-case}
+
+\par
+Jeśli pivot zawsze dzieli tablicę na dwie równe części:
+
+\[
+T(n) = 2T\left(\frac{n}{2}\right) + \Theta(n)
+\Rightarrow T(n) = \Theta(n \log n)
+\]
+
+\par\textbf{Analiza average-case}
+
+\par
+Niech $T_n$ oznacza liczbę porównań dla tablicy długości $n$.
+
+\[
+x_k =
+\begin{cases}
+    1, & \text{jeśli partition dzieli tablicę na } (k,\; n - k - 1) \\[0.5em]
+    0, & \text{w przeciwnym wypadku}
+\end{cases}
+\]
+
+
+\[
+T_n = \sum_{k=0}^{n-1} x_k \cdot (T_k + T_{n-k-1}) + (n - 1)
+\]
+
+\par
+Liczymy wartość oczekiwaną:
+
+\[
+E(T_n) = \sum_{k=0}^{n-1} \mathbb{E}(x_k) \cdot \left( \mathbb{E}(T_k) + \mathbb{E}(T_{n-k-1}) \right) + (n - 1)
+\]
+
+\[
+\mathbb{E}(x_k) = \frac{1}{n} \quad \text{(bo pivot jest losowy)}
+\]
+
+\[
+E(T_n) = \frac{1}{n} \sum_{k=0}^{n-1} \left( E(T_k) + E(T_{n-k-1}) \right) + (n - 1)
+\]
+
+\[
+= \frac{2}{n} \sum_{k=0}^{n-1} E(T_k) + (n - 1)
+\]
+
+\[
+\Rightarrow E(T_n) = \Theta(n \log n)
+\]
+
+
+    \textbf{Analiza avg Case'a}
+    $T_n \rightarrow$ Liczba porównań elementów sortowanej tablicy: |A| = n \newline
+
+\[
+x_k =
+\begin{cases}
+    1, & \mbox{jeśli partition dzieli tablicę na } (k,\, n - k - 1) \\[0.6em]
+    0, & \mbox{w przeciwnym wypadku}
+\end{cases}
+\]
+
+
+\[
+    T_n =
+    \begin{cases}
+        T_0 + T_{n-1} + n-1, gdy (0, n-1) -split \\
+        T_1 + T_{n-2} + n -1, gdy (1, n-2) -split \\
+        ... \\
+        T_k + T_{n-1-k} + n - 1, gdy (k, n-k-1) -split \\
+        ... \\
+        T_{n-1} + T_0 + n - 1, gdy (n-1, o) -split
+    \end{cases}
+    \]
+
+    $T_n = \sum_{k=0}^{n-1} x_k (T_k + T_{n-k-1}) + n - 1$ \newline
+
+    liczymy wartosć oczekiwaną: \newline
+    $E(T_n) = E (\sum{k=0}^{n-1} X_k (T_k + T_{n-k-1} + n - 1))$ \newline
+    $E(T_n) = \sum_{k=0}^{n-1} E(X_k \cdot (T_k + T_{n-k-1}) + n - 1) $ \newline
+    $E(T_n) = \sum_{k=0}^{n-1} E(X_k) - E(T_k + T_{n-k-1} - n - 1)$ \newline
+    $E(T_n) = \frac{1}{n} \cdot \sum_{k=0}^{n-1} E(T_k) + \sum (E(T_{n-k-1}))$ \newline
+    TO BE CONTINUED
 
 
 
-\end{document}
+\end{document} 

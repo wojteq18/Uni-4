@@ -707,7 +707,7 @@ E(T_n) = \frac{1}{n} \sum_{k=0}^{n-1} \left( E(T_k) + E(T_{n-k-1}) \right) + (n 
 \Rightarrow E(T_n) = \Theta(n \log n)
 \]
 
-
+    \vspace{1\baselineskip}
     \textbf{Analiza avg Case'a}
     $T_n \rightarrow$ Liczba porównań elementów sortowanej tablicy: |A| = n \newline
 
@@ -732,14 +732,137 @@ x_k =
     \end{cases}
     \]
 
-    $T_n = \sum_{k=0}^{n-1} x_k (T_k + T_{n-k-1}) + n - 1$ \newline
 
+    $T_n = \sum_{k=0}^{n-1} x_k (T_k + T_{n-k-1}) + n - 1$ \newline
+    
     liczymy wartosć oczekiwaną: \newline
+
     $E(T_n) = E (\sum{k=0}^{n-1} X_k (T_k + T_{n-k-1} + n - 1))$ \newline
     $E(T_n) = \sum_{k=0}^{n-1} E(X_k \cdot (T_k + T_{n-k-1}) + n - 1) $ \newline
     $E(T_n) = \sum_{k=0}^{n-1} E(X_k) - E(T_k + T_{n-k-1} - n - 1)$ \newline
     $E(T_n) = \frac{1}{n} \cdot \sum_{k=0}^{n-1} E(T_k) + \sum (E(T_{n-k-1}))$ \newline
-    TO BE CONTINUED
+
+
+    \textbf{Dual pivot quicksort} \newline
+
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=0.7\textwidth]{/home/wojteq18/Pobrane/zdjecia/dpq.png}
+        \label{fig:example_image}
+    \end{figure}
+
+    \textbf{Wartość oczekiwana: } 
+
+    $E(\mbox{liczba porównań w dual pivot partition}) \approx \frac{16}{9}n$ 
+
+    $E(\mbox{liczba porównań w dual pivot qs sedwick}) \approx \frac{32}{15}n logn$  \newline
+
+
+    \textbf{Yaroslavsky dual pivot qs} 
+
+    $E(\mbox{liczba porównań w partition}) \approx \frac{19}{12}n$ 
+
+    $E(\mbox{liczba porównań w Dual Pivot qs Yaroslavsky}) \approx 1.9 n logn$ \newline
+
+    \textbf{Strategia count}
+
+    $E(\mbox{liczba porównań w Count Partition}) \approx \frac{3}{2}n$
+
+    $E(\mbox{liczba porównań w Dual Pivot qs z count}) \approx 1.8 n logn$ \newline
+
+    \textbf{Comparsion Model} 
+
+    Dolne ograniczenie na liczbę porównań w problemie sortowania \par
+    w Comparsion Modelwynosi $\Omega(n logn)$ \newline
+
+    D-d: \par
+    \begin{itemize}
+        \item dla dowolnego algorytmu sortującego możemy znależć odpowiadające mu drzewo decyzyjne
+        \item n! liści w binarnym drzewie decyzyjnym
+        \item drzewo binarne pełne o wysokości h ma co najmniej $2^h$ liści
+        \item ale liści w drzewie decyzyjnym powinno być co najmniej n!, zatem: \par
+        $2^h \leq n!$ / lg \par
+        $h \leq \log_{2}n!$ \par
+        $lg n! = lg(\sqrt{s \pi n} (\frac{n}{e})^n (1 + o(1)))$ \par
+        $lg (\frac{n}{e})^n + lg (\sqrt(2 \pi n)(1 + o(1)))$ \par
+        $n logn - n lg e + lg(\sqrt{2 \pi n} (2 + o(1))) = \Omega(n logn)$
+    \end{itemize}    \par
+
+    Sortowanie: \par
+    Input: $|a| = n, \forall i \in \{1, ..., k\}$ \par
+    Output: posortowana rosnąco tablica A \par
+
+    \begin{algorithm}[H]
+        \caption{CountingSort}
+        \label{alg:countingsort}
+        \begin{algorithmic}[1]
+            \Procedure{counting\_sort}{A, n, k}
+                \For{$i = 1$ \textbf{to} $k$}
+                    \State $C[i] \gets 0$
+                \EndFor
+                \For{$i = 1$ \textbf{to} $n$}
+                    \State $C[A[i]] \gets C[A[i]] + 1$
+                \EndFor
+                \For{$i = 2$ \textbf{to} $k$}
+                    \State $C[i] \gets C[i] + C[i - 1]$
+                \EndFor
+                \For{$i = n$ \textbf{downto} $1$}
+                    \State $B[C[A[i]]] \gets A[i]$
+                    \State $C[A[i]] \gets C[A[i]] - 1$
+                \EndFor
+                \State \Return $B$
+            \EndProcedure
+        \end{algorithmic}
+    \end{algorithm} \par
+
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=0.7\textwidth]{/home/wojteq18/Pobrane/zdjecia/cs.png}
+        \label{fig:example_image}
+    \end{figure} \par
+
+    Złożoność obliczeniowa Counting Sorta: \par
+    $\Theta (n + k)$ gdzie $k = O(n)$ \par
+
+    \vspace{1\baselineskip}
+
+    \textbf{Stable Sorting Property} \par
+
+    Algorytm zachowuje kolejność równych sobie elementów z tablicy wejściowej
+
+    \vspace{5\baselineskip}
+
+    \textbf{RafixSort} \par
+
+    \begin{algorithm}[H]
+        \caption{RadixSort}
+        \label{alg:radixsort}
+        \begin{algorithmic}[1]
+            \Procedure{radix\_sort}{A, n, d}
+                \For{$i = 1$ \textbf{to} $d$}
+                    \State $counting\_sort(A, n, 9)$
+                \EndFor
+                \State \Return $A$
+            \EndProcedure
+        \end{algorithmic}
+    \end{algorithm} \par
+
+    
+    
+
+
+
+
+
+
+
+
+    
+
+
+
+
+
 
 
 

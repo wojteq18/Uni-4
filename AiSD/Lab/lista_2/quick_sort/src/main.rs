@@ -1,51 +1,35 @@
 use std::env;
 
-fn quick_sort (length: usize, arr: &mut Vec<usize>)  -> Vec<usize> {
+fn quick_sort (length: usize, arr: &mut [usize]) {
     if arr.len() <= 1 {
-        return arr.clone();
+        return;
     }
 
-    let pivot = arr[0];
-    let mut left_side = vec![];
-    let mut middle_side = vec![];
-    let mut right_side = vec![];
+    let pivot_index = partition_lomuto(arr);
+    
+    quick_sort(arr[..pivot_index].len(), &mut arr[..pivot_index]);
+    quick_sort(arr[pivot_index + 1..].len(), &mut arr[pivot_index + 1..]);
+}
 
-    for &item in arr.iter() { 
-        if item < pivot {
-            left_side.push(item);
-        } else if item == pivot {
-            middle_side.push(item);
-        } else {
-            right_side.push(item);
+fn partition_lomuto(arr: &mut [usize]) -> usize {
+    let pivot = arr[arr.len() - 1];
+    let mut i = 0;
+
+    for j in 0..arr.len() - 1 {
+        if arr[j] <= pivot {
+            arr.swap(i, j);
+            i = i + 1;
         }
     }
-
-    let mut sorted_left = quick_sort(left_side.len(), &mut left_side);
-    let mut sorted_right = quick_sort(right_side.len(), &mut right_side);
-
-    sorted_left.append(&mut middle_side);
-    sorted_left.append(&mut sorted_right);
-
-    return sorted_left;
+    arr.swap(i, arr.len() - 1);
+    return i;
 }
 
 
 fn main() {
-    let args: Vec<String> = env::args().skip(1).collect(); //pomiń nazwę programu
+    let mut arr: [usize; 10] = [2, 2, 3222, 43, 51, 6, 17, 18, 9, 0];
 
-    if args.len() < 2 {
-        println!("Za mało argumentów! ");
-        return;
-    }
+    quick_sort(10, &mut arr);
 
-    let length = args[0].parse::<usize>().unwrap();
-    if args.len() != length + 1 {
-        println!("Zła długość tablicy, oczekuje {} elementów, podano {}", length, args.len() - 1);
-        return;
-    }
-
-    let mut arr: Vec<usize> = args[1..].iter().map(|s| s.parse().expect("Invalid number")).collect();
-
-    let sorted = quick_sort(length, &mut arr);
-    println!("{:?}", sorted);
+    println!("{:?}", arr);
 }

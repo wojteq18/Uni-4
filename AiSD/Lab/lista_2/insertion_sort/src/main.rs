@@ -1,16 +1,27 @@
 use std::io::{self, BufRead};
 
 
-fn insertion_sort (length: usize, arr: &mut [usize]) {
+fn insertion_sort (_length: usize, arr: &mut [usize]) {
+    let mut s = 0;
+    let mut c = 0;
+
     for i in 1..arr.len() {
         let key = arr[i];
         let mut j: usize = i;
-        while j > 0 && arr[j - 1] > key {
+        while j > 0 && {
+            c += 1;
+            arr[j - 1] > key
+        } {
             arr[j] = arr[j - 1];
-            j = j - 1;
+            j -= 1;
+            s += 1;
         }
         arr[j] = key;
+        println!("State: {:?}", arr);
     }
+    println!("s={}", s);
+    println!("c={}", c);
+
 }
 
 

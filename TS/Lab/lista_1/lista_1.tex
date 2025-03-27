@@ -11,6 +11,8 @@
 \usepackage{float}
 \usepackage{graphicx}
 \usepackage{booktabs} 
+\usepackage{siunitx}
+
 
 \title{Technologie sieciowe - lista 1}
 \author{Wojciech Typer}
@@ -168,23 +170,13 @@ Standardowym MTU (Maximum Transmission Unit) dla sieci Ethernet \par wynosi 1500
 \end{itemize}
 \vspace{1\baselineskip}
 \textbf{Podsumowanie pingowania} \newline
-\begin{table}[h]
-  \centering
-  \begin{tabular}{cccccc} % Ustawione 6 kolumn (c = wyśrodkowane)
-      \toprule
-      \textbf{\#} & \textbf{Odległość} & \textbf{Bites} & \textbf{Liczba skoków stamtąd} & \textbf{Liczba skoków tam} & \textbf{Opóźnienie ping'u} \\ 
-      \midrule
-      1  & Blisko         & 100  & 52 & 13 & 40ms   \\ 
-      2  & Blisko         & 1400 & 52 & 13 & 62ms \\ 
-      3  & Daleko         & 100  & 53 & 16 & 55ms  \\ 
-      4  & Daleko         & 1400 & 51 & 16 & 78ms  \\ 
-      5  & Bardzo daleko  & 100  & 51 & 22 & 70ms    \\ 
-      6  & Bardzo daleko  & 1400 & 51 & 22 & 73ms    \\ 
-      \bottomrule
-  \end{tabular}
-  \caption{Parametry sieciowe w zależności od odległości}
-  \label{tab:network_parameters}
-\end{table}
+
+\begin{figure}[H]
+  \hspace{-4cm}
+  \includegraphics[width=1.6\textwidth]{/home/wojteq18/Obrazy/Screenshots/Screenshot From 2025-03-27 10-02-10.png}
+  \label{fig:large_hu_berlin}
+\end{figure}
+
 
 \vspace{1\baselineskip}
 \textbf{Traceroute:}
@@ -242,11 +234,10 @@ W prosty sposób może ją jednak zdekodować do postaci tekstowej:
   \item \textbf{Asymetryczność tras} występuje często na skutek różnych polityk routingu stosowanych przez operatorów – obserwowano to w kilku spośród przeprowadzonych testów.
 \end{itemize}
 
-Reasumując, narzędzia \textbf{ping}, \textbf{traceroute} i \textbf{Wireshark} \par stanowią spójny zestaw do diagnostyki sieci:
+Reasumując, narzędzia \textbf{Ping}, \textbf{Traceroute} i \textbf{Wireshark} \par stanowią spójny zestaw do diagnostyki sieci:
 \begin{itemize}
   \item \textbf{ping} – zapewnia szybką weryfikację dostępności hosta i pomiar opóźnienia,
   \item \textbf{traceroute} – pozwala ustalić dokładną drogę pakietu i zidentyfikować ewentualne wąskie gardła,
   \item \textbf{Wireshark} – służy do szczegółowej analizy ruchu sieciowego, włączając w to fragmentację pakietów oraz informacje zawarte w nagłówkach.
 \end{itemize}
-%ZAINSTALOWAC SCAPY i wysłać wiadomosci do siebie
 \end{document}

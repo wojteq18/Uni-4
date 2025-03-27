@@ -31,5 +31,5 @@ fn main() {
 
     let mut arr: Vec<usize> = (0..length).map(|_| rng.gen_range(0..limit)).collect();
     insertion_sort(length, &mut arr);
-    println!("{:?}", arr);
+    println!("{}, {:?}",length, arr);
 }

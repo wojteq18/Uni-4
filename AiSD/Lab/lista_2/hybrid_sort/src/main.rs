@@ -1,3 +1,6 @@
+use std::io::{self, BufRead};
+
+
 fn quick_sort (length: usize, arr: &mut [usize]) {
     if arr.len() <= 1 {
         return;
@@ -24,7 +27,7 @@ fn partition_lomuto(arr: &mut [usize]) -> usize {
 }
 
 fn insertion_sort (length: usize, arr: &mut [usize]) {
-    for i in 1..length {
+    for i in 1..arr.len() {
         let key = arr[i];
         let mut j: usize = i;
         while j > 0 && arr[j - 1] > key {
@@ -44,9 +47,26 @@ fn hybrid_sort(length: usize, arr: &mut [usize]) {
 }
 
 fn main() {
-    let mut arr: [usize; 10] = [2, 2, 3222, 43, 51, 6, 17, 18, 9, 0];
+    let stdin = io::stdin();
+    let line = stdin.lock().lines().next().unwrap().unwrap();
 
-    hybrid_sort(10, &mut arr);
+    let length = line.split_whitespace()
+        .next()
+        .and_then(|s| s.parse::<usize>().ok())
+        .unwrap_or(0);
 
-    println!("{:?}", arr);
+    if let Some(start) = line.find('[') {
+        if let Some(end) = line.find(']') {
+            let numbers_str = &line[start + 1..end];
+
+            let mut numbers: Vec<usize> = numbers_str
+                .split(',')
+                .filter_map(|s| s.trim().parse::<usize>().ok())
+                .collect();
+
+            quick_sort(length, &mut numbers);
+            println!("{:?}", numbers);
+        }
+    }    
 }
+// /home/wojteq18/Uni/AiSD/Lab/lista_2/generators/random_sequence/target/release/random_sequence 7 | /home/wojteq18/Uni/AiSD/Lab/lista_2/hybrid_sort/target/release/hybrid_sort

@@ -1,7 +1,8 @@
-use std::env;
+use std::io::{self, BufRead};
+
 
 fn insertion_sort (length: usize, arr: &mut [usize]) {
-    for i in 1..length {
+    for i in 1..arr.len() {
         let key = arr[i];
         let mut j: usize = i;
         while j > 0 && arr[j - 1] > key {
@@ -14,21 +15,27 @@ fn insertion_sort (length: usize, arr: &mut [usize]) {
 
 
 fn main() {
-    let args: Vec<String> = env::args().skip(1).collect(); //pomiń nazwę programu
+    let stdin = io::stdin();
+    let line = stdin.lock().lines().next().unwrap().unwrap();
 
-    if args.len() < 2 {
-        println!("Za mało argumentów! ");
-        return;
-    }
+    let length = line.split_whitespace()
+        .next()
+        .and_then(|s| s.parse::<usize>().ok())
+        .unwrap_or(0);
 
-    let length = args[0].parse::<usize>().unwrap();
-    if args.len() != length + 1 {
-        println!("Zła długość tablicy, oczekuje {} elementów, podano {}", length, args.len() - 1);
-        return;
-    }
+    if let Some(start) = line.find('[') {
+        if let Some(end) = line.find(']') {
+            let numbers_str = &line[start + 1..end];
 
-    let mut arr: Vec<usize> = args[1..].iter().map(|s| s.parse().expect("Invalid number")).collect();
+            let mut numbers: Vec<usize> = numbers_str
+                .split(',')
+                .filter_map(|s| s.trim().parse::<usize>().ok())
+                .collect();
 
-    insertion_sort(length, &mut arr);
-    println!("{:?}", arr);
+
+            insertion_sort(length, &mut numbers);
+            println!("{:?}", numbers);
+        }
+    }    
 }
+// /home/wojteq18/Uni/AiSD/Lab/lista_2/generators/random_sequence/target/release/random_sequence 7 | /home/wojteq18/Uni/AiSD/Lab/lista_2/insertion_sort/target/release/insertion_sort

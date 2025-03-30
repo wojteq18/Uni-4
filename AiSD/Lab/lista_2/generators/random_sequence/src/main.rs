@@ -15,7 +15,7 @@ fn main() {
     let seed = rand::thread_rng().gen(); 
     let mut rng = Mt64::new(seed);
 
-    let limit = 64;
+    let limit = 2 * length - 1;
 
     let arr: Vec<usize> = (0..length).map(|_| rng.gen_range(0..limit)).collect();
     println!("{:?}", arr);

@@ -28,21 +28,27 @@ fn partition_lomuto(arr: &mut [usize], comparsion: &mut usize, swaps: &mut usize
 }
 
 
-fn insertion_sort (_length: usize, arr: &mut [usize], comparsion: &mut usize, swaps: &mut usize) {
-
+fn insertion_sort(_length: usize, arr: &mut [usize], comparsion: &mut usize, swaps: &mut usize) {
     for i in 1..arr.len() {
         let key = arr[i];
-        let mut j: usize = i;
-        while j > 0 && {
+        let mut j = i;
+
+        // Szukamy miejsca dla key (to jest jedyne miejsce gdzie zliczamy porównania)
+        while j > 0 {
             *comparsion += 1;
-            arr[j - 1] > key
-        } {
-            arr[j] = arr[j - 1];
-            j -= 1;
-            *swaps += 1;
+            if arr[j - 1] > key {
+                j -= 1;
+            } else {
+                break;
+            }
         }
-        arr[j] = key;
-        println!("State: {:?}", arr);
+
+        // Przesuwamy blok [j..i) o 1 w prawo
+        if j != i {
+            arr.copy_within(j..i, j + 1);
+            arr[j] = key;
+            *swaps += 1; // swap to u nas oznacza "przesunięcie bloku"
+        }
     }
 }
 
@@ -58,7 +64,7 @@ fn is_sorted(arr: &mut [usize]) -> bool {
 
 
 fn hybrid_sort(length: usize, arr: &mut [usize], comparsion: &mut usize, swaps: &mut usize) {
-    if length < 16 {
+    if length < 20 {
         insertion_sort(length, arr, comparsion, swaps);
     } else {
         quick_sort(length, arr, comparsion, swaps);
@@ -85,7 +91,7 @@ fn main() {
                 .filter_map(|s| s.trim().parse::<usize>().ok())
                 .collect();
 
-            quick_sort(length, &mut numbers, &mut c, &mut s);
+            hybrid_sort(length, &mut numbers, &mut c, &mut s);
             println!("{:?}", numbers);
 
             if is_sorted(&mut numbers) {

@@ -7,21 +7,35 @@ fn insertion_sort (_length: usize, arr: &mut [usize]) {
 
     for i in 1..arr.len() {
         let key = arr[i];
-        let mut j: usize = i;
-        while j > 0 && {
+        let mut j = i;
+
+        while j > 0 {
             c += 1;
-            arr[j - 1] > key
-        } {
-            arr[j] = arr[j - 1];
-            j -= 1;
-            s += 1;
+            if arr[j - 1] > key {
+                j -= 1;
+            } else {
+                break;
+            }
         }
-        arr[j] = key;
-        println!("State: {:?}", arr);
+
+        if j != i {
+            arr.copy_within(j..i, j + 1);
+            arr[j] = key;
+            s += 1;
+            println!("State: {:?}", arr);
+        }
     }
     println!("s={}", s);
     println!("c={}", c);
+}
 
+fn is_sorted(arr: &mut [usize]) -> bool {
+    for i in 1..arr.len() {
+        if arr[i] < arr[i - 1] {
+            return false;
+        }
+    }
+    true
 }
 
 
@@ -46,6 +60,12 @@ fn main() {
 
             insertion_sort(length, &mut numbers);
             println!("{:?}", numbers);
+
+            if is_sorted(&mut numbers) {
+                println!("Sorted");
+            } else {
+                println!("Not sorted");
+            }
         }
     }    
 }

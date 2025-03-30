@@ -56,7 +56,8 @@ type Traces_Sequence_Type struct {
 }
 
 func PrintTrace(t TraceType) {
-	fmt.Printf("%v %d %d %d %c\n", t.Time_Stamp.Sub(startTime), t.Id, t.Position.X, t.Position.Y, t.Symbol)
+	elapsed := t.Time_Stamp.Sub(startTime).Seconds()
+	fmt.Printf("%.6f %d %d %d %c\n", elapsed, t.Id, t.Position.X, t.Position.Y, t.Symbol)
 }
 
 func PrintTraces(t Traces_Sequence_Type) {
@@ -80,7 +81,67 @@ type Traveler struct {
 	Position Position
 }
 
+func traveler(id int, sybol rune, seed int) {
+	r := rand.New(rand.NewSource(int64(seed)))
+
+	var traveler Traveler
+	traveler.Id = id
+	traveler.Symbol = sybol
+	traveler.Position.X = r.Intn(BoardWidth)
+	traveler.Position.Y = r.Intn(BoardHeight)
+
+	var traces Traces_Sequence_Type
+	traces.Last = -1
+
+	timeStamp := time.Since(startTime)
+	traces.Last++
+	traces.TraceArray[traces.Last] = TraceType{
+		Time_Stamp: startTime.Add(timeStamp),
+		Id:         traveler.Id,
+		Position:   traveler.Position,
+		Symbol:     traveler.Symbol,
+	}
+
+	nrOfSteps := MinSteps + r.Intn(MaxSteps-MinSteps+1)
+
+	time.Sleep(100 * time.Millisecond)
+	for i := 0; i < nrOfSteps; i++ {
+		delay := MinDelay + time.Duration(r.Int63n(int64(MaxDelay-MinDelay)))
+		time.Sleep(delay)
+
+		switch r.Intn(4) {
+		case 0:
+			traveler.Position.MoveUp()
+		case 1:
+			traveler.Position.MoveDown()
+		case 2:
+			traveler.Position.MoveLeft()
+		case 3:
+			traveler.Position.MoveRight()
+		}
+
+		timeStamp = time.Since(startTime)
+		traces.Last++
+		traces.TraceArray[traces.Last] = TraceType{
+			Time_Stamp: startTime.Add(timeStamp),
+			Id:         traveler.Id,
+			Position:   traveler.Position,
+			Symbol:     traveler.Symbol,
+		}
+	}
+	reportChannel <- traces
+}
+
 func main() {
-	rand.Seed(time.Now().UnixNano())
-	fmt.Println("Hello, World!")
+	fmt.Printf("-1 %d %d %d\n", NrOfTravelers, BoardWidth, BoardHeight)
+
+	go printer()
+
+	symbols := []rune{'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O'}
+
+	for i := 0; i < NrOfTravelers; i++ {
+		go traveler(i, symbols[i], rand.Int())
+	}
+
+	time.Sleep(3 * time.Second)
 }

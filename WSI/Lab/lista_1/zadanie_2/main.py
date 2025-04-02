@@ -37,6 +37,11 @@ for fname in filenames:
     y_true.append(true_label)
     y_pred.append(pred_class)
 
+print("Plik | Prawdziwa | Przewidziana")
+for fname, true, pred in zip(filenames, y_true, y_pred):
+    print(f"{fname} | {true} | {pred}")
+
+
 
 
 accuracy = accuracy_score(y_true, y_pred)

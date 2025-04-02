@@ -23,7 +23,7 @@ model.compile(optimizer='adam', #Adam + Nesterov momentum
               metrics=['accuracy'])
 
 # Training the model
-model.fit(x_train, y_train, epochs=10)
+model.fit(x_train, y_train, epochs=8)
 
 # Making predictions
 y_pred_probs = model.predict(x_test) #Calculates for each example the probability for the classes

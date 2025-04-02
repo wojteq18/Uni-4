@@ -1,0 +1,75 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage[polish]{babel}
+\usepackage{amsmath}
+\usepackage{tikz}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+\usepackage{hyperref}
+\usepackage{float}
+\usepackage{graphicx}
+
+\title{Wstęp do sztucznej inteligencji 1}
+\author{Wojciech Typer}
+\date{}
+
+\begin{document}
+\maketitle
+\textbf{Zadanie 1} \newline
+Do rozwiązania zadania pierwszego wykorzystałem bibliotekę tensorflow. Jako funkje aktywacji 
+użyłem funkcji swish: 
+\[
+f(x) = x \cdot \sigma(x) = x \cdot \frac{1}{1 + e^{-x}} 
+\] 
+
+Jako optymalizatora użyłem Adam (Adaptive Moment Estimation). Algrytm ten aktualizuje wagi sieci podczas trenignu,
+żeby zmniejszyć straty. \newline
+Jako funkcję straty użyłem sparse categorical crossentropy, która używana jest do klasyfikacji
+wieloklasowej, gdy etykiety podane są jako liczby. \newline
+
+Model został wytrenowany na 8 epokach. Oto jego wyniki: \newline
+\begin{itemize}
+    \item dokładność: 0.9777
+    \item precyzja: 0.9777
+    \item czułość: 0.9775
+\end{itemize}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\textwidth]{/home/wojteq18/Obrazy/Screenshots/Screenshot From 2025-04-02 19-05-17.png}
+    \label{fig:example_image}
+\end{figure} 
+\textbf{Zadanie 2} \newline
+W drugim zadaniu, model wytrenowany na bazie MNIST osiągnął następujące wyniki: \newline
+\begin{itemize}
+    \item dokładność: 0.4333
+    \item precyzja: 0.4881
+    \item czułość: 0.4333
+\end{itemize} 
+Model nie radził sobie przedewszystkim z rozpoznaniem 9, 8, 6 i 0. Tak prezentują się jego odpowiedzi:
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.3\textwidth]{/home/wojteq18/Obrazy/Screenshots/Screenshot From 2025-04-02 19-42-22.png}
+    \label{fig:example_image}
+\end{figure}  
+\vspace{5\baselineskip}
+Dla eksperymentu, model przeuczony, wytrenowany na 60 epokach, poradził sobie z rozpoznaniem moich cyfr gorzej: 
+\begin{itemize}
+    \item dokładność: 0.4000
+    \item precyzja: 0.3362
+    \item czułość: 0.4000
+\end{itemize}
+
+\textbf{Zadanie 3} \newline
+Dane podzieliłem następująco: 0.8 na trening i 0.2 na testy. 
+random state = 42 to ziarno generatora liczb pseudolosowych - dzięki temu za każdym raze podział danych będzie jednakowy,
+dzięki czemu będziemy dostawać powtarzalne wyniki. \newline
+Model oparty na RandomForestClassifier ma 100 drzew decyzyjnych. Osiągnął on następujące wyniki: \newline
+\begin{itemize}
+    \item dokładność: 0.9673
+    \item precyzja: 0.9671
+    \item czułość: 0.9671
+\end{itemize}
+
+\end{document}

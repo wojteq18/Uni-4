@@ -93,3 +93,78 @@ partition' p (x:xs) = if p x then (x:l, r) --jeżeli element spełnia warunek, t
                         where (l, r) = partition' p xs --reszte tablicy dzielimy rekurencyjnie
 
 
+--zadanie 26
+isSorted :: Ord a => [a] -> Bool --Ord a oznacza, że elementy są porównywalne
+isSorted [] = True
+isSorted [_] = True
+isSorted (x:y:xs)
+    | x <= y = isSorted (y:xs)
+    | otherwise = False
+
+--zadanie 29
+rev :: [a] -> [a]
+rev [] = []
+rev (x:xs) = rev xs ++ [x] 
+--operator ++ ma w haskellu złożoność obliczeniową O(n), bo musi przejść przez całą lewą listę, żeby dokleić x
+--Zatem złożoność naszego całego algorytmu to: 1 + 2 + 3 + ... + n-1 + n = O(n^2)
+
+--zadanie 30
+filter' p = concat . map box
+    where box x = if p x then [x] else []
+--funkcja box działa w następujący sposób: jeżeli x spełnia dany predykat to zostaje utworzona tablica z tym jednym elementem, 
+--jeżel nie spełnia, to zostaje utworzona pusta tablica []. concat łączy wszystkie tablice w jedną, odrzucając puste tablice
+
+--zadanie 31
+--a)
+takeWhile' :: (a -> Bool) -> [a] -> [a]
+takeWhile' _ [] = []
+takeWhile' p (x:xs)
+    | p x = x : takeWhile' p xs
+    | otherwise = []
+--w przypadku gdy do takeWhile wrzucimy pustą tablicę, to zwróci pustą tablicę, w innym przypadku będzie zwracał elementy, dopóki nie natrafi
+--na pierwszy element nie spełniający p
+
+--b)
+dropWhile' :: (a -> Bool) -> [a] -> [a]
+dropWhile' _ [] = []
+dropWhile' p (x:xs)
+    | p x = dropWhile' p xs
+    | otherwise = (x:xs)
+--w przypadku gdy x spełnia warunek jest pomijany. gdy dropWhile' natrafi na pierwszy element nie spełiający warunku,
+--zwraca go wraz z pozostałą częscią listy
+
+--zadanie 34
+-- :t sum: sum :: (Foldable t, Num a) => t a -> a | sumuje wszystkie liczby w strukturze
+-- :t product: product :: (Foldable t, Num a) => t a -> a | mnoży wszystkie liczby w strukturze
+-- :t all: all :: Foldable t => (a -> Bool) -> t a -> Bool | sprawdza czy wszystkie elementy w strukturze spełniają dany warunek
+-- :t any: any :: Foldable t => (a -> Bool) -> t a -> Bool | sprawdza czy przynajmniej jeden element w strukturze spełnia dany warunek
+--foldable oznacza, że struktura może być przekształcona w jedną wartość za pomocą folda
+
+--zadanie 35
+--let x = [1..100000]
+
+--foldl (+) 0 xs -> zwraca sumę wszystkich elementów w tablicy
+--foldr (+) 0 xs -> zwraca sumę wszystkich elementów w tablicy (liczy od końca)
+--foldl1 (+) xs -> zwraca sumę wszystkich elementów w tablicy (liczy od początku, bez podawania wartości początkowej, działą dla list niepustych)
+--foldr1 (+) xs -> zwraca sumę wszystkich elementów w tablicy (liczy od końca, bez podawania wartości początkowej, działą dla list niepustych)
+--foldl' i foldr' są szybsze i nie używają lazy evaluation
+
+--zadanie 36
+reverse' :: [a] -> [a]
+reverse' = foldl (flip(:)) [] --foldl przechodzi przez wszystkie elementy w tablicy i dodaje je do nowej tablicy, flip zamienia miejscami argumenty funkcji (:)
+
+--zadanie 37
+count_even' :: [Integer] -> Integer
+count_even' = foldr (\x acc -> if even x then acc + 1 else acc) 0 --foldr przechodzi przez wszystkie elementy w tablicy i 
+--zlicza parzyste liczby, acc to akumulator, który przechowuje liczbę parzystych liczb
+
+--zadanie 42
+approx :: Int -> Double
+approx n = foldr (+) 0 [1 / fromIntegral (product [1..k]) | k <- [1..n]] --tworzymy tablicę liczb [1..n]
+--dla każdej liczby k w tablicy obliczamy 1 / k!, i każdy następny element to suma poprzednich dodać ten 1/k!
+--zaczynamy od 0, kończymy na n
+
+--zadanie 43
+
+
+

@@ -19,6 +19,7 @@ partition p (x:xs) = if p x then (x:l, r)
 
 
 --quick_sort bez list comprehension (bo to mocno spowalnia działanie funkcji)
+--zadanie 25
 qSort' :: Ord a => [a] -> [a]
 qSort' [] = []
 qSort' (x:xs) = qSort' l ++ [x] ++ qSort' r

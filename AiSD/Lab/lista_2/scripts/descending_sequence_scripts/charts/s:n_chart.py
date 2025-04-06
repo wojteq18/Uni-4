@@ -1,29 +1,29 @@
+import pandas as pd
 import matplotlib.pyplot as plt
 
-def wczytaj_dane(plik):
-    n, s, c = [], [], []
-    with open(plik, 'r') as f:
-        next(f)  
-        for linia in f:
-            dane = linia.strip().split(',')
-            if len(dane) == 3:
-                n.append(int(dane[0]))
-                c.append(int(dane[1]))
-                s.append(int(dane[2]))
-    return n, c, s
+def load_and_prepare(path):
+    df = pd.read_csv(path, delimiter=",", skipinitialspace=True)
+    df.columns = [col.strip() for col in df.columns]
+    df['n'] = pd.to_numeric(df['n'], errors='coerce')
+    df['s'] = pd.to_numeric(df['s'], errors='coerce')
+    grouped = df.groupby('n')['s'].mean().reset_index()
+    grouped['s_per_n'] = grouped['s'] / grouped['n']  # <<< tutaj s / n
+    return grouped
 
-n1, c1, s1 = wczytaj_dane('/home/wojteq18/Uni/AiSD/Lab/lista_2/scripts/descending_sequence_scripts/insertion_sort.txt')
-n2, c2, s2 = wczytaj_dane('/home/wojteq18/Uni/AiSD/Lab/lista_2/scripts/descending_sequence_scripts/quick_sort.txt')
-n3, c3, s3 = wczytaj_dane('/home/wojteq18/Uni/AiSD/Lab/lista_2/scripts/descending_sequence_scripts/hybrid_sort.txt')
+# wczytywanie
+hybrid_avg = load_and_prepare("/home/wojteq18/Uni/AiSD/Lab/lista_2/scripts/descending_sequence_scripts/dual_pivot_quick_sort.txt")
+quick_avg = load_and_prepare("/home/wojteq18/Uni/AiSD/Lab/lista_2/scripts/descending_sequence_scripts/quick_sort.txt")
+#insertion_avg = load_and_prepare("/home/wojteq18/Uni/AiSD/Lab/lista_2/scripts/random_sequence_scripts/insertion_sort.txt")
 
-# pojedynczy wykres s/n
-plt.plot(n1, [s / n for s, n in zip(s1, n1)], label='Insertion Sort', marker='o')
-plt.plot(n2, [s / n for s, n in zip(s2, n2)], label='Quick Sort', marker='s')
-plt.plot(n3, [s / n for s, n in zip(s3, n3)], label='Hybrid Sort', marker='^')
+# wykres
+plt.figure(figsize=(10, 6))
 
-plt.xlabel('elements (n)')
-plt.ylabel('s / n')
-plt.title('Swaps per element')
+plt.plot(hybrid_avg['n'], hybrid_avg['s_per_n'], marker='o', label='DP Quick Sort')
+plt.plot(quick_avg['n'], quick_avg['s_per_n'], marker='o', label='Quick Sort')
+#plt.plot(insertion_avg['n'], insertion_avg['s_per_n'], marker='o', label='Insertion Sort')
+plt.title("Average number of swaps per element (s/n) based on n (for k = 10)")
+plt.xlabel("n")
+plt.ylabel("avg s / n")
 plt.legend()
 plt.grid(True)
 plt.show()

@@ -1,17 +1,18 @@
 use std::io::{self, BufRead};
 
 
-fn quick_sort(_length: usize, arr: &mut [usize], comparsion: &mut usize, swaps: &mut usize) {
+fn quick_sort(arr: &mut [usize], comparsion: &mut usize, swaps: &mut usize) {
     if arr.len() <= 1 {
         return;
     }
 
     let pivot_index = partition_lomuto(arr, comparsion, swaps);
-    quick_sort(pivot_index, &mut arr[..pivot_index], comparsion, swaps);
-    quick_sort(arr.len() - pivot_index - 1, &mut arr[pivot_index + 1..], comparsion, swaps);
+    quick_sort( &mut arr[..pivot_index], comparsion, swaps);
+    quick_sort( &mut arr[pivot_index + 1..], comparsion, swaps);
 }
 
 fn partition_lomuto(arr: &mut [usize], comparsion: &mut usize, swaps: &mut usize) -> usize {
+    println!("State: {:?}", arr);
     let pivot = arr[arr.len() - 1];
     let mut i = 0;
 
@@ -27,16 +28,20 @@ fn partition_lomuto(arr: &mut [usize], comparsion: &mut usize, swaps: &mut usize
     return i
 }
 
+fn is_sorted(arr: &mut [usize]) -> bool {
+    for i in 1..arr.len() {
+        if arr[i] < arr[i - 1] {
+            return false;
+        }
+    }
+    true
+}
+
 fn main() {
     let mut c: usize = 0;
     let mut s: usize = 0;
     let stdin = io::stdin();
     let line = stdin.lock().lines().next().unwrap().unwrap();
-
-    let length = line.split_whitespace()
-        .next()
-        .and_then(|s| s.parse::<usize>().ok())
-        .unwrap_or(0);
 
     if let Some(start) = line.find('[') {
         if let Some(end) = line.find(']') {
@@ -47,10 +52,19 @@ fn main() {
                 .filter_map(|s| s.trim().parse::<usize>().ok())
                 .collect();
 
-            quick_sort(length, &mut numbers, &mut c, &mut s);
+            let copy = numbers.clone();
+            println!("Nieposortowana: {:?}", numbers);
+            quick_sort( &mut numbers, &mut c, &mut s);
+            println!("Posortowana: {:?}", numbers);
+            println!("Nieposortowana: {:?}", copy);
             println!("{:?}", numbers);
             println!("s={}", s);
             println!("c={}", c);
+            if is_sorted(&mut numbers) {
+                println!("Posortowane");
+            } else {
+                println!("Nieposortowane");
+            }
         }
     }    
 }

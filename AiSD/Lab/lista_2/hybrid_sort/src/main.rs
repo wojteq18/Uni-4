@@ -1,14 +1,14 @@
 use std::io::{self, BufRead};
 
 
-fn quick_sort(_length: usize, arr: &mut [usize], comparsion: &mut usize, swaps: &mut usize) {
+fn quick_sort(arr: &mut [usize], comparsion: &mut usize, swaps: &mut usize) {
     if arr.len() <= 1 {
         return;
     }
 
     let pivot_index = partition_lomuto(arr, comparsion, swaps);
-    hybrid_sort(pivot_index, &mut arr[..pivot_index], comparsion, swaps);
-    hybrid_sort(arr.len() - pivot_index - 1, &mut arr[pivot_index + 1..], comparsion, swaps);
+    hybrid_sort(&mut arr[..pivot_index], comparsion, swaps);
+    hybrid_sort(&mut arr[pivot_index + 1..], comparsion, swaps);
 }
 
 fn partition_lomuto(arr: &mut [usize], comparsion: &mut usize, swaps: &mut usize) -> usize {
@@ -28,7 +28,7 @@ fn partition_lomuto(arr: &mut [usize], comparsion: &mut usize, swaps: &mut usize
 }
 
 
-fn insertion_sort(_length: usize, arr: &mut [usize], comparsion: &mut usize, swaps: &mut usize) {
+fn insertion_sort(arr: &mut [usize], comparsion: &mut usize, swaps: &mut usize) {
     for i in 1..arr.len() {
         let key = arr[i];
         let mut j = i;
@@ -63,12 +63,13 @@ fn is_sorted(arr: &mut [usize]) -> bool {
 
 
 
-fn hybrid_sort(length: usize, arr: &mut [usize], comparsion: &mut usize, swaps: &mut usize) {
-    if length < 20 {
-        insertion_sort(length, arr, comparsion, swaps);
+fn hybrid_sort(arr: &mut [usize], comparsion: &mut usize, swaps: &mut usize) {
+    if arr.len() < 20 {
+        insertion_sort(arr, comparsion, swaps);
     } else {
-        quick_sort(length, arr, comparsion, swaps);
+        quick_sort(arr, comparsion, swaps);
     }
+    println!("State: {:?}", arr);
 }
 
 fn main() {
@@ -76,11 +77,6 @@ fn main() {
     let mut s: usize = 0;
     let stdin = io::stdin();
     let line = stdin.lock().lines().next().unwrap().unwrap();
-
-    let length = line.split_whitespace()
-        .next()
-        .and_then(|s| s.parse::<usize>().ok())
-        .unwrap_or(0);
 
     if let Some(start) = line.find('[') {
         if let Some(end) = line.find(']') {
@@ -91,11 +87,14 @@ fn main() {
                 .filter_map(|s| s.trim().parse::<usize>().ok())
                 .collect();
 
-            hybrid_sort(length, &mut numbers, &mut c, &mut s);
-            println!("{:?}", numbers);
+            let copy = numbers.clone();
+            println!("Nieposortowana: {:?}", numbers);
+            hybrid_sort(&mut numbers, &mut c, &mut s);
+            println!("Posortowana: {:?}", numbers);
+            println!("Nieposortowana: {:?}", copy);
 
             if is_sorted(&mut numbers) {
-                println!("Array is sorted");
+                println!("Tablica jest posortowana");
             } else {
                 println!("Array is not sorted");
             }

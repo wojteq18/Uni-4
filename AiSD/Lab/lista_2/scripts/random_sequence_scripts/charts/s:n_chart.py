@@ -11,17 +11,17 @@ def load_and_prepare(path):
     return grouped
 
 # wczytywanie
-hybrid_avg = load_and_prepare("/home/wojteq18/Uni/AiSD/Lab/lista_2/scripts/random_sequence_scripts/hybrid_sort.txt")
-quick_avg = load_and_prepare("/home/wojteq18/Uni/AiSD/Lab/lista_2/scripts/random_sequence_scripts/quick_sort.txt")
+hybrid_avg = load_and_prepare("/home/wojteq18/Uni/AiSD/Lab/lista_2/scripts/random_sequence_scripts/wojteq_sort.txt")
+quick_avg = load_and_prepare("/home/wojteq18/Uni/AiSD/Lab/lista_2/scripts/random_sequence_scripts/merge_sort.txt")
 #insertion_avg = load_and_prepare("/home/wojteq18/Uni/AiSD/Lab/lista_2/scripts/random_sequence_scripts/insertion_sort.txt")
 
 # wykres
 plt.figure(figsize=(10, 6))
 
-plt.plot(hybrid_avg['n'], hybrid_avg['s_per_n'], marker='o', label='Hybrid Sort')
-plt.plot(quick_avg['n'], quick_avg['s_per_n'], marker='o', label='Quick Sort')
+plt.plot(hybrid_avg['n'], hybrid_avg['s_per_n'], marker='o', label='wojteq Sort')
+plt.plot(quick_avg['n'], quick_avg['s_per_n'], marker='o', label='Merge Sort')
 #plt.plot(insertion_avg['n'], insertion_avg['s_per_n'], marker='o', label='Insertion Sort')
-plt.title("Average number of swaps per element (s/n) based on n (for k = 1)")
+plt.title("Average number of swaps per element (s/n) based on n (for k = 10)")
 plt.xlabel("n")
 plt.ylabel("avg s / n")
 plt.legend()

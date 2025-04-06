@@ -11,19 +11,21 @@ def load_and_prepare(path):
     return grouped
 
 # wczytywanie
-hybrid_avg = load_and_prepare("/home/wojteq18/Uni/AiSD/Lab/lista_2/scripts/increasing_sequence_scripts/hybrid_sort.txt")
+hybrid_avg = load_and_prepare("/home/wojteq18/Uni/AiSD/Lab/lista_2/scripts/increasing_sequence_scripts/dp_quick_sort.txt")
 quick_avg = load_and_prepare("/home/wojteq18/Uni/AiSD/Lab/lista_2/scripts/increasing_sequence_scripts/quick_sort.txt")
-insertion_avg = load_and_prepare("/home/wojteq18/Uni/AiSD/Lab/lista_2/scripts/increasing_sequence_scripts/insertion_sort.txt")
+#insertion_avg = load_and_prepare("/home/wojteq18/Uni/AiSD/Lab/lista_2/scripts/increasing_sequence_scripts/insertion_sort.txt")
 
 # wykres
 plt.figure(figsize=(10, 6))
+#plt.yscale('log')  # jeśli różnice są duże
 
-plt.plot(hybrid_avg['n'], hybrid_avg['s'] + 0.2, marker='o', label='Hybrid Sort')
-plt.plot(quick_avg['n'], quick_avg['s_per_n'], marker='o', label='Quick Sort')
-plt.plot(insertion_avg['n'], insertion_avg['s_per_n'], marker='o', label='Insertion Sort')
-plt.title("Average number of swaps per element (s/n) based on n (for k = 1)")
+# poprawne wartości s/n
+plt.plot(hybrid_avg['n'], hybrid_avg['s'] / hybrid_avg['n'], marker='o', label='DP Quick Sort (s/n)')
+plt.plot(quick_avg['n'], quick_avg['s'] / quick_avg['n'], marker='o', label='Quick Sort (s/n)')
+
+plt.title("Average number of swaps per element (s/n) based on n")
 plt.xlabel("n")
-plt.ylabel("avg s / n")
+plt.ylabel("avg swaps per element (s/n)")
 plt.legend()
 plt.grid(True)
 plt.show()

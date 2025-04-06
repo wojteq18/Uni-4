@@ -1,7 +1,7 @@
 use std::io::{self, BufRead};
 
 
-fn insertion_sort (_length: usize, arr: &mut [usize]) {
+fn insertion_sort (arr: &mut [usize]) {
     let mut s = 0;
     let mut c = 0;
 
@@ -43,11 +43,6 @@ fn main() {
     let stdin = io::stdin();
     let line = stdin.lock().lines().next().unwrap().unwrap();
 
-    let length = line.split_whitespace()
-        .next()
-        .and_then(|s| s.parse::<usize>().ok())
-        .unwrap_or(0);
-
     if let Some(start) = line.find('[') {
         if let Some(end) = line.find(']') {
             let numbers_str = &line[start + 1..end];
@@ -57,12 +52,14 @@ fn main() {
                 .filter_map(|s| s.trim().parse::<usize>().ok())
                 .collect();
 
-
-            insertion_sort(length, &mut numbers);
-            println!("{:?}", numbers);
+            let copy = numbers.clone();
+            println!("Nieposortowana: {:?}", numbers);
+            insertion_sort(&mut numbers);
+            println!("Posortowana: {:?}", numbers);
+            println!("Nieposortowana: {:?}", copy);
 
             if is_sorted(&mut numbers) {
-                println!("Sorted");
+                println!("Tablica jest posortowana");
             } else {
                 println!("Not sorted");
             }

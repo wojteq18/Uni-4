@@ -9,22 +9,22 @@ def load_and_prepare(path):
     return df.groupby('n')['s'].mean().reset_index()
 
 # wczytywanie
-hybrid_avg = load_and_prepare("/home/wojteq18/Uni/AiSD/Lab/lista_2/scripts/increasing_sequence_scripts/hybrid_sort.txt")
+hybrid_avg = load_and_prepare("/home/wojteq18/Uni/AiSD/Lab/lista_2/scripts/increasing_sequence_scripts/dp_quick_sort.txt")
 quick_avg = load_and_prepare("/home/wojteq18/Uni/AiSD/Lab/lista_2/scripts/increasing_sequence_scripts/quick_sort.txt")
-insertion_avg = load_and_prepare("/home/wojteq18/Uni/AiSD/Lab/lista_2/scripts/increasing_sequence_scripts/insertion_sort.txt")
+#insertion_avg = load_and_prepare("/home/wojteq18/Uni/AiSD/Lab/lista_2/scripts/increasing_sequence_scripts/insertion_sort.txt")
 
 
 # wykres
 plt.figure(figsize=(10, 6))
-#plt.yscale('log')
+plt.yscale('log')
 
 
-plt.plot(hybrid_avg['n'], hybrid_avg['s'], marker='o', label='Hybrid Sort')
+plt.plot(hybrid_avg['n'], hybrid_avg['s'], marker='o', label='DP Quick Sort')
 plt.plot(quick_avg['n'], quick_avg['s'], marker='o', label='Quick Sort')
-plt.plot(insertion_avg['n'], insertion_avg['s'], marker='o', label='Insertion Sort')
+#plt.plot(insertion_avg['n'], insertion_avg['s'], marker='o', label='Insertion Sort')
 
 
-plt.title("Avarage number of swaps based on n (for k = 1)")
+plt.title("Avarage number of swaps based on n (for k = 10)")
 plt.xlabel("n ")
 plt.ylabel("avg s")
 plt.legend()

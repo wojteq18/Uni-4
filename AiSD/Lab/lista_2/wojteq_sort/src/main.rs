@@ -1,21 +1,25 @@
 use std::io::{self, BufRead};
 
-fn find_runs(arr: &mut [usize]) -> Vec<(usize)> {
+fn find_runs(arr: &mut [usize], s: &mut usize, c: &mut usize) -> Vec<(usize)> {
     let mut runs = Vec::new();
     let length = arr.len();
     runs.push(0);
     let mut i = 0;
     while i < length - 1 {
         let mut start = i;
+        *c += 1;
         if arr[i+1] >= arr[i] { 
             while i + 1 < length && arr[i+1] >= arr[i] {
+                *c += 1;
                 i += 1;
             }
         } else {
             while i + 1 < length && arr[i+1] <= arr[i] {
+                *c += 1;
                 i += 1;
             }
             arr[start..=i].reverse();
+            *s += arr[start..=i].len();
         }
         runs.push(i+1);
         i += 1;
@@ -27,17 +31,20 @@ fn find_runs(arr: &mut [usize]) -> Vec<(usize)> {
     return runs;
 }
 
-fn merge (arr1: &mut [usize], arr2: &mut [usize]) -> Vec<(usize)> {
+fn merge (arr1: &mut [usize], arr2: &mut [usize], s: &mut usize, c: &mut usize) -> Vec<(usize)> {
     let mut merged = Vec::new();
     let mut i = 0;
     let mut j = 0;
     while i < arr1.len() && j < arr2.len() {
+        *c += 1;
         if arr1[i] <= arr2[j] {
             merged.push(arr1[i]);
+            *s += 1;
             i += 1;
         } else {
             merged.push(arr2[j]);
             j += 1;
+            *s += 1;
         }
     }
 
@@ -48,9 +55,9 @@ fn merge (arr1: &mut [usize], arr2: &mut [usize]) -> Vec<(usize)> {
     return merged;
 }
 
-fn wojteq_sort(arr: &mut [usize]) {
+fn wojteq_sort(arr: &mut [usize], s: &mut usize, c: &mut usize) {
     loop {
-        let runs = find_runs(arr);
+        let runs = find_runs(arr, s, c);
 
         if runs.len() <= 2 {
             break;
@@ -68,7 +75,7 @@ fn wojteq_sort(arr: &mut [usize]) {
             let left_slice  = &mut left_part[left_start..left_end];
             let right_slice = &mut right_part[..(right_end - right_start)];
 
-            let merged = merge(left_slice, right_slice);
+            let merged = merge(left_slice, right_slice, s, c);
 
             let left_len = left_slice.len();
             left_slice.copy_from_slice(&merged[..left_len]);
@@ -90,6 +97,8 @@ fn is_sorted(arr: &mut [usize]) -> bool {
 
 
 fn main() {
+    let mut c: usize = 0;
+    let mut s: usize = 0;
     let stdin = io::stdin();
     let line = stdin.lock().lines().next().unwrap().unwrap();
 
@@ -108,7 +117,7 @@ fn main() {
                 .collect();
 
 
-            wojteq_sort(&mut numbers);
+            wojteq_sort(&mut numbers, &mut s,&mut c);
             println!("{:?}", numbers);
 
             if is_sorted(&mut numbers) {
@@ -117,8 +126,9 @@ fn main() {
                 println!("Not sorted");
             }
         }
-    }    
+    } 
+    println!("s={}", s);
+    println!("c={}", c);   
 }
 // /home/wojteq18/Uni/AiSD/Lab/lista_2/generators/random_sequence/target/release/random_sequence 7 | /home/wojteq18/Uni/AiSD/Lab/lista_2/wojteq_sort/target/release/wojteq_sort
-
 

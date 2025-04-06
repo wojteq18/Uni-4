@@ -113,11 +113,13 @@ func traveler(id int, sybol rune, seed int) {
 	defer wg.Done()
 	r := rand.New(rand.NewSource(int64(seed)))
 
+	var isDeadlocked bool
+
 	var traveler Traveler
 	traveler.Id = id
 	traveler.Symbol = sybol
-	traveler.Position.X = r.Intn(BoardWidth)
-	traveler.Position.Y = r.Intn(BoardHeight)
+	traveler.Position.X = id
+	traveler.Position.Y = id
 
 	var traces Traces_Sequence_Type
 	traces.Last = -1
@@ -137,24 +139,27 @@ func traveler(id int, sybol rune, seed int) {
 
 	time.Sleep(100 * time.Millisecond)
 
-	deadlockTimeOut := (9*MaxDelay + MinDelay) / 2
-	isDeadlock := false
-
+	deadlockTimeOut := (MaxDelay + MinDelay) / 2
 	for i := 0; i < nrOfSteps; i++ {
 		delay := MinDelay + time.Duration(r.Int63n(int64(MaxDelay-MinDelay)))
 		time.Sleep(delay)
 
 		oldPos := traveler.Position
 
-		switch r.Intn(4) {
-		case 0:
-			traveler.Position.MoveUp()
-		case 1:
-			traveler.Position.MoveDown()
-		case 2:
-			traveler.Position.MoveLeft()
-		case 3:
-			traveler.Position.MoveRight()
+		if traveler.Id%2 == 0 {
+			switch seed % 2 {
+			case 0:
+				traveler.Position.MoveDown()
+			case 1:
+				traveler.Position.MoveUp()
+			}
+		} else {
+			switch seed % 2 {
+			case 0:
+				traveler.Position.MoveRight()
+			case 1:
+				traveler.Position.MoveLeft()
+			}
 		}
 
 		newX := traveler.Position.X
@@ -162,7 +167,7 @@ func traveler(id int, sybol rune, seed int) {
 
 		ok := acquireSquareWithTimeout(newX, newY, deadlockTimeOut)
 		if !ok {
-			isDeadlock = true
+			isDeadlocked = true
 			traveler.Symbol = unicode.ToLower(traveler.Symbol)
 
 			traveler.Position = oldPos
@@ -194,7 +199,7 @@ func traveler(id int, sybol rune, seed int) {
 		}
 	}
 
-	if !isDeadlock {
+	if !isDeadlocked {
 		releaseSquare(traveler.Position.X, traveler.Position.Y)
 		reportChannel <- traces
 	}
@@ -205,6 +210,7 @@ func main() {
 
 	initBoard()
 	wg.Add(1 + NrOfTravelers)
+
 	go printer()
 
 	symbols := []rune{
@@ -217,5 +223,5 @@ func main() {
 	}
 
 	wg.Wait()
-	time.Sleep(10 * time.Second)
+	time.Sleep(3 * time.Second)
 }

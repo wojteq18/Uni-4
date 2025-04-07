@@ -18,8 +18,6 @@
 
 
 
-
-
 \title{Algorytmy i Struktury Danych}
 \author{Wojciech Typer}
 \date{}
@@ -832,7 +830,7 @@ x_k =
 
     \vspace{5\baselineskip}
 
-    \textbf{RafixSort} \par
+    \textbf{RadixSort} \par
 
     \begin{algorithm}[H]
         \caption{RadixSort}
@@ -846,24 +844,124 @@ x_k =
             \EndProcedure
         \end{algorithmic}
     \end{algorithm} \par
+    \vspace{1\baselineskip}
+
+    \textbf{Złożoność obliczeniowa RadixSorta} \par
+    \begin{itemize}
+        \item n liczb b'bitowych
+        \item liczb b bitowych dzielimy na r-bitowe cyfry
+        \item cyfry są z |{$0,...,2^n-1$}| = $2^n$ \par
+        \item Counting Sort sortujący n liczb względem jednej cyfry
+    \end{itemize} \par
+    Zatem RadixSort będzie miał złożoność obliczneiową: \par
+    $\Theta(\frac{b}{r} \cdot (n + 2^r))$ \par
+    Co po wykonaniu skomplikowanej analizy daje: \par
+    $\Theta(d \cdot n)$ \par
+
+    \vspace{2\baselineskip}
+    \textbf{Statystyki pozycyjne} \par
+    \vspace{1\baselineskip} \par
+    \textbf{Def: } k-tą statystyką pozycyjną nazywam← k-tą najmniejszą wartość z \par
+    zadanego zbioru \par
+    przykład: \par
+    \begin{itemize}
+        \item $k=1 \rightarrow O(n)$
+        \item $k=n$ $\rightarrow O(n)$
+        \item $k=\lfloor \rightarrow \text { sortowanie } O(n \log n)$
+    \end{itemize}
+    \vspace{1\baselineskip}
+    \begin{algorithm}[H]
+        \caption{RandomSelect}
+        \label{alg:randomselect}
+        \begin{algorithmic}[1]
+            \Procedure{random\_select}{A, p, q, i}
+                \If{$p = q$}
+                    \State \Return $A[p]$
+                \EndIf
+                \State $r \gets$ RandPartition($A$, $p$, $q$)
+                \State $k \gets r - p + 1$
+                \If{$i = k$}
+                    \State \Return $A[r]$
+                \ElsIf{$i < k$}   
+                    \State \Return \Call{random\_select}{$A$, $p$, $r - 1$, $i$}
+                \Else
+                    \State \Return \Call{random\_select}{$A$, $r + 1$, $q$, $i - k$}
+                \EndIf         
+            \EndProcedure
+        \end{algorithmic}
+    \end{algorithm}
+    
+    \vspace{1\baselineskip}
+    \textbf{Select algorithm} \par
+    \begin{itemize}
+        \item dzielimy A[p..q] na $\frac{n}{\lfloor 5 \rfloor}$ pięcioelementowych częsci
+        oraz ostanią część na $\leq$ 5 elementów
+        \item Sortujemy te grupy i wybieramy z każdej z nich medianę
+        \item Znajdujemy medianę M. Select(M, 1, $\frac{n}{5}$, $\frac{n}{10}$)
+        \item Ustalamy X jako pivot; Partition(A, p, q) i tak samo jak w RandomSelect
+    \end{itemize}
+
+    \textbf{Select} \par
+    Select(A, K) $\rightarrow$ T(n) \par
+    \begin{itemize}
+        \item Dziel na 5 elementowe tablice i znajdź ich medianę $\rightarrow \Theta(n)$
+        \item Select (...) $\rightarrow$ znajdź medianę median $\rightarrow T(\lceil{\frac{n}{5}}\lceil)$ \par
+        \item Użyj mediany median jako pivot w Partition $\rightarrow \Theta(n)$
+        \item Idź do lewej albo prawej podtablicy w zależności od indeksu pivota i szukaj statystyki pozycyjnej
+    \end{itemize}
+    Otrzymujemy: $t(n) = T(\lceil{\frac{n}{5}}\lceil) + \Theta(?)$ \par
+    \vspace{9\baselineskip}
+    \textbf{Struktury danych} \par
+    Set interface: \par
+    \begin{itemize}
+        \item build (A) - buduje set z danych zawartych w A
+        \item length - zwraca moc zbioru
+        \item find (k) - zwraca element zbioru o kluczu równym k
+        \item insert (k) - dodaje element o kluczu k do zbioru
+        \item delete (k) - usuwa element o kluczu k ze zbioru
+        \item find\_max - zwróc element o największym kluczu
+        \item find\_min - zwróć element o najmniejszym kluczu
+        \item find\_prev - zwraca element poprzedni od klucza
+    \end{itemize}
+    \vspace{1\baselineskip}
+    \textbf{Binary Search Tree} \par
+    BST property : \par
+    \begin{itemize}
+        \item x $\in$ T - x jest węzłem drzewa T
+        \item Wówczas każdy y $in$ x.left ma y.key < x.key
+        \item key y $in$ x.right ma y.key > x.key
+    \end{itemize}
+    \vspace{1\baselineskip}
+    \textbf{Inorder Tree Walk} \par
+    \begin{algorithm}[H]
+        \caption{Inorder Tree Walk}\label{alg:inorder_tree_walk}
+        \begin{algorithmic}[1]
+        \Procedure{InorderTreeWalk}{x $\in$ T}
+            \If{$x \neq \text{null}$}
+                \State \Call{InorderTreeWalk}{x.left}
+                \State print(x)
+                \State \Call{InorderTreeWalk}{x.right}
+            \EndIf
+        \EndProcedure
+        \end{algorithmic}
+    \end{algorithm}
+    \newpage
+    \textbf{Tree Search} \par
+    \begin{algorithm}[H]
+        \caption{TreeSearch}\label{alg:tree_search}
+        \begin{algorithmic}[1]
+        \Procedure{TreeSearch}{x $\in$ T, k}
+            \If{$x = \text{null} \lor k = x.key$}
+                \State \Return x
+            \ElsIf{$k < x.key$}
+                \State \Return \Call{TreeSearch}{x.left, k}
+            \Else
+                \State \Return \Call{TreeSearch}{x.right, k}
+            \EndIf
+        \EndProcedure
+        \end{algorithmic}
+    \end{algorithm}
+    
 
     
-    
-
-
-
-
-
-
-
-
-    
-
-
-
-
-
-
-
-
 \end{document} 

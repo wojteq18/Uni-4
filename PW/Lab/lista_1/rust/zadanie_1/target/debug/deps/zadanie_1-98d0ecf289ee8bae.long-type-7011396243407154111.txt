@@ -1,0 +1,4 @@
+(std::sync::mpsc::Sender<Traces_Sequence_Type>, std::sync::mpsc::Receiver<Traces_Sequence_Type>)
+once_cell::imp::OnceCell<(std::sync::mpsc::Sender<Traces_Sequence_Type>, std::sync::mpsc::Receiver<Traces_Sequence_Type>)>
+once_cell::sync::OnceCell<(std::sync::mpsc::Sender<Traces_Sequence_Type>, std::sync::mpsc::Receiver<Traces_Sequence_Type>)>
+once_cell::sync::Lazy<(std::sync::mpsc::Sender<Traces_Sequence_Type>, std::sync::mpsc::Receiver<Traces_Sequence_Type>)>

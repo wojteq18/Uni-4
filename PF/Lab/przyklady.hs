@@ -164,7 +164,23 @@ approx n = foldr (+) 0 [1 / fromIntegral (product [1..k]) | k <- [1..n]] --tworz
 --dla każdej liczby k w tablicy obliczamy 1 / k!, i każdy następny element to suma poprzednich dodać ten 1/k!
 --zaczynamy od 0, kończymy na n
 
---zadanie 43
+--zadanie 47
+subsetlist :: Eq a => [a] -> [a] -> Bool
+subsetlist [] _ = True
+subsetlist _ [] = False
+subsetlist (x:xs) ys = elem x ys && subsetlist xs ys
+--elementy muszą być porównywalne (klasa Eq)
+
+--zadanie 48
+mmap f = map (map f)
+mmmap f = map (map (map f))
+
+--zadanie 49
+dotprod :: (Num a) => [a] -> [a] -> a
+dotprod [] _ = 0
+dotprod _ [] = 0
+dotprod (x:xs) (y:ys) = x * y + dotprod xs ys
+--klasa Num definiuje, że możemy na elementach wykonywać operacje arytmetyczne
 
 
 

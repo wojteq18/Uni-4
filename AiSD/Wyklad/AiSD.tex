@@ -961,7 +961,68 @@ x_k =
         \EndProcedure
         \end{algorithmic}
     \end{algorithm}
+    \vspace{1\baselineskip}
+    \textbf{BST - Delete} \par
+    \begin{itemize}
+        \item x jest liścciem - zwolnij pamięć zajmowaną przez x, wstaw wskaźnik na jego ojca (na niego / na null'a)
+        \item x ma jedno poddrzewo - x ma syna v to: \par
+        \begin {itemize}
+            \item zwalniamy pamięć x
+            \item ojciec x wskazuje na v
+            \item v.p wskazuje na x.p
+        \end{itemize}
+        \item x ma dwa poddrzewa: \par
+        \begin{itemize}
+            \item znajdź następnika x -> y
+            \item zastąp dane x danymi z y
+            \item skasuj y
+        \end{itemize}
+    \end{itemize}
+    \vspace{1\baselineskip}
+    \textbf{Twierdzenie: } Niech T będzie losowym drzewem  BST o n-węzłach. wtedy: \par
     
+    $E(h(t)) \leq 3log_2{n} = o(logn)$ \par
 
-    
+    D-d: \par
+    Nierówność Jensena: f-wypukła: \par
+    $f(E(x)) \leq E(f(x))$
+
+    Zamiast analizować zmienną losową h(t) będziemy się zajmować zmienną losową $H_{n}$, będziemy się zajmować $Y_{n} = 2^{H_{n}}$ \par
+
+    Pokażemy, że $E(Y_{n}) = O(n^3)$ \par
+
+    $2^{H_{n}} \leq E(2^{H_{n}}) = E(Y_{n}) = O(n^3) //log_{2}$ \par
+    $E(H_{n}) = 3 \cdot log_2{n} + o(lnn)$ \par
+    \newpage
+    \textbf{Drzewa czerwono-czarne} \par   
+    \begin{itemize}
+        \item Drzewo czerwono-czarne jest drzewem BST
+        \item Każdy węzeł jest czerwony albo czarny
+        \item Korzeń oraz liście są czarne
+        \item Czerwony węzeł nie może mieć czerwonego ojca
+        \item Każda ścieżka od węzła do liścia ma tę samą liczbę czarnych węzłów (ścieżkę tę będziemy nazywać black-height i oznaczać jako bh(x))
+    \end{itemize}
+    \vspace{1\baselineskip}
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=0.7\textwidth]{/home/wojteq18/Pobrane/zdjecia/rbt.png}
+        \label{fig:example_image}
+    \end{figure} \par
+    \vspace{1\baselineskip}
+    \textbf{Lemat: } Niech T będzie drzewem czerwono-czarnym o n węzłach. \par Wówczas wysokość drzewa T jest z góry ograniczona przez: \par
+    \begin{center}
+        $\text{wysokość}(T) \leq 2 \cdot log_2(n + 1)$
+    \end{center}
+    \vspace{1\baselineskip}
+    \textbf{RB - Insert} \par
+    \begin{itemize}
+        \item Wstawiamy węzeł z w taki sposób jak w BST
+        \item z.kolor = czerwony
+        \item FixUp (nie chodzi o zespół punkowy)
+    \end{itemize}
+    Więcej o drzewacz czerwono - czarnych można znaleźć pod linkiem: \par 
+    \begin{center}
+        https://inf.ug.edu.pl/~pmp/Z/ASDwyklad/czczWUd.pdf
+    \end{center} \par
+
 \end{document} 

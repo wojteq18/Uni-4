@@ -17,7 +17,7 @@ fn main() {
 
     let limit = 2 * length - 1;
 
-    let random_index = rng.gen_range(0..length-1);
+    let random_index = length / 2;
 
     let arr: Vec<usize> = (0..length).map(|_| rng.gen_range(0..limit)).collect();
     println!("{:?} {}", arr, random_index);

@@ -1,8 +1,8 @@
 package main
 
 import (
-	"bufio"
 	"fmt"
+	"io"
 	"math/rand"
 	"os"
 	"strconv"
@@ -70,28 +70,28 @@ func random_select(arr *[]int, n int, s *int, c *int) int {
 func main() {
 	s := 0
 	c := 0
-	scanner := bufio.NewScanner(os.Stdin)
-	if !scanner.Scan() {
-		fmt.Fprintln(os.Stderr, "I/O Error")
+
+	input, err := io.ReadAll(os.Stdin)
+	if err != nil {
+		fmt.Fprintln(os.Stderr, "I/O Error reading stdin")
 		return
 	}
-	line := scanner.Text()
 
+	line := string(input)
 	start := strings.Index(line, "[")
 	end := strings.Index(line, "]")
-	if start == -1 || end == -1 || end <= start { // Jeśli nie znalazł nawiasu - zwraca -1
-		fmt.Fprintln(os.Stderr, "I/O Error")
+	if start == -1 || end == -1 || end <= start {
+		fmt.Fprintln(os.Stderr, "I/O Error parsing array")
 		return
 	}
 
 	nStr := strings.TrimSpace(line[end+1:])
 	n, err := strconv.Atoi(nStr)
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "n is not correct")
+		fmt.Fprintln(os.Stderr, "n is not correct")
 		return
 	}
 
-	// Parsowanie tablicy
 	numbersStr := line[start+1 : end]
 	parts := strings.Split(numbersStr, ",")
 
@@ -99,14 +99,14 @@ func main() {
 	for _, part := range parts {
 		num, err := strconv.Atoi(strings.TrimSpace(part))
 		if err != nil {
-			fmt.Fprintf(os.Stderr, "parse error")
+			fmt.Fprintln(os.Stderr, "parse error")
 			return
 		}
 		numbers = append(numbers, num)
 	}
 
-	selected := random_select(&numbers, n, &s, &c)
-	fmt.Println("Selected number:", selected)
-	fmt.Println("Number of swaps:", s)
-	fmt.Println("Number of comparisons:", c)
+	random_select(&numbers, n, &s, &c)
+
+	fmt.Println("s =", s)
+	fmt.Println("c =", c)
 }

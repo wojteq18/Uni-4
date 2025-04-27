@@ -8,7 +8,7 @@ import (
 	"strings"
 )
 
-func sortFives(arr []int, s *int, c *int) []int {
+func sortThrees(arr []int, s *int, c *int) []int {
 	length := len(arr)
 	for i := 0; i < length; i++ {
 		j := i
@@ -29,8 +29,8 @@ func sortFives(arr []int, s *int, c *int) []int {
 	return arr
 }
 
-func findMedianInFive(arr []int, s *int, c *int) int {
-	sortFives(arr, s, c)
+func findMedianInThree(arr []int, s *int, c *int) int {
+	sortThrees(arr, s, c)
 	length := len(arr)
 
 	if length == 0 {
@@ -44,18 +44,18 @@ func medianOfMedians(arr []int, s *int, c *int) int {
 
 	length := len(arr)
 
-	if length <= 5 {
-		return findMedianInFive(arr, s, c)
+	if length <= 3 {
+		return findMedianInThree(arr, s, c)
 	}
 
 	var medians []int
-	for i := 0; i < length; i += 5 {
-		end := i + 5
+	for i := 0; i < length; i += 3 {
+		end := i + 3
 		if end > length {
 			end = length
 		}
 		slice := arr[i:end]
-		medians = append(medians, findMedianInFive(slice, s, c))
+		medians = append(medians, findMedianInThree(slice, s, c))
 	}
 
 	return medianOfMedians(medians, s, c)

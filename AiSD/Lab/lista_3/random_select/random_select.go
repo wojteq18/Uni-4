@@ -20,9 +20,9 @@ func init() {
 	rng = rand.New(source)
 }
 
-func random_select(arr *[]int, n int, s *int, c *int) int {
+func random_select(arr []int, n int, s *int, c *int) int {
 
-	length := len(*arr)
+	length := len(arr)
 
 	if n > length {
 		panic("n is greater than the length of the array")
@@ -31,7 +31,7 @@ func random_select(arr *[]int, n int, s *int, c *int) int {
 	randonPivot := rng.Intn(length)
 
 	if randonPivot != length-1 {
-		(*arr)[randonPivot], (*arr)[length-1] = (*arr)[length-1], (*arr)[randonPivot]
+		(arr)[randonPivot], (arr)[length-1] = (arr)[length-1], (arr)[randonPivot]
 		(*s)++
 	}
 
@@ -39,31 +39,31 @@ func random_select(arr *[]int, n int, s *int, c *int) int {
 
 	for j := 0; j < length-1; j++ {
 		(*c)++
-		if (*arr)[j] < (*arr)[length-1] {
+		if (arr)[j] < (arr)[length-1] {
 			if i != j {
 				(*s)++
-				(*arr)[i], (*arr)[j] = (*arr)[j], (*arr)[i]
+				(arr)[i], (arr)[j] = (arr)[j], (arr)[i]
 			}
 			i++
 		}
 	}
 
 	if i != length-1 {
-		(*arr)[i], (*arr)[length-1] = (*arr)[length-1], (*arr)[i]
+		(arr)[i], (arr)[length-1] = (arr)[length-1], (arr)[i]
 		(*s)++
 	}
 
 	if i < n-1 {
-		right := (*arr)[i+1:]
-		return random_select(&right, n-i-1, s, c)
+		right := (arr)[i+1:]
+		return random_select(right, n-i-1, s, c)
 	}
 
 	if i > n-1 {
-		left := (*arr)[:i]
-		return random_select(&left, n, s, c)
+		left := (arr)[:i]
+		return random_select(left, n, s, c)
 	}
 
-	return (*arr)[i]
+	return (arr)[i]
 
 }
 
@@ -105,7 +105,7 @@ func main() {
 		numbers = append(numbers, num)
 	}
 
-	random_select(&numbers, n, &s, &c)
+	random_select(numbers, n, &s, &c)
 
 	fmt.Println("s =", s)
 	fmt.Println("c =", c)

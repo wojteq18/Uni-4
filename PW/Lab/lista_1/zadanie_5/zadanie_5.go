@@ -181,7 +181,7 @@ func traveler(id int, sybol rune, seed int) {
 				Symbol:     traveler.Symbol,
 			}
 
-			releaseSquare(oldPos.X, oldPos.Y)
+			//releaseSquare(oldPos.X, oldPos.Y)
 			reportChannel <- traces
 			break
 

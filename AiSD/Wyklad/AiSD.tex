@@ -1024,5 +1024,106 @@ x_k =
     \begin{center}
         https://inf.ug.edu.pl/~pmp/Z/ASDwyklad/czczWUd.pdf
     \end{center} \par
+    \newpage
+    \textbf{Directed Access Array} \par
+    \begin{itemize}
+        \item klucze należą do {0, ..., k - 1}, k = moc zbioru kluczy
+        \item klucze będziemy utożsamiać z adresami w pamięci komputera
+    \end{itemize}
+    \vspace{1\baselineskip}
+    \textbf{Hash Tables} \par
+    \vspace{1\baselineskip}
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=0.7\textwidth]{/home/wojteq18/Pobrane/zdjecia/ht.png}
+        \label{fig:example_image}
+    \end{figure} \par
+    Ponieważ k >> m (k - zbiór kluczy, m - wartości hash): funkcja hash  \par nie będzie różnowartościowa:
+    \begin{center}
+        $\exists k_1, k_2: h(k_1) = h(k_2)$
+    \end{center}
+    \vspace{1\baselineskip}
+    Aby poradzić sobie z tym problemem:
+    \begin{itemize}
+        \item open adressing
+    \end{itemize}
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=0.7\textwidth]{/home/wojteq18/Pobrane/zdjecia/oa.png}
+        \label{fig:example_image}
+    \end{figure} \par
+    Chcemy abu funkcja h(hash) zwracała wyniki z rozkładu jednostajnego na zbiorze {0, ..., m-1}
+    \begin{itemize}
+        \item Division hash function: h(k) = k mod m
+        \item Universal hash function: $H_{a,b}(k) = ((a \cdot k + b)\text{mod p}) \text{mod m}$
+            \begin{center}
+                $H(p, m) = {h_{a,b}: a, b \in {0, ..., p-1}, a \neq 0}$
+            \end{center}
+    \end{itemize}
+
+    Własności Universal hash function: \par
+    \begin{itemize}
+        \item Universal hash property:
+            \begin{center}
+                $P_{h \in H} (h(k_i) = h(k_j)) \leq \frac{1}{m}, \forall k_1, k_j \in  \text{\{0, ..., k-1\}}$
+            \end{center}
+            D - d: \par
+            zakładamy, że $h_{a, b}$ ma Universal Hash Property. \par
+            $a \cdot x + b \equiv a \cdot y + b + i \cdot m \text {mod p}$ \par
+            Skoro p > k, $x \neq y \rightarrow x - y \neq 0$ oraz ma odwrotność mod p. \par
+            $a \equiv i \cdot m \cdot (x-y)^{-1} \text{mod p}$ \par
+            zatem otrzymujemy: \par
+            $P_r \text{(kolizja)} \leq \frac{\lfloor \frac{p-1}{m} \rfloor}{p-1} \leq \frac{\frac{p-1}{m}}{p-1} = \frac{1}{m}$
+            \vspace{1\baselineskip}
+            Wartość oczekiwana kolizji jest rzędu $\Theta(1)$
+    \end{itemize}
+    \vspace{1\baselineskip}
+    \textbf{Wzbogacanie strukur danych} \par
+    \begin{itemize}
+        \item Ex - dynamiczne statydtyki pozycyjne
+        \begin{itemize}
+            \item dynamiczna strukura danych
+            \item OS-Select(i) - zwróci i-tą statystykę pozycyjną z danych
+            \item OS-Rank(x) - numer statystyki pozycyjnej X w danych
+            
+            \begin{algorithm}[H]
+                \caption{OS-Select}\label{alg:os-select}
+                \begin{algorithmic}[1]
+                    \Procedure{OS-Select}{x, i}
+                        \State $k \gets \text{size}(x.\text{left}) + 1$
+                        \If{$i = k$}
+                            \State \Return $x$
+                        \ElsIf{$i < k$}
+                            \State \Return \Call{OS-Select}{$x.\text{left}, i$}
+                        \Else
+                            \State \Return \Call{OS-Select}{$x.\text{right}, i - k$}
+                        \EndIf
+                    \EndProcedure
+                \end{algorithmic}
+            \end{algorithm}
+            
+            \begin{algorithm}[H]
+                \caption{OS-Rank}\label{alg:os-rank}
+                \begin{algorithmic}[1]
+                    \Procedure{OS-Rank}{x}
+                        \State $r \gets \text{size}(x.\text{left}) + 1$
+                        \State $y \gets x$
+                        \While{$y \neq \text{root}$}
+                            \If{$y = y.\text{parent.right}$}
+                                \State $r \gets r + \text{size}(y.\text{parent.left}) + 1$
+                            \EndIf
+                            \State $y \gets y.\text{parent}$
+                        \EndWhile
+                        \State \Return $r$
+                    \EndProcedure
+                \end{algorithmic}
+            \end{algorithm}
+            
+
+
+        \end{itemize}
+    \end{itemize}
+
+
 
 \end{document} 

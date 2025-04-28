@@ -193,6 +193,64 @@ $n! = 10^6  \rightarrow n = 9, n! = 1.8 * 10^9  \rightarrow n = 13, n! = 3.1 * 1
         Zatem widzimy, że $n^{log_b(a)}$ rośnie szybciej niż $f(n)$ \par
         Zatem z zasady Master Theorem: \par
         $T(n) = \Theta(n^{log_2(3)}) = \Theta(n^{1.58})$ \par
+
+        \vspace{14\baselineskip}
+        \textbf{Zadanie 5} \par
+        W tablicy B przechowujemy sumę elementów z tablicy A do indeksu i; \par
+        Załóżmy, że A = [5, 6, 7, 8, 9, 1] \par
+        Wówczas B = [5, 11, 18, 26, 35, 36] \par
+        Tablicę B możemy stworzyć jako: \par
+        for i = 2..n { \par
+            B[i] = B[i - 1] + A[i] \par
+        } \par
+        Anser(a, b) { \par
+            return B[b] - B[a - 1] \par
+        } \par
+        Czas wykonania algorytmu jest stały; O(1) \par
         
+        \vspace{1\baselineskip}
+        \textbf{zadanie 6} \par
+        %\begin{figure}[H]
+         %   \centering
+          %  \includegraphics[width=1.3\textwidth]{/home/wojteq18/Obrazy/Screenshots/Screenshot From 2025-03-26 13-51-45.png}
+           % \label{fig:example_image}
+        %\end{figure}
+        Korzystamy z takiego algorytmu, którego złożoność obliczeniowa to : $O(3^{log_2(n)})$ \par
     \end{itemize}
+
+    \vspace{1\baselineskip}
+    \textbf{zadanie 5 / lista 3} \par
+    \begin{itemize}
+        \item $T(n) = 5T(\frac{n}{2}) + \Theta(n \cdot logn)$ \par
+         $T'(n) = 5T'(\frac{n}{2}) + n^{\log_2{5}}$ \par
+         z MT: $n \cdot logn = O(n^{log_2{5}})$ \par
+         Zatem: $T(n) = O(T'(n))$ \par
+         $T''(n) = 5T''(\frac{n}{2}) + n$ \par
+         $log_2{5} > 1 \rightarrow T''(n) = \Theta(n^{log_2{5}})$ \par
+         $T(n) = \Omega(T''(n))$ \par
+
+         \item $T(n) = 2T(n-1) + \Theta(1)$ \par
+         $T(n) = \sum_{i=1}^n 2^i = \Theta(2^n)$ \par
+
+         \item $T(n) = 9T(\frac{n}{3}) + \Theta(n^2)$
+         Z MT: $\Theta(n^2 \cdot logn)$ \par
+    \end{itemize}
+    Widzimy, że najlepszą opcją bedzie wybór algorytmu nr 1
+    \newpage
+    \textbf{zadanie 3 / lista 4} \par
+    Na początku stwórzmy funkcję pomocniczą, wyznaczającą medianę \par jednej
+        if n mod 2 == 0 return 0.5 $\cdot$ (C[n/2] + C[n/2 + 1]) \par
+        else return C[$\lceil n/2 \rceil$] \par
+
+    \vspace{1\baselineskip}
+    Teraz zapiszmy funkcję spełniającą wymogi zadania: \par
+    SortedArraysMedian(A[1..n], B[1..n], n) \par
+    if n == 1 return 0.5 $\cdot$ (A[1] + B[1]) \par
+    if n == 2 return 0.5 $\cdot$ (max(A[1], B[1]) + min(A[2], B[2])) \par
+    medianA = Median(A[1..n], n) \par
+    medianB = Median(B[1..n], n) \par
+    if medianA == medianB return medianA \par
+    else if medianA < medianB return SortedArraysMedian($A [\lfloor n/2 \rfloor$ + 1..n] , \par B[$1..n- \lfloor n/2 \rfloor$], n - $\lfloor n/2 \rfloor$) \par
+    else return SortedArraysMedian($A [1..n - \lfloor n/2 \rfloor$], B[$\lfloor n/2 \rfloor$ + 1..n], n - $\lfloor n/2 \rfloor$) \par
+    
 \end{document}

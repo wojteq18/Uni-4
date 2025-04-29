@@ -8,7 +8,7 @@ import (
 	"strings"
 )
 
-func binarySearch(arr []int, target int) int {
+func binarySearch(arr []int, target int, c *int) int {
 	length := len(arr)
 
 	if length == 0 {
@@ -16,6 +16,7 @@ func binarySearch(arr []int, target int) int {
 	}
 
 	if length == 1 {
+		(*c)++
 		if arr[0] == target {
 			return 1
 		} else {
@@ -25,16 +26,20 @@ func binarySearch(arr []int, target int) int {
 
 	pivot := arr[length/2]
 
+	(*c)++
 	if pivot == target {
 		return 1
 	} else if target > pivot {
-		return binarySearch(arr[length/2:], target)
+		(*c)++
+		return binarySearch(arr[length/2:], target, c)
 	} else {
-		return binarySearch(arr[:length/2], target)
+		(*c)++
+		return binarySearch(arr[:length/2], target, c)
 	}
 }
 
 func main() {
+	c := 0
 
 	input, err := io.ReadAll(os.Stdin)
 	if err != nil {
@@ -70,8 +75,10 @@ func main() {
 		numbers = append(numbers, num)
 	}
 
-	result := binarySearch(numbers, n)
+	result := binarySearch(numbers, n, &c)
 
 	fmt.Println("Rezultat: ", result)
-
+	fmt.Println("c =", c)
 }
+
+//liczba porównań (O(1)) ~ 2

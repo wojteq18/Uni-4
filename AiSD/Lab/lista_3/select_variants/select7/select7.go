@@ -13,16 +13,16 @@ func sortSevens(arr []int, s *int, c *int) []int {
 	for i := 0; i < length; i++ {
 		j := i
 		for {
-			//(*c)++
+			(*c)++
 			if j <= 0 {
 				break
 			}
-			//(*c)++
+			(*c)++
 			if (arr)[j] >= (arr)[j-1] {
 				break
 			}
 			(arr)[j], (arr)[j-1] = (arr)[j-1], (arr)[j]
-			//(*s)++
+			(*s)++
 			j--
 		}
 	}

@@ -17,10 +17,6 @@ fn main() {
 
     let limit = 2 * length - 1;
 
-    let random_index = length / 2;
-
     let arr: Vec<usize> = (0..length).map(|_| rng.gen_range(0..limit)).collect();
-    println!("{:?} {}", arr, random_index);
+    println!("{:?}", arr);
 }
-
-//../random_generator/target/release/random_generator 44 | go run random_select.go 

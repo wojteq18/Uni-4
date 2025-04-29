@@ -6,7 +6,7 @@ OUTPUT="select7.txt"
 
 echo "n,c,s,trial" > "$OUTPUT"
 
-for trial in {1..100}; do
+for trial in {1..1}; do
     for (( n=1000; n<=50000; n+=1000 )); do
         result=$($GENERATOR $n | $SELECT)
         c=$(echo "$result" | grep -oP 'c\s*=\s*\K[0-9]+')

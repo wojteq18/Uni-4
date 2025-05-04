@@ -24,7 +24,7 @@ plt.plot(random_select_avg['n'], random_select_avg['s'], marker='o', label='Rand
 #plt.plot(insertion_avg['n'], insertion_avg['s'], marker='o', label='Insertion Sort')
 
 
-plt.title("Avarage number of swaps, m = 50, k = rand")
+plt.title("Avarage number of swaps, m = 5")
 plt.xlabel("n ")
 plt.ylabel("avg s")
 plt.legend()

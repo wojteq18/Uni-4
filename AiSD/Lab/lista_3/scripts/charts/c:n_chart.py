@@ -26,7 +26,7 @@ plt.plot(random_select_avg['n'], random_select_avg['c_per_n'], marker='o', label
 #lt.plot(dp_quick_avg['n'], dp_quick_avg['c_per_n'], marker='o', label='DP Quick Sort')
 #plt.plot(insertion_avg['n'], insertion_avg['c_per_n'], marker='o', label='Insertion Sort')
 
-plt.title("Average number of comparisons per element (c/n), m = 50, k = rand")
+plt.title("Average number of comparisons per element (c/n), m = 5")
 plt.xlabel("n")
 plt.ylabel("avg c / n")
 plt.legend()

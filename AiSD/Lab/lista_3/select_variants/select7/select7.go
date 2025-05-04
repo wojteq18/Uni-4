@@ -13,17 +13,15 @@ func sortSevens(arr []int, s *int, c *int) {
 		key := arr[i]
 		j := i - 1
 		for j >= 0 {
-			(*c)++
+			(*c)++ // Porównanie wartości
 			if arr[j] > key {
-				arr[j+1] = arr[j]
-				(*s)++
+				arr[j+1] = arr[j] // przesunięcie, NIE jest liczone jako swap
 				j--
 			} else {
 				break
 			}
 		}
-		arr[j+1] = key
-		(*s)++
+		arr[j+1] = key // wstawienie klucza, NIE jest swapem
 	}
 }
 
@@ -35,7 +33,7 @@ func findMedianInSeven(arr []int, s *int, c *int) int {
 		panic("Array is empty")
 	}
 
-	return (arr)[length/2]
+	return arr[length/2]
 }
 
 func medianOfMedians(arr []int, s *int, c *int) int {
@@ -64,48 +62,47 @@ func selectFind(arr []int, k int, s *int, c *int) int {
 	pivotValue := medianOfMedians(arr, s, c)
 
 	idx := 0
-
 	for i := 0; i < length; i++ {
-		(*c)++
-		if (arr)[i] == pivotValue {
+		(*c)++ // Porównanie wartości
+		if arr[i] == pivotValue {
 			idx = i
 			break
 		}
 	}
 
 	if idx != length-1 {
-		(arr)[idx], (arr)[length-1] = (arr)[length-1], (arr)[idx]
-		(*s)++
+		arr[idx], arr[length-1] = arr[length-1], arr[idx]
+		(*s)++ // swap
 	}
 
 	i := 0
 	for j := 0; j < length-1; j++ {
-		(*c)++
-		if (arr)[j] < (arr)[length-1] {
+		(*c)++ // Porównanie wartości
+		if arr[j] < arr[length-1] {
 			if i != j {
-				(arr)[i], (arr)[j] = (arr)[j], (arr)[i]
-				(*s)++
+				arr[i], arr[j] = arr[j], arr[i]
+				(*s)++ // swap
 			}
 			i++
 		}
 	}
 
 	if i != length-1 {
-		(arr)[i], (arr)[length-1] = (arr)[length-1], (arr)[i]
-		(*s)++
+		arr[i], arr[length-1] = arr[length-1], arr[i]
+		(*s)++ // swap
 	}
 
 	if i < k-1 {
-		right := (arr)[i+1:]
+		right := arr[i+1:]
 		return selectFind(right, k-i-1, s, c)
 	}
 
 	if i > k-1 {
-		left := (arr)[:i]
+		left := arr[:i]
 		return selectFind(left, k, s, c)
 	}
 
-	return (arr)[i]
+	return arr[i]
 }
 
 func main() {
@@ -152,5 +149,3 @@ func main() {
 	fmt.Println("c =", c)
 	fmt.Println("znaleziony element:", a)
 }
-
-//../random_generator/target/release/random_generator 11 | go run random_select.go

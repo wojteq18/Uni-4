@@ -18,6 +18,6 @@ fn main() {
     let limit = 2 * length - 1;
 
     let arr: Vec<usize> = (0..length).map(|_| rng.gen_range(0..limit)).collect();
-    let random_number = 2;
+    let random_number = rng.gen_range(0..arr.len());
     println!("{:?} {}", arr, random_number);
 }

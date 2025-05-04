@@ -21,6 +21,8 @@ const (
 	BoardHeight = 15
 )
 
+var numRenters = 0
+
 var startTime = time.Now()
 
 var wg sync.WaitGroup
@@ -39,7 +41,7 @@ var Board [BoardWidth][BoardHeight]*Field
 func initBoard() {
 	for i := 0; i < BoardWidth; i++ {
 		for j := 0; j < BoardHeight; j++ {
-			p := &Field{Entry: make(chan Message)}
+			p := &Field{Entry: make(chan Message, 1)}
 			Board[i][j] = p
 			go initField(p)
 		}
@@ -48,12 +50,15 @@ func initBoard() {
 
 func initField(p *Field) {
 	isFree := true
+	//isRenterHere := false
 	for {
 		switch msg := <-p.Entry; msg.Type {
 		case "enter":
 			if isFree {
 				msg.Answer <- true
 				isFree = false
+			} else {
+				msg.Answer <- false
 			}
 		case "exit":
 			isFree = true
@@ -141,14 +146,13 @@ func PrintTraces(t Traces_Sequence_Type) {
 	}
 }
 
-var reportChannel = make(chan Traces_Sequence_Type)
+var reportChannel = make(chan Traces_Sequence_Type, NrOfTravelers+50)
 
-func printer() {
-	for i := 0; i < NrOfTravelers; i++ {
-		traces := <-reportChannel
+func printer(done chan struct{}) {
+	defer close(done)
+	for traces := range reportChannel {
 		PrintTraces(traces)
 	}
-	wg.Done()
 }
 
 type Traveler struct {
@@ -165,44 +169,48 @@ type Renter struct {
 }
 
 func wildRenter(Id int, symbol rune, seed int) {
-	timeout := 100 * time.Millisecond
-	timeStamp := time.Since(startTime)
+	defer wg.Done()
 	r := rand.New(rand.NewSource(int64(seed)))
 	var traces Traces_Sequence_Type
 	traces.Last = -1
+	var renter Renter
+	renter.Id = Id
+	renter.Symbol = symbol
 
-	for timeStamp < timeout {
-		var renter Renter
-		renter.Id = Id
-		renter.Symbol = symbol
+	for {
 		renter.Position.X = r.Intn(BoardWidth)
 		renter.Position.Y = r.Intn(BoardHeight)
-
-		for {
-			isAlright := EnterField(renter.Position.X, renter.Position.Y, timeout)
-			if isAlright {
-				traces.Last++
-				traces.TraceArray[traces.Last] = TraceType{
-					Time_Stamp: startTime.Add(timeStamp),
-					Id:         renter.Id,
-					Position:   renter.Position,
-					Symbol:     renter.Symbol,
-				}
-				reportChannel <- traces
-				break
-			}
+		isAlright := EnterField(renter.Position.X, renter.Position.Y, 100*time.Millisecond)
+		if isAlright {
+			break
 		}
-		ExitField(renter.Position.X, renter.Position.Y)
-		lastPos := renter.Position
-		traces.Last++
-		traces.TraceArray[traces.Last] = TraceType{
-			Time_Stamp: startTime.Add(timeStamp),
-			Id:         renter.Id,
-			Position:   lastPos,
-			Symbol:     ' ',
-		}
-		reportChannel <- traces
 	}
+
+	traces.Last++
+	traces.TraceArray[traces.Last] = TraceType{
+		Time_Stamp: time.Now(),
+		Id:         renter.Id,
+		Position:   renter.Position,
+		Symbol:     renter.Symbol,
+	}
+	//reportChannel <- traces
+
+	randTime := time.Now().Add(time.Duration(r.Intn(601)) * time.Millisecond)
+	for time.Now().Before(randTime) {
+	}
+	ExitField(renter.Position.X, renter.Position.Y)
+
+	//if traces.Last >= MaxSteps {
+	//	return
+	//}
+	traces.Last++
+	traces.TraceArray[traces.Last] = TraceType{
+		Time_Stamp: time.Now(),
+		Id:         renter.Id,
+		Position:   renter.Position,
+		Symbol:     ' ',
+	}
+	reportChannel <- traces
 }
 
 func traveler(id int, sybol rune, seed int) {
@@ -220,9 +228,12 @@ func traveler(id int, sybol rune, seed int) {
 	traces.Last = -1
 
 	for {
-		isAlright := EnterField(traveler.Position.X, traveler.Position.Y, 100*MaxDelay)
+		isAlright := EnterField(traveler.Position.X, traveler.Position.Y, 500*MaxDelay)
 		if isAlright {
 			break
+		} else {
+			traveler.Position.X = r.Intn(BoardWidth)
+			traveler.Position.Y = r.Intn(BoardHeight)
 		}
 	}
 	timeStamp := time.Since(startTime)
@@ -310,34 +321,47 @@ func main() {
 	fmt.Printf("-1 %d %d %d\n", NrOfTravelers, BoardWidth, BoardHeight)
 
 	initBoard()
-	wg.Add(1 + NrOfTravelers)
-	go printer()
 
 	symbols := []rune{
 		'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H',
 		'I', 'J', 'K', 'L', 'M', 'N', 'O',
 	}
 
-	limit := 50
-
 	renterSymbols := []rune{
 		'1', '2', '3', '4', '5', '6', '7', '8', '9',
 	}
 
-	for i := 0; i < limit; i++ {
-		randomNumber := rand.Float64()
-		randomRenter := rand.Intn(9)
+	reportChannel = make(chan Traces_Sequence_Type, NrOfTravelers+50)
 
-		if 0.0 < randomNumber && randomNumber < 0.1 {
-			go wildRenter(randomRenter, renterSymbols[randomRenter], rand.Int())
+	printerDone := make(chan struct{})
+	go printer(printerDone)
+
+	wg.Add(1)
+	go func() {
+		defer wg.Done()
+		limit := 50
+		for i := 0; i < limit; i++ {
+			if rand.Float64() < 0.1 {
+				renterIndex := rand.Intn(len(renterSymbols))
+				wg.Add(1)
+				go wildRenter(NrOfTravelers+numRenters+i, renterSymbols[renterIndex], rand.Int())
+				numRenters++
+			}
+			randTime := MinDelay + time.Duration(rand.Int63n(int64(MaxDelay-MinDelay)))
+			time.Sleep(randTime)
 		}
-
-	}
-
-	for i := 0; i < NrOfTravelers; i++ {
-		go traveler(i, symbols[i], rand.Int())
-	}
+	}()
+	wg.Add(1)
+	go func() {
+		defer wg.Done()
+		for i := 0; i < NrOfTravelers; i++ {
+			wg.Add(1)
+			go traveler(i+1, symbols[i], rand.Int())
+		}
+	}()
 
 	wg.Wait()
-	time.Sleep(10 * time.Second)
+	close(reportChannel)
+
+	<-printerDone
 }

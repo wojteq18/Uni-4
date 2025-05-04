@@ -17,8 +17,8 @@ const (
 	MinDelay = 10 * time.Millisecond
 	MaxDelay = 50 * time.Millisecond
 
-	BoardWidth  = 15
-	BoardHeight = 15
+	BoardWidth  = 10
+	BoardHeight = 10
 )
 
 var numRenters = 0
@@ -37,6 +37,8 @@ type Field struct {
 }
 
 var Board [BoardWidth][BoardHeight]*Field
+var renterPosition sync.Map
+var renterSymbols sync.Map
 
 func initBoard() {
 	for i := 0; i < BoardWidth; i++ {
@@ -98,11 +100,41 @@ func EnterField(x, y int) bool {
 	return res.(bool)
 }
 
+func EnterFieldRenter(x, y int) bool {
+	answer := make(chan interface{})
+	msg := Message{
+		Type:   "enterRenter",
+		Answer: answer,
+	}
+
+	Board[x][y].Entry <- msg
+	res := <-answer
+	return res.(bool)
+}
+
 func ExitField(x, y int) {
 	msg := Message{
 		Type: "exit",
 	}
 	Board[x][y].Entry <- msg
+}
+
+func ExitFieldRenter(x, y int) {
+	msg := Message{
+		Type: "exit",
+	}
+	Board[x][y].Entry <- msg
+}
+
+func checkStatus(x, y int) bool {
+	msg := Message{
+		Type: "status",
+	}
+	answer := make(chan interface{})
+	msg.Answer = answer
+	Board[x][y].Entry <- msg
+	res := <-answer
+	return res.(bool)
 }
 
 type Position struct {
@@ -185,8 +217,10 @@ func wildRenter(Id int, symbol rune, seed int) {
 	for {
 		renter.Position.X = r.Intn(BoardWidth)
 		renter.Position.Y = r.Intn(BoardHeight)
-		isAlright := EnterField(renter.Position.X, renter.Position.Y)
+		isAlright := EnterFieldRenter(renter.Position.X, renter.Position.Y)
 		if isAlright {
+			renterPosition.Store(renter.Id, renter.Position)
+			renterSymbols.Store(renter.Id, renter.Symbol)
 			break
 		}
 	}
@@ -198,16 +232,14 @@ func wildRenter(Id int, symbol rune, seed int) {
 		Position:   renter.Position,
 		Symbol:     renter.Symbol,
 	}
-	//reportChannel <- traces
 
 	randTime := time.Now().Add(time.Duration(r.Intn(601)) * time.Millisecond)
 	for time.Now().Before(randTime) {
 	}
-	ExitField(renter.Position.X, renter.Position.Y)
+	ExitFieldRenter(renter.Position.X, renter.Position.Y)
+	renterPosition.Delete(renter.Id)
+	renterSymbols.Delete(renter.Id)
 
-	//if traces.Last >= MaxSteps {
-	//	return
-	//}
 	traces.Last++
 	traces.TraceArray[traces.Last] = TraceType{
 		Time_Stamp: time.Now(),
@@ -284,6 +316,76 @@ func traveler(id int, sybol rune, seed int) {
 			if ok {
 				break
 			}
+			isRenter := checkStatus(newX, newY)
+			switch isRenter {
+			case true:
+				var renterId int = -1
+				renterPosition.Range(func(key, value interface{}) bool {
+					pos := value.(Position)
+					if pos.X == newX && pos.Y == newY {
+						renterId = key.(int)
+						return false //znaleziony renter, koniec iteracji
+					}
+					return true
+				})
+				if renterId != -1 {
+					sym, okSym := renterSymbols.Load(renterId)
+					if !okSym {
+						sym = '?' // jeśli symbol się nie znajdzie
+					}
+					renter := Renter{
+						Id:       renterId,
+						Position: Position{X: newX, Y: newY},
+						Symbol:   sym.(rune),
+					}
+
+					neighborPositions := []Position{
+						{X: renter.Position.X, Y: (renter.Position.Y + 1) % BoardHeight},
+						{X: renter.Position.X, Y: (renter.Position.Y - 1 + BoardHeight) % BoardHeight},
+						{X: (renter.Position.X + 1) % BoardWidth, Y: renter.Position.Y},
+						{X: (renter.Position.X - 1 + BoardWidth) % BoardWidth, Y: renter.Position.Y},
+					}
+
+					moved := false
+					for _, newRenterPos := range neighborPositions {
+						if EnterFieldRenter(newRenterPos.X, newRenterPos.Y) {
+							ExitFieldRenter(renter.Position.X, renter.Position.Y)
+							renterPosition.Store(renter.Id, newRenterPos)
+							renter.Position = newRenterPos
+
+							trace := Traces_Sequence_Type{
+								Last: 0,
+								TraceArray: TraceArray{
+									0: TraceType{
+										Time_Stamp: time.Now(),
+										Id:         renter.Id,
+										Position:   renter.Position,
+										Symbol:     renter.Symbol,
+									},
+								},
+							}
+							reportChannel <- trace
+
+							moved = true
+							break
+						}
+					}
+
+					if !moved {
+						continue
+					}
+
+					// Traveler zajmuje pole rentera
+					ok = EnterField(newX, newY)
+					if ok {
+						break
+					}
+
+				}
+			case false:
+				continue
+			}
+
 		}
 		if !ok {
 			isDeadlock = true
@@ -351,9 +453,9 @@ func main() {
 	wg.Add(1)
 	go func() {
 		defer wg.Done()
-		limit := 50
+		limit := 90
 		for i := 0; i < limit; i++ {
-			if rand.Float64() < 0.1 {
+			if rand.Float64() < 0.4 {
 				renterIndex := rand.Intn(len(renterSymbols))
 				wg.Add(1)
 				go wildRenter(NrOfTravelers+numRenters+i, renterSymbols[renterIndex], rand.Int())

@@ -50,7 +50,7 @@ func initBoard() {
 
 func initField(p *Field) {
 	isFree := true
-	//isRenterHere := false
+	isRenterHere := false
 	for {
 		switch msg := <-p.Entry; msg.Type {
 		case "enter":
@@ -60,11 +60,24 @@ func initField(p *Field) {
 			} else {
 				msg.Answer <- false
 			}
+
+		case "enterRenter":
+			if isFree {
+				msg.Answer <- true
+				isFree = false
+				isRenterHere = true
+			} else {
+				msg.Answer <- false
+			}
 		case "exit":
 			isFree = true
 
+		case "exitRenter":
+			isFree = true
+			isRenterHere = false
+
 		case "status":
-			if isFree {
+			if isRenterHere {
 				msg.Answer <- true
 			} else {
 				msg.Answer <- false
@@ -73,24 +86,16 @@ func initField(p *Field) {
 	}
 }
 
-func EnterField(x, y int, timeout time.Duration) bool {
+func EnterField(x, y int) bool {
 	answer := make(chan interface{})
 	msg := Message{
 		Type:   "enter",
 		Answer: answer,
 	}
 
-	select {
-	case Board[x][y].Entry <- msg:
-		select {
-		case res := <-answer:
-			return res.(bool)
-		case <-time.After(timeout):
-			return false
-		}
-	case <-time.After(timeout):
-		return false
-	}
+	Board[x][y].Entry <- msg
+	res := <-answer
+	return res.(bool)
 }
 
 func ExitField(x, y int) {
@@ -180,7 +185,7 @@ func wildRenter(Id int, symbol rune, seed int) {
 	for {
 		renter.Position.X = r.Intn(BoardWidth)
 		renter.Position.Y = r.Intn(BoardHeight)
-		isAlright := EnterField(renter.Position.X, renter.Position.Y, 100*time.Millisecond)
+		isAlright := EnterField(renter.Position.X, renter.Position.Y)
 		if isAlright {
 			break
 		}
@@ -228,7 +233,7 @@ func traveler(id int, sybol rune, seed int) {
 	traces.Last = -1
 
 	for {
-		isAlright := EnterField(traveler.Position.X, traveler.Position.Y, 500*MaxDelay)
+		isAlright := EnterField(traveler.Position.X, traveler.Position.Y)
 		if isAlright {
 			break
 		} else {
@@ -271,8 +276,15 @@ func traveler(id int, sybol rune, seed int) {
 
 		newX := traveler.Position.X
 		newY := traveler.Position.Y
+		ok := false
+		deadLockDeadLine := time.Now().Add(deadlockTimeOut)
 
-		ok := EnterField(newX, newY, deadlockTimeOut)
+		for time.Now().Before(deadLockDeadLine) {
+			ok = EnterField(newX, newY)
+			if ok {
+				break
+			}
+		}
 		if !ok {
 			isDeadlock = true
 			traveler.Symbol = unicode.ToLower(traveler.Symbol)

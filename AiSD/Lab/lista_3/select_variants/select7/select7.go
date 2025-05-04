@@ -13,15 +13,15 @@ func sortSevens(arr []int, s *int, c *int) {
 		key := arr[i]
 		j := i - 1
 		for j >= 0 {
-			(*c)++ // Porównanie wartości
-			if arr[j] > key {
-				arr[j+1] = arr[j] // przesunięcie, NIE jest liczone jako swap
+			(*c)++
+			if arr[j] > key { //
+				arr[j+1] = arr[j]
 				j--
 			} else {
 				break
 			}
 		}
-		arr[j+1] = key // wstawienie klucza, NIE jest swapem
+		arr[j+1] = key
 	}
 }
 

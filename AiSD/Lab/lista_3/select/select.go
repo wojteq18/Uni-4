@@ -13,15 +13,17 @@ func sortFives(arr []int, s *int, c *int) {
 		key := arr[i]
 		j := i - 1
 		for j >= 0 {
-			(*c)++ // Porównanie wartości
+			(*c)++
 			if arr[j] > key {
-				arr[j+1] = arr[j] // przesunięcie, NIE jest liczone jako swap
+				arr[j+1] = arr[j]
+				(*s)++ // swap
 				j--
 			} else {
 				break
 			}
 		}
-		arr[j+1] = key // wstawienie klucza, NIE jest swapem
+		arr[j+1] = key
+		(*s)++ // swap
 	}
 }
 

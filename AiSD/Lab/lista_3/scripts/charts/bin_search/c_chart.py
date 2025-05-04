@@ -27,7 +27,7 @@ plt.plot(bin_search['n'], bin_search['c'], marker='o', label='Select')
 #plt.plot(insertion_avg['n'], insertion_avg['c'], marker='o', label='Insertion Sort')
 
 
-plt.title("Avarage number of comparisons, k not in array`")
+plt.title("Avarage number of comparisons, k not in array")
 plt.xlabel("n ")
 plt.ylabel("avg c")
 plt.legend()

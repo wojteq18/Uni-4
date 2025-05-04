@@ -52,6 +52,7 @@ func random_select(arr []int, n int, s *int, c *int) int {
 		(arr)[i], (arr)[length-1] = (arr)[length-1], (arr)[i]
 		(*s)++
 	}
+	fmt.Println("Obecny stan: ", arr)
 
 	if i < n-1 {
 		right := (arr)[i+1:]
@@ -104,9 +105,11 @@ func main() {
 		}
 		numbers = append(numbers, num)
 	}
+	fmt.Println("Tablica: ", numbers)
 
-	random_select(numbers, n, &s, &c)
+	i := random_select(numbers, n, &s, &c)
 
+	fmt.Println("Znaleziony element: ", i)
 	fmt.Println("s =", s)
 	fmt.Println("c =", c)
 }

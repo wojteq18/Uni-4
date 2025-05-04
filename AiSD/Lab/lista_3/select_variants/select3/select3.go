@@ -8,25 +8,23 @@ import (
 	"strings"
 )
 
-func sortThrees(arr []int, s *int, c *int) []int {
-	length := len(arr)
-	for i := 0; i < length; i++ {
-		j := i
-		for {
+func sortThrees(arr []int, s *int, c *int) {
+	for i := 1; i < len(arr); i++ {
+		key := arr[i]
+		j := i - 1
+		for j >= 0 {
 			(*c)++
-			if j <= 0 {
+			if arr[j] > key {
+				arr[j+1] = arr[j]
+				(*s)++
+				j--
+			} else {
 				break
 			}
-			(*c)++
-			if (arr)[j] >= (arr)[j-1] {
-				break
-			}
-			(arr)[j], (arr)[j-1] = (arr)[j-1], (arr)[j]
-			(*s)++
-			j--
 		}
+		arr[j+1] = key
+		(*s)++
 	}
-	return arr
 }
 
 func findMedianInThree(arr []int, s *int, c *int) int {

@@ -19,10 +19,10 @@ const (
 
 	TrapTime = 40 * time.Millisecond
 
-	BoardWidth  = 10
-	BoardHeight = 10
+	BoardWidth  = 15
+	BoardHeight = 15
 
-	TrampsNumbers = 70
+	TrampsNumbers = 15
 )
 
 var numRenters = 0
@@ -294,7 +294,7 @@ func wildRenter(Id int, symbol rune, seed int) {
 		Time_Stamp: time.Now(),
 		Id:         renter.Id,
 		Position:   renter.Position,
-		Symbol:     ' ',
+		Symbol:     '.',
 	}
 	reportChannel <- traces
 }
@@ -549,7 +549,7 @@ func traveler(id int, sybol rune, seed int) {
 }*/
 
 func main() {
-	fmt.Printf("-1 %d %d %d\n", NrOfTravelers, BoardWidth, BoardHeight)
+	fmt.Printf("-1 %d %d %d\n", NrOfTravelers+500, BoardWidth, BoardHeight)
 
 	initBoard()
 	time.Sleep(100 * time.Millisecond) // chcemy miec pewnosc, ze initBoard zdazy sie wykonać

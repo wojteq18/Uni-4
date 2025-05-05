@@ -245,7 +245,7 @@ func wildRenter(Id int, symbol rune, seed int) {
 		Time_Stamp: time.Now(),
 		Id:         renter.Id,
 		Position:   renter.Position,
-		Symbol:     ' ',
+		Symbol:     '.',
 	}
 	reportChannel <- traces
 }
@@ -451,7 +451,7 @@ func traveler(id int, sybol rune, seed int) {
 }*/
 
 func main() {
-	fmt.Printf("-1 %d %d %d\n", NrOfTravelers, BoardWidth, BoardHeight)
+	fmt.Printf("-1 %d %d %d\n", NrOfTravelers+500, BoardWidth, BoardHeight)
 
 	initBoard()
 

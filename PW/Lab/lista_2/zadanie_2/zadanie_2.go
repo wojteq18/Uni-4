@@ -17,12 +17,8 @@ const (
 	MinDelay = 10 * time.Millisecond
 	MaxDelay = 50 * time.Millisecond
 
-	TrapTime = 40 * time.Millisecond
-
-	BoardWidth  = 10
-	BoardHeight = 10
-
-	TrampsNumbers = 70
+	BoardWidth  = 15
+	BoardHeight = 15
 )
 
 var numRenters = 0
@@ -37,8 +33,7 @@ type Message struct {
 }
 
 type Field struct {
-	Entry  chan Message
-	isTrap bool
+	Entry chan Message
 }
 
 var Board [BoardWidth][BoardHeight]*Field
@@ -88,17 +83,6 @@ func initField(p *Field) {
 				msg.Answer <- true
 			} else {
 				msg.Answer <- false
-			}
-		case "isTrap":
-			if p.isTrap {
-				msg.Answer <- true
-			} else {
-				msg.Answer <- false
-			}
-
-		case "trap":
-			{
-				p.isTrap = true
 			}
 		}
 	}
@@ -153,39 +137,6 @@ func checkStatus(x, y int) bool {
 	return res.(bool)
 }
 
-func isTrap(x, y int) bool {
-	msg := Message{
-		Type: "isTrap",
-	}
-	answer := make(chan interface{})
-	msg.Answer = answer
-	Board[x][y].Entry <- msg
-	res := <-answer
-	return res.(bool)
-}
-
-func Trap(x, y int) {
-	msg := Message{
-		Type: "trap",
-	}
-	Board[x][y].Entry <- msg
-}
-
-func sendTrapTrace(x, y, id int) {
-	traces := Traces_Sequence_Type{
-		Last: 0,
-		TraceArray: TraceArray{
-			0: TraceType{
-				Time_Stamp: time.Now(),
-				Id:         id,
-				Position:   Position{X: x, Y: y},
-				Symbol:     '#',
-			},
-		},
-	}
-	reportChannel <- traces
-}
-
 type Position struct {
 	X int
 	Y int
@@ -232,7 +183,7 @@ func PrintTraces(t Traces_Sequence_Type) {
 	}
 }
 
-var reportChannel = make(chan Traces_Sequence_Type, NrOfTravelers+1500)
+var reportChannel = make(chan Traces_Sequence_Type, NrOfTravelers+50)
 
 func printer(done chan struct{}) {
 	defer close(done)
@@ -267,7 +218,7 @@ func wildRenter(Id int, symbol rune, seed int) {
 		renter.Position.X = r.Intn(BoardWidth)
 		renter.Position.Y = r.Intn(BoardHeight)
 		isAlright := EnterFieldRenter(renter.Position.X, renter.Position.Y)
-		if isAlright && !isTrap(renter.Position.X, renter.Position.Y) {
+		if isAlright {
 			renterPosition.Store(renter.Id, renter.Position)
 			renterSymbols.Store(renter.Id, renter.Symbol)
 			break
@@ -315,7 +266,7 @@ func traveler(id int, sybol rune, seed int) {
 
 	for {
 		isAlright := EnterField(traveler.Position.X, traveler.Position.Y)
-		if isAlright && !isTrap(traveler.Position.X, traveler.Position.Y) {
+		if isAlright {
 			break
 		} else {
 			traveler.Position.X = r.Intn(BoardWidth)
@@ -402,40 +353,19 @@ func traveler(id int, sybol rune, seed int) {
 							ExitFieldRenter(renter.Position.X, renter.Position.Y)
 							renterPosition.Store(renter.Id, newRenterPos)
 							renter.Position = newRenterPos
-							if !isTrap(renter.Position.X, renter.Position.Y) {
-								trace := Traces_Sequence_Type{
-									Last: 0,
-									TraceArray: TraceArray{
-										0: TraceType{
-											Time_Stamp: time.Now(),
-											Id:         renter.Id,
-											Position:   renter.Position,
-											Symbol:     renter.Symbol,
-										},
+
+							trace := Traces_Sequence_Type{
+								Last: 0,
+								TraceArray: TraceArray{
+									0: TraceType{
+										Time_Stamp: time.Now(),
+										Id:         renter.Id,
+										Position:   renter.Position,
+										Symbol:     renter.Symbol,
 									},
-								}
-								reportChannel <- trace
-							} else {
-								traces.Last++
-								traces.TraceArray[traces.Last] = TraceType{
-									Time_Stamp: time.Now(),
-									Id:         renter.Id,
-									Position:   renter.Position,
-									Symbol:     '*',
-								}
-								reportChannel <- traces
-								time.Sleep(TrapTime)
-								//ponawiamy znak #
-								ExitFieldRenter(renter.Position.X, renter.Position.Y)
-								timeStamp2 := time.Since(startTime)
-								traces.Last++
-								traces.TraceArray[traces.Last] = TraceType{
-									Time_Stamp: startTime.Add(timeStamp2),
-									Id:         renter.Id,
-									Position:   renter.Position,
-									Symbol:     '#',
-								}
+								},
 							}
+							reportChannel <- trace
 
 							moved = true
 							break
@@ -499,41 +429,13 @@ func traveler(id int, sybol rune, seed int) {
 
 		ExitField(oldPos.X, oldPos.Y)
 
-		if !isTrap(traveler.Position.X, traveler.Position.Y) {
-			timeStamp = time.Since(startTime)
-			traces.Last++
-			traces.TraceArray[traces.Last] = TraceType{
-				Time_Stamp: startTime.Add(timeStamp),
-				Id:         traveler.Id,
-				Position:   traveler.Position,
-				Symbol:     traveler.Symbol,
-			}
-
-		} else {
-			traveler.Symbol = unicode.ToLower(traveler.Symbol)
-			timeStamp = time.Since(startTime)
-			traces.Last++
-			traces.TraceArray[traces.Last] = TraceType{
-				Time_Stamp: startTime.Add(timeStamp),
-				Id:         traveler.Id,
-				Position:   traveler.Position,
-				Symbol:     traveler.Symbol,
-			}
-			reportChannel <- traces
-			time.Sleep(TrapTime)
-
-			//ponawiamy znak #
-			ExitField(traveler.Position.X, traveler.Position.Y)
-			timeStamp2 := time.Since(startTime)
-			traces.Last++
-			traces.TraceArray[traces.Last] = TraceType{
-				Time_Stamp: startTime.Add(timeStamp2),
-				Id:         traveler.Id,
-				Position:   traveler.Position,
-				Symbol:     '#',
-			}
-			reportChannel <- traces
-			break
+		timeStamp = time.Since(startTime)
+		traces.Last++
+		traces.TraceArray[traces.Last] = TraceType{
+			Time_Stamp: startTime.Add(timeStamp),
+			Id:         traveler.Id,
+			Position:   traveler.Position,
+			Symbol:     traveler.Symbol,
 		}
 	}
 
@@ -552,7 +454,6 @@ func main() {
 	fmt.Printf("-1 %d %d %d\n", NrOfTravelers, BoardWidth, BoardHeight)
 
 	initBoard()
-	time.Sleep(100 * time.Millisecond) // chcemy miec pewnosc, ze initBoard zdazy sie wykonać
 
 	symbols := []rune{
 		'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H',
@@ -567,19 +468,6 @@ func main() {
 
 	printerDone := make(chan struct{})
 	go printer(printerDone)
-
-	for i := 0; i < TrampsNumbers; i++ {
-		for {
-			randX := rand.Intn(BoardWidth)
-			randY := rand.Intn(BoardHeight)
-			if !isTrap(randX, randY) {
-				Trap(randX, randY)
-				sendTrapTrace(randX, randY, 100+i)
-				break
-			}
-		}
-	}
-	time.Sleep(2 * time.Second)
 
 	wg.Add(1)
 	go func() {

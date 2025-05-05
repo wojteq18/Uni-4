@@ -17,8 +17,8 @@ const (
 	MinDelay = 10 * time.Millisecond
 	MaxDelay = 50 * time.Millisecond
 
-	BoardWidth  = 10
-	BoardHeight = 10
+	BoardWidth  = 15
+	BoardHeight = 15
 )
 
 var numRenters = 0

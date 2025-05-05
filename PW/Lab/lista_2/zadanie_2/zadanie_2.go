@@ -121,7 +121,7 @@ func ExitField(x, y int) {
 
 func ExitFieldRenter(x, y int) {
 	msg := Message{
-		Type: "exit",
+		Type: "exitRenter",
 	}
 	Board[x][y].Entry <- msg
 }
@@ -233,9 +233,9 @@ func wildRenter(Id int, symbol rune, seed int) {
 		Symbol:     renter.Symbol,
 	}
 
-	randTime := time.Now().Add(time.Duration(r.Intn(601)) * time.Millisecond)
-	for time.Now().Before(randTime) {
-	}
+	randTime := time.Duration(r.Intn(601)) * time.Millisecond
+	time.Sleep(randTime)
+
 	ExitFieldRenter(renter.Position.X, renter.Position.Y)
 	renterPosition.Delete(renter.Id)
 	renterSymbols.Delete(renter.Id)
@@ -348,6 +348,7 @@ func traveler(id int, sybol rune, seed int) {
 
 					moved := false
 					for _, newRenterPos := range neighborPositions {
+						//fmt.Println("Wejscie w rentera")
 						if EnterFieldRenter(newRenterPos.X, newRenterPos.Y) {
 							ExitFieldRenter(renter.Position.X, renter.Position.Y)
 							renterPosition.Store(renter.Id, newRenterPos)
@@ -372,13 +373,31 @@ func traveler(id int, sybol rune, seed int) {
 					}
 
 					if !moved {
-						continue
+						switch r.Intn(4) {
+						case 0:
+							traveler.Position.MoveUp()
+						case 1:
+							traveler.Position.MoveDown()
+						case 2:
+							traveler.Position.MoveLeft()
+						case 3:
+							traveler.Position.MoveRight()
+						}
+						newX = traveler.Position.X
+						newY = traveler.Position.Y
 					}
 
 					// Traveler zajmuje pole rentera
 					ok = EnterField(newX, newY)
 					if ok {
-						break
+						timeStamp = time.Since(startTime)
+						traces.Last++
+						traces.TraceArray[traces.Last] = TraceType{
+							Time_Stamp: startTime.Add(timeStamp),
+							Id:         traveler.Id,
+							Position:   traveler.Position,
+							Symbol:     traveler.Symbol,
+						}
 					}
 
 				}
@@ -445,7 +464,7 @@ func main() {
 		'1', '2', '3', '4', '5', '6', '7', '8', '9',
 	}
 
-	reportChannel = make(chan Traces_Sequence_Type, NrOfTravelers+50)
+	//reportChannel = make(chan Traces_Sequence_Type, NrOfTravelers+50)
 
 	printerDone := make(chan struct{})
 	go printer(printerDone)

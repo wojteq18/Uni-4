@@ -14,6 +14,9 @@
 \usepackage{amsmath}
 \usepackage{amsfonts}
 \usepackage{amsmath}
+\usepackage{amsmath}
+\usepackage{booktabs}
+\usepackage[margin=1in]{geometry}
 
 
 
@@ -771,7 +774,7 @@ x_k =
     \textbf{Comparsion Model} 
 
     Dolne ograniczenie na liczbę porównań w problemie sortowania \par
-    w Comparsion Modelwynosi $\Omega(n logn)$ \newline
+    w Comparsion Model wynosi $\Omega(n logn)$ \newline
 
     D-d: \par
     \begin{itemize}
@@ -911,7 +914,9 @@ x_k =
     \end{itemize}
     Otrzymujemy: $t(n) = T(\lceil{\frac{n}{5}}\lceil) + \Theta(?)$ \par
     \vspace{9\baselineskip}
+    
     \textbf{Struktury danych} \par
+
     Set interface: \par
     \begin{itemize}
         \item build (A) - buduje set z danych zawartych w A
@@ -923,6 +928,24 @@ x_k =
         \item find\_min - zwróć element o najmniejszym kluczu
         \item find\_prev - zwraca element poprzedni od klucza
     \end{itemize}
+    \newpage 
+    \vspace*{\fill}
+    \begin{table}[H]
+    \centering
+    \begin{tabular}{lcccccc}
+    \toprule
+    \textbf{Struct} & \textbf{build} & \textbf{find} & \textbf{insert / delete} & \textbf{find min / find max} & \textbf{find\_prev} & \textbf{sort} \\
+    \midrule
+    unsorted array       & $\Theta(n)$         & $\Theta(n)$         & $\Theta(n)$               & $\Theta(n)$              & $\Theta(n)$          & $\Theta(n \log n)$ \\
+    sorted array         & $\Theta(n \log n)$  & $\Theta(\log n)$    & $\Theta(n)$               & $\Theta(1)$              & $\Theta(\log n)$     & $\Theta(n)$ \\
+    pointers list & $\Theta(n)$         & $\Theta(n)$         & $\Theta(1)\ /\ \Theta(n)$ & $\Theta(n)$              & $\Theta(n)$          & $\Theta(n \log n)$ \\
+    DAA                  & $\Theta(n)$         & $\Theta(1)$         & $\Theta(1)$               & $\Theta(n)$              & $\Theta(n)$          & $\Theta(n)$ \\
+    BST                  & $\Theta(n)$         &                     &                            &                          &                      & \\
+    \bottomrule
+    \end{tabular}
+    \end{table}
+    \vspace*{\fill}
+    \newpage
     \vspace{1\baselineskip}
     \textbf{Binary Search Tree} \par
     BST property : \par
@@ -1080,7 +1103,7 @@ x_k =
     \vspace{1\baselineskip}
     \textbf{Wzbogacanie strukur danych} \par
     \begin{itemize}
-        \item Ex - dynamiczne statydtyki pozycyjne
+        \item Ex - dynamiczne statystyki pozycyjne
         \begin{itemize}
             \item dynamiczna strukura danych
             \item OS-Select(i) - zwróci i-tą statystykę pozycyjną z danych
@@ -1118,11 +1141,110 @@ x_k =
                     \EndProcedure
                 \end{algorithmic}
             \end{algorithm}
-            
-
-
+        \end{itemize}
+        \item Metodologia wzbogacenia struktur danych
+        \begin{itemize}
+            \item Wybierz strukturę
+            \item Wybrać dodatkową informację, która ma być przechowywana w strukturze
+            \item Upewnić się, że złożoność obliczeniowa operacji na strukturze danych nie ulegnie pogorszeniu
+            \item Zaprojektować dodatkowe operacje na strukturze danych, wykorzystującą dodatkową informację
         \end{itemize}
     \end{itemize}
+
+    \vspace{1\baselineskip}
+    \textbf{Drzewa przedziałowe} \par
+
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=0.7\textwidth]{/home/wojteq18/Pobrane/zdjecia/dp.png}
+        \label{fig:example_image}
+    \end{figure} \par
+
+    Własności: \par
+    \begin{itemize}
+        \item Przechowuje punkty oraz wszystkie przedziały związane z tymi punktami
+        \item Jest zrównoważone
+        \item Odpowiada na pytania dotyczące przedziałów w czasie logarytmicznym
+    \end{itemize}
+
+    \begin{algorithm}[H]
+        \caption{IntervalSearch}\label{alg:interval-search}
+        \begin{algorithmic}[1]
+            \Procedure{IntervalSearch}{$i, T$}
+                \State $x \gets \text{root}(T)$
+                \While{$x \neq \text{null}$ \textbf{and} $(i.\text{low} > x.\text{high} \ \textbf{or} \ x.\text{low} > i.\text{high})$}
+                    \If{$x.\text{left} \neq \text{null}$ \textbf{and} $i.\text{low} < x.\text{left}.m$}
+                        \State $x \gets x.\text{left}$
+                    \Else
+                        \State $x \gets x.\text{right}$
+                    \EndIf
+                \EndWhile
+                \State \Return $x$
+            \EndProcedure
+        \end{algorithmic}
+    \end{algorithm}
+    \newpage
+    \textbf{Programowanie dynamiczne} \par
+    Programowanie dynamiczne to technika projektowania algorytmów \par
+    polegająca na rozwiązywaniu podproblemów i zapamiętywaniu ich wyników \par
+    Przykład: n-ta liczba Fibonacciego (memoizacja): \par
+    \begin{algorithm}[H]
+        \caption{FibonacciMemo}\label{alg:fibonacci-memo}
+        \begin{algorithmic}[1]
+            \Procedure{FibonacciMemo}{$n, memo$}
+                \If{$n \leq 1$}
+                    \State \Return $n$
+                \EndIf
+                \If{$memo[n] \neq -1$}
+                    \State \Return $memo[n]$
+                \EndIf
+                \State $memo[n] \gets \Call{FibonacciMemo}{n - 1, memo} + \Call{FibonacciMemo}{n - 2, memo}$
+                \State \Return $memo[n]$
+            \EndProcedure
+        \end{algorithmic}
+    \end{algorithm}
+    \vspace{1\baselineskip}
+    \textbf{Problem wydawania reszty} \par
+    Dane: $c_1 < c_2 < ... < c_k$ - zbiór nominałów $\in \mathbb{N}$ \par
+    Szukamy minimalnej liczby monet, które sumują się do kwoty $n$ \par
+    Niech L(i) będzie minimalną liczbą monet dla reszty i \par
+    $L(i) = 1 + min_{1 \leq j \leq n} \{L(i - c_j): c_j \leq i\}$ \par
+
+    \vspace{1\baselineskip}
+    \textbf{Problem plecakowy} \par
+    Dane: $n$ przedmiotów, $w_i$ - waga przedmiotu i, $v_i$ - wartość przedmiotu i \par
+    Ograniczenie górne na pojemność plecaka: $W$ \par
+    Szukamy maksymalnej wartości przedmiotów, które zmieszczą się w plecaku: 
+    $\mathbb{I} \in \{1, .., n\}$ takie, że:
+    \begin{itemize}
+        \item $\sum_{i \in \mathbb{I}} w_i \leq W$
+        \item $\sum_{i \in \mathbb{I}} v_i$ jest maksymalne
+    \end{itemize}
+    \begin{algorithm}[H]
+        \caption{Algorytm plecakowy}\label{alg:knapsack}
+        \begin{algorithmic}[1]
+            \Procedure{Knapsack}{$W, w, c, n$}
+                \State $\text{utwórz tablicę } A[0 \dots W]$
+                \For{$i \gets 0 \text{ to } W$}
+                    \State $A[i] \gets 0$
+                \EndFor
+    
+                \For{$i \gets 0 \text{ to } W$}
+                    \For{$j \gets 1 \text{ to } n$}
+                        \If{$w[j] \leq i$} 
+                            \State $A[i] \gets \max\left(A[i],\, A[i - w[j]] + c[j]\right)$
+                        \EndIf
+                    \EndFor
+                \EndFor
+                \State \Return $A[W]$
+            \EndProcedure
+        \end{algorithmic}
+    \end{algorithm}
+    
+    
+    
+    
+
 
 
 

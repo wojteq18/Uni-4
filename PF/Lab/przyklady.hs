@@ -184,3 +184,117 @@ dotprod (x:xs) (y:ys) = x * y + dotprod xs ys
 
 
 
+--zadanie 67
+data MyTree a = Empty | Leaf a | Node (MyTree a) a (MyTree a)
+    deriving (Eq)
+
+--1) 
+instance Show a => Show (MyTree a) where
+  show Empty = "Empty"
+  show (Leaf x) = "Leaf " ++ show x
+  show (Node left x right) =
+   "Node (" ++ show left ++ ") " ++ show x ++ " (" ++ show right ++ ")"
+
+--przykładowa deklaracja drzewa: let drzewo = Node (Leaf 1) 2 (Node Empty 3 (Leaf 4))
+
+--2) 
+--Funktor to typ, do którego można zastosować funkcję, nie zmieniając jego struktury
+--formalnie, funktor to typ f, dla którego można zdefiniować funkcję:
+-- fmap :: (a -> b) -> f a -> f b
+
+instance Functor MyTree where
+    fmap _ Empty = Empty
+    fmap f (Leaf x) = Leaf (f x)
+    fmap f (Node left x right) = Node (fmap f left ) (f x) (fmap f right)
+
+--fmap (*5) drzewko
+
+--3)
+instance Foldable MyTree where
+    foldr _ acc Empty = acc
+    foldr f acc (Leaf x) = f x acc
+    foldr f acc (Node left x right) = foldr f (f x (foldr f acc right)) left
+
+--ewnetualna implementacja foldl:
+--foldl _ acc Empty = acc
+--foldl f acc (Leaf x) = f acc x
+--foldl f acc (Node left x right) = foldl f (f (foldl f acc left) x) right
+
+--foldr (+) 4 drzewko
+
+
+--4)
+height :: MyTree a -> Int
+height Empty = 0
+height (Leaf _) = 1
+height (Node left _ right) = 1 + max (height left) (height right)
+
+--5)
+nbLeafs :: MyTree a -> Int 
+nbLeafs Empty = 0
+nbLeafs (Leaf _) = 1
+nbLeafs (Node left _ right) = nbLeafs left + nbLeafs right
+
+--6)
+nbNodes :: MyTree a -> Int
+nbNodes Empty = 0
+nbNodes (Leaf _) = 0
+nbNodes (Node left _ right) = 1 + nbNodes left + nbNodes right
+
+
+--zadanie 68
+--a)
+--Ta naturalna transformacja jest w haskellu zaimplementowana za pomocą funkcji id (:i id)
+-- id :: a -> a
+
+--zadanie 73
+choose :: Ord a => [a] -> [a]
+choose (x:y:zs)
+    | x > y = x : choose (y:zs)
+    | otherwise = choose (y:zs)
+choose _ = []   
+--zapis (x:y:zs) oznacza, że tablica musi mieć co najmniej dwa elementy - x jest pierwszym, y drugim, a zs to reszta tablicy 
+
+
+--zadanie 74
+
+maxSum :: (Ord a, Num a) => [a] -> [a]
+maxSum (x:xs)
+    |x > sum xs = x : maxSum xs
+    | otherwise = maxSum xs
+maxSum [] = []
+
+--sum :: (Num a) => [a] -> a
+--sum [] = 0
+--sum (x:xs) = x + sum xs
+
+--Obecna implementacja funkcji maxSum ma złożoność obliczeniową O(n^2), spróbujmy ulepszyć ją do złożoności liniowej:
+--na początku przygotujmy tablicę, która przechowuje kolejne zsumowane elementy tablicy wejściowej: np. dla tablicy [1, 3, 5, 7] przechowuje ona [1, 4, 9, 16]
+--następnie możemy sprawdzać, czy dany element jest większy od sumy pozostałych elementów tablicy odejmując liczbę będącą na tym samym indeksie 
+--w przygotowanej tablicy od ostatniego elementu. Jeżeli wynik różnicy będzie mniejszy niż ta liczba, to znacz, że jest ona większa od sumy pozostałych elementów
+
+
+maxSumInN :: (Ord a, Num a) => [a] -> [a]
+maxSumInN xs = go xs 0 totalSum []
+  where
+    totalSum = sum xs
+    go [] _ _ acc = reverse acc
+    go (y:ys) prefixSum remaining acc
+        | y > (remaining - y) = go ys (prefixSum + y) (remaining - y) (y:acc)
+        | otherwise           = go ys (prefixSum + y) (remaining - y) acc
+
+
+
+
+
+--sums to tablica, która przechowuje kolejne zsumowane elementy tablicy wejściowej, scanl działa podobnie do foldl, ale zachowuje wszystkie pośrednie wyniki
+--total to ostani element tablicy sums, czyli suma wszystkich elementów tablicy wejściowej
+--zip xs (init sums) łączy oryginalną tablicę z listą sums, ale bez ostatniego elementu, żeby dopasowanie miało tę samą długość
+--przykład działania zip: zip [1, 3, 5, 7] [0, 1, 4, 9] = [(1,0), (3,1), (5,4), (7,9)]
+--x > total - s oznacza, że dany element jest większy od sumy pozostałych elementów tablicy
+
+
+--test
+prop_sameResults :: [Integer] -> Bool
+prop_sameResults xs = maxSum xs == maxSumInN xs
+--do odpalenia: import Test.QuickCheck, quickCheck prop_sameResults

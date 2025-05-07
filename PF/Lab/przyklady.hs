@@ -298,3 +298,4 @@ maxSumInN xs = go xs 0 totalSum []
 prop_sameResults :: [Integer] -> Bool
 prop_sameResults xs = maxSum xs == maxSumInN xs
 --do odpalenia: import Test.QuickCheck, quickCheck prop_sameResults
+--as

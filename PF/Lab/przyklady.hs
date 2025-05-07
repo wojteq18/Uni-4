@@ -283,15 +283,15 @@ maxSumInN xs = go xs 0 totalSum []
         | y > (remaining - y) = go ys (prefixSum + y) (remaining - y) (y:acc)
         | otherwise           = go ys (prefixSum + y) (remaining - y) acc
 
-
-
-
-
---sums to tablica, która przechowuje kolejne zsumowane elementy tablicy wejściowej, scanl działa podobnie do foldl, ale zachowuje wszystkie pośrednie wyniki
---total to ostani element tablicy sums, czyli suma wszystkich elementów tablicy wejściowej
---zip xs (init sums) łączy oryginalną tablicę z listą sums, ale bez ostatniego elementu, żeby dopasowanie miało tę samą długość
---przykład działania zip: zip [1, 3, 5, 7] [0, 1, 4, 9] = [(1,0), (3,1), (5,4), (7,9)]
---x > total - s oznacza, że dany element jest większy od sumy pozostałych elementów tablicy
+--na początku obliczana jest suma wszystkich elementów jako totalSum
+--następnie wywoływana jest funkcja pomocnicza go, która przyjmuje argumenty:
+--1) listę elementów
+--2) prefixSum, czyli sumę elementów, które już przetworzono
+--3) remaining, czyli sumę obecnego elementu i wszystkich po nim    
+--4) acc, czyli akumulator, który przechowuje elementy spełniające warunek
+--na początku funkcja go przyjmuje tablicę xs, 0, bo żadne elementy nie zostały jeszcze przetworzone, suma wszystkich elementów i pustą tablicę, 
+--gdyż na początku nie mamy jeszcze żadnych elementów, które spełniają warunek
+--w przypadku gdy mamy pustą tablicę, zwracamy odwrócony akumulator, ponieważ dodawaliśmy elementy do lewej strony (y:acc)
 
 
 --test

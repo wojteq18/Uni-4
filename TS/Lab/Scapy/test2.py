@@ -31,8 +31,8 @@ def signal_handler(sig, frame):
     sys.exit(0)
 
 if __name__ == "__main__":
-    target_ip = "192.168.164.103"
-    gateway_ip = "192.168.164.215"
+    target_ip = "192.168.100.52"
+    gateway_ip = "192.168.100.1"
 
     if len(sys.argv) > 2:
         target_ip = sys.argv[1]
@@ -42,7 +42,7 @@ if __name__ == "__main__":
         print("Lub zmień wartości target_ip i gateway_ip w kodzie.")
         sys.exit(1)
 
-    os.system("sysctl -w net.ipv4.ip_forward=1")
+    # os.system("sysctl -w net.ipv4.ip_forward=1")
 
     print(f"[*] Cel ataku (ofiara): {target_ip}")
     print(f"[*] Brama domyślna: {gateway_ip}")

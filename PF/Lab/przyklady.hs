@@ -185,15 +185,15 @@ dotprod (x:xs) (y:ys) = x * y + dotprod xs ys
 
 
 --zadanie 67
-data MyTree a = Empty | Leaf a | Node (MyTree a) a (MyTree a)
+data MyTree a = Empty | Leaf a | Node (MyTree a)  (MyTree a)
     deriving (Eq)
 
 --1) 
 instance Show a => Show (MyTree a) where
   show Empty = "Empty"
   show (Leaf x) = "Leaf " ++ show x
-  show (Node left x right) =
-   "Node (" ++ show left ++ ") " ++ show x ++ " (" ++ show right ++ ")"
+  show (Node left  right) =
+   "Node (" ++ show left ++ ")"  ++  "(" ++ show right ++ ")"
 
 --przykładowa deklaracja drzewa: let drzewo = Node (Leaf 1) 2 (Node Empty 3 (Leaf 4))
 
@@ -202,18 +202,18 @@ instance Show a => Show (MyTree a) where
 --formalnie, funktor to typ f, dla którego można zdefiniować funkcję:
 -- fmap :: (a -> b) -> f a -> f b
 
-instance Functor MyTree where
-    fmap _ Empty = Empty
-    fmap f (Leaf x) = Leaf (f x)
-    fmap f (Node left x right) = Node (fmap f left ) (f x) (fmap f right)
+--instance Functor MyTree where
+  --  fmap _ Empty = Empty
+    --fmap f (Leaf x) = Leaf (f x)
+    --fmap f (Node left x right) = Node (fmap f left ) (fmap f right)
 
 --fmap (*5) drzewko
 
 --3)
-instance Foldable MyTree where
-    foldr _ acc Empty = acc
-    foldr f acc (Leaf x) = f x acc
-    foldr f acc (Node left x right) = foldr f (f x (foldr f acc right)) left
+--instance Foldable MyTree where
+  --  foldr _ acc Empty = acc
+    --foldr f acc (Leaf x) = f x acc
+    --foldr f acc (Node left x right) = foldr f (f x (foldr f acc right)) left
 
 --ewnetualna implementacja foldl:
 --foldl _ acc Empty = acc
@@ -224,22 +224,22 @@ instance Foldable MyTree where
 
 
 --4)
-height :: MyTree a -> Int
-height Empty = 0
-height (Leaf _) = 1
-height (Node left _ right) = 1 + max (height left) (height right)
+--height :: MyTree a -> Int
+--height Empty = 0
+--height (Leaf _) = 1
+--height (Node left _ right) = 1 + max (height left) (height right)
 
 --5)
-nbLeafs :: MyTree a -> Int 
-nbLeafs Empty = 0
-nbLeafs (Leaf _) = 1
-nbLeafs (Node left _ right) = nbLeafs left + nbLeafs right
+--nbLeafs :: MyTree a -> Int 
+--nbLeafs Empty = 0
+--nbLeafs (Leaf _) = 1
+--nbLeafs (Node left _ right) = nbLeafs left + nbLeafs right
 
 --6)
-nbNodes :: MyTree a -> Int
-nbNodes Empty = 0
-nbNodes (Leaf _) = 0
-nbNodes (Node left _ right) = 1 + nbNodes left + nbNodes right
+--nbNodes :: MyTree a -> Int
+--nbNodes Empty = 0
+--nbNodes (Leaf _) = 0
+--nbNodes (Node left _ right) = 1 + nbNodes left + nbNodes right
 
 
 --zadanie 68
@@ -275,21 +275,20 @@ maxSum [] = []
 
 
 maxSumInN :: (Ord a, Num a) => [a] -> [a]
-maxSumInN xs = go xs 0 totalSum []
+maxSumInN xs = go xs totalSum []
   where
     totalSum = sum xs
-    go [] _ _ acc = reverse acc
-    go (y:ys) prefixSum remaining acc
-        | y > (remaining - y) = go ys (prefixSum + y) (remaining - y) (y:acc)
-        | otherwise           = go ys (prefixSum + y) (remaining - y) acc
+    go [] _ acc = acc
+    go (y:ys) remaining acc
+        | y > (remaining - y) = go ys (remaining - y) (acc ++ [y])
+        | otherwise           = go ys (remaining - y) acc
 
 --na początku obliczana jest suma wszystkich elementów jako totalSum
 --następnie wywoływana jest funkcja pomocnicza go, która przyjmuje argumenty:
 --1) listę elementów
---2) prefixSum, czyli sumę elementów, które już przetworzono
 --3) remaining, czyli sumę obecnego elementu i wszystkich po nim    
 --4) acc, czyli akumulator, który przechowuje elementy spełniające warunek
---na początku funkcja go przyjmuje tablicę xs, 0, bo żadne elementy nie zostały jeszcze przetworzone, suma wszystkich elementów i pustą tablicę, 
+--na początku funkcja go przyjmuje tablicę xs, sume wszystkich elementów i pustą tablicę, 
 --gdyż na początku nie mamy jeszcze żadnych elementów, które spełniają warunek
 --w przypadku gdy mamy pustą tablicę, zwracamy odwrócony akumulator, ponieważ dodawaliśmy elementy do lewej strony (y:acc)
 
@@ -299,3 +298,29 @@ prop_sameResults :: [Integer] -> Bool
 prop_sameResults xs = maxSum xs == maxSumInN xs
 --do odpalenia: import Test.QuickCheck, quickCheck prop_sameResults
 --as
+
+--zadanie 75
+bfs :: MyTree a -> [a]
+bfs a = go [a]
+    where
+        go [] = []
+        go (Empty:as) = go as
+        go (Leaf a:as) = a : go as
+        go (Node left right:as) = go (as ++ [left, right])
+
+--na początku tworzymy funkcję pomocniczą go, która przyjmuje jako argument
+--tablicę z jednym elementem [a]
+--jeżeli funkcja go napotka Empty, przechodzi do przetwarzania reszty kolejki
+--jeżeli napotka Leaf a do wyniku dodajemy a i przetwarzamy kolejkę dalej
+--jeżeli napotka Node l r, dodajemy jego dzieci (l r) na koniec kolejki
+
+--drzewo = Node (Node (Leaf 2) (Node (Leaf 4) Empty)) (Node (Leaf 3) (Node Empty (Node (Leaf 5) (Leaf 6))))
+
+--zadanie 76
+treeProfile :: MyTree a -> [Integer]
+treeProfile a = go [a] 0
+    where
+        go [] _ = []
+        go (Empty:as) r = go as r
+        go (Leaf a:as) r = go as (r+1)
+        go (Node left right:as) r = r : go (as ++ [left, right]) (r+1)

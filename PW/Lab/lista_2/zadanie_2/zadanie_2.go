@@ -38,7 +38,7 @@ type Field struct {
 
 var Board [BoardWidth][BoardHeight]*Field
 var renterPosition sync.Map
-var renterSymbols sync.Map
+var renterControlChannels sync.Map
 
 func initBoard() {
 	for i := 0; i < BoardWidth; i++ {
@@ -80,6 +80,12 @@ func initField(p *Field) {
 
 		case "status":
 			if isRenterHere {
+				msg.Answer <- true
+			} else {
+				msg.Answer <- false
+			}
+		case "isFree":
+			if isFree {
 				msg.Answer <- true
 			} else {
 				msg.Answer <- false
@@ -135,6 +141,32 @@ func checkStatus(x, y int) bool {
 	Board[x][y].Entry <- msg
 	res := <-answer
 	return res.(bool)
+}
+
+func getFreeNeighbors(x, y int) []Position {
+	var freeNeighbors []Position
+
+	dirs := []Position{
+		{X: (x + 1) % BoardWidth, Y: y},
+		{X: x, Y: (y + 1) % BoardHeight},
+		{X: (x - 1 + BoardWidth) % BoardWidth, Y: y},
+		{X: x, Y: (y - 1 + BoardHeight) % BoardHeight},
+	}
+
+	for _, pos := range dirs {
+		answer := make(chan interface{})
+		msg := Message{
+			Type:   "isFree",
+			Answer: answer,
+		}
+		Board[pos.X][pos.Y].Entry <- msg
+		res := <-answer
+		if res.(bool) {
+			freeNeighbors = append(freeNeighbors, pos)
+		}
+	}
+
+	return freeNeighbors
 }
 
 type Position struct {
@@ -207,6 +239,9 @@ type Renter struct {
 
 func wildRenter(Id int, symbol rune, seed int) {
 	defer wg.Done()
+	controlChan := make(chan string)
+	renterControlChannels.Store(Id, controlChan)
+
 	r := rand.New(rand.NewSource(int64(seed)))
 	var traces Traces_Sequence_Type
 	traces.Last = -1
@@ -220,7 +255,6 @@ func wildRenter(Id int, symbol rune, seed int) {
 		isAlright := EnterFieldRenter(renter.Position.X, renter.Position.Y)
 		if isAlright {
 			renterPosition.Store(renter.Id, renter.Position)
-			renterSymbols.Store(renter.Id, renter.Symbol)
 			break
 		}
 	}
@@ -233,12 +267,41 @@ func wildRenter(Id int, symbol rune, seed int) {
 		Symbol:     renter.Symbol,
 	}
 
+	go func() {
+		for {
+			cmd := <-controlChan
+			if cmd == "relocate" {
+				freePositions := getFreeNeighbors(renter.Position.X, renter.Position.Y)
+				if len(freePositions) == 0 {
+					continue
+				} else {
+					newPos := freePositions[1]
+					if EnterFieldRenter(newPos.X, newPos.Y) {
+						ExitFieldRenter(renter.Position.X, renter.Position.Y)
+						renterPosition.Store(renter.Id, newPos)
+						renter.Position = newPos
+
+						traces.Last++
+						traces.TraceArray[traces.Last] = TraceType{
+							Time_Stamp: time.Now(),
+							Id:         renter.Id,
+							Position:   renter.Position,
+							Symbol:     renter.Symbol,
+						}
+						reportChannel <- traces
+					} else {
+						continue
+					}
+				}
+			}
+		}
+	}()
+
 	randTime := time.Duration(r.Intn(601)) * time.Millisecond
 	time.Sleep(randTime)
 
 	ExitFieldRenter(renter.Position.X, renter.Position.Y)
 	renterPosition.Delete(renter.Id)
-	renterSymbols.Delete(renter.Id)
 
 	traces.Last++
 	traces.TraceArray[traces.Last] = TraceType{
@@ -248,6 +311,8 @@ func wildRenter(Id int, symbol rune, seed int) {
 		Symbol:     '.',
 	}
 	reportChannel <- traces
+	renterControlChannels.Delete(renter.Id)
+	close(controlChan)
 }
 
 func traveler(id int, sybol rune, seed int) {
@@ -329,46 +394,26 @@ func traveler(id int, sybol rune, seed int) {
 					return true
 				})
 				if renterId != -1 {
-					sym, okSym := renterSymbols.Load(renterId)
-					if !okSym {
-						sym = '?' // jeśli symbol się nie znajdzie
+					renterChan, isAlright := renterControlChannels.Load(renterId)
+					if isAlright {
+						renterChan.(chan string) <- "relocate"
+					} else {
+						fmt.Println("Nie znaleziono kanału kontrolnego dla rentera")
 					}
-					renter := Renter{
-						Id:       renterId,
-						Position: Position{X: newX, Y: newY},
-						Symbol:   sym.(rune),
-					}
-
-					neighborPositions := []Position{
-						{X: renter.Position.X, Y: (renter.Position.Y + 1) % BoardHeight},
-						{X: renter.Position.X, Y: (renter.Position.Y - 1 + BoardHeight) % BoardHeight},
-						{X: (renter.Position.X + 1) % BoardWidth, Y: renter.Position.Y},
-						{X: (renter.Position.X - 1 + BoardWidth) % BoardWidth, Y: renter.Position.Y},
-					}
+					//dajmy renterowi czas na przemieszczenie się
+					time.Sleep(10 * time.Millisecond)
 
 					moved := false
-					for _, newRenterPos := range neighborPositions {
-						//fmt.Println("Wejscie w rentera")
-						if EnterFieldRenter(newRenterPos.X, newRenterPos.Y) {
-							ExitFieldRenter(renter.Position.X, renter.Position.Y)
-							renterPosition.Store(renter.Id, newRenterPos)
-							renter.Position = newRenterPos
-
-							trace := Traces_Sequence_Type{
-								Last: 0,
-								TraceArray: TraceArray{
-									0: TraceType{
-										Time_Stamp: time.Now(),
-										Id:         renter.Id,
-										Position:   renter.Position,
-										Symbol:     renter.Symbol,
-									},
-								},
-							}
-							reportChannel <- trace
-
-							moved = true
-							break
+					getIt := EnterField(newX, newY)
+					if getIt == true {
+						moved = true
+						timeStamp = time.Since(startTime)
+						traces.Last++
+						traces.TraceArray[traces.Last] = TraceType{
+							Time_Stamp: startTime.Add(timeStamp),
+							Id:         traveler.Id,
+							Position:   traveler.Position,
+							Symbol:     traveler.Symbol,
 						}
 					}
 
@@ -386,20 +431,6 @@ func traveler(id int, sybol rune, seed int) {
 						newX = traveler.Position.X
 						newY = traveler.Position.Y
 					}
-
-					// Traveler zajmuje pole rentera
-					ok = EnterField(newX, newY)
-					if ok {
-						timeStamp = time.Since(startTime)
-						traces.Last++
-						traces.TraceArray[traces.Last] = TraceType{
-							Time_Stamp: startTime.Add(timeStamp),
-							Id:         traveler.Id,
-							Position:   traveler.Position,
-							Symbol:     traveler.Symbol,
-						}
-					}
-
 				}
 			case false:
 				continue
@@ -477,7 +508,7 @@ func main() {
 			if rand.Float64() < 0.4 {
 				renterIndex := rand.Intn(len(renterSymbols))
 				wg.Add(1)
-				go wildRenter(NrOfTravelers+numRenters+i, renterSymbols[renterIndex], rand.Int())
+				go wildRenter(NrOfTravelers+numRenters+i+20, renterSymbols[renterIndex], rand.Int())
 				numRenters++
 			}
 			randTime := MinDelay + time.Duration(rand.Int63n(int64(MaxDelay-MinDelay)))

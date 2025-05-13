@@ -30,7 +30,6 @@ plt.plot(select9_avg['n'], select9_avg['c'], marker='o', label='Select 9')
 #plt.plot(dp_quick_avg['n'], dp_quick_avg['s'], marker='o', label='DP Quick Sort')
 #plt.plot(insertion_avg['n'], insertion_avg['s'], marker='o', label='Insertion Sort')
 
-plt.title("Avarage number of comparisons based on n (for k = 10)")
 plt.xlabel("n ")
 plt.ylabel("avg c")
 plt.legend()

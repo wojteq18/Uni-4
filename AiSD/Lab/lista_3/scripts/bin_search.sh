@@ -6,8 +6,8 @@ OUTPUT="bin_search.txt"
 
 echo "n,c,trial" > "$OUTPUT"
 
-for trial in {1..1}; do
-    for (( n=1000; n<=100000; n+=1000 )); do
+for trial in {1..15}; do
+    for (( n=100; n<=100000; n+=100 )); do
         result=$($GENERATOR $n | $SELECT)
         c=$(echo "$result" | grep -oP 'c\s*=\s*\K[0-9]+')
         echo "$n,$c,$trial" >> "$OUTPUT"

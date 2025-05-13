@@ -6,6 +6,7 @@ import (
 	"os"
 	"strconv"
 	"strings"
+	"time"
 )
 
 func binarySearch(arr []int, target int, c *int) int {
@@ -25,6 +26,7 @@ func binarySearch(arr []int, target int, c *int) int {
 	}
 
 	pivot := arr[length/2]
+	//fmt.Println("Aktualny stan: ", arr)
 
 	(*c)++
 	if pivot == target {
@@ -39,7 +41,7 @@ func binarySearch(arr []int, target int, c *int) int {
 }
 
 func main() {
-	c := 0
+	comp := 0
 
 	input, err := io.ReadAll(os.Stdin)
 	if err != nil {
@@ -75,9 +77,13 @@ func main() {
 		numbers = append(numbers, num)
 	}
 
-	result := binarySearch(numbers, n, &c)
+	//fmt.Println("Pierwotna tablica: ", numbers)
+	//fmt.Println("Szukana liczba: ", n)
+	startTime := time.Now()
+	binarySearch(numbers, n, &comp)
+	c := time.Since(startTime)
 
-	fmt.Println("Rezultat: ", result)
+	//fmt.Println("Rezultat: ", result)
 	fmt.Println("c =", c)
 }
 

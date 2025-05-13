@@ -29,6 +29,7 @@ func random_select(arr []int, n int, s *int, c *int) int {
 	}
 
 	randonPivot := rng.Intn(length)
+	fmt.Println("Losowy pivot: ", (arr)[randonPivot])
 
 	if randonPivot != length-1 {
 		(arr)[randonPivot], (arr)[length-1] = (arr)[length-1], (arr)[randonPivot]

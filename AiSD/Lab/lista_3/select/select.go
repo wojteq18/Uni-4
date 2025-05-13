@@ -6,6 +6,7 @@ import (
 	"os"
 	"strconv"
 	"strings"
+	"time"
 )
 
 func sortFives(arr []int, s *int, c *int) {
@@ -16,14 +17,12 @@ func sortFives(arr []int, s *int, c *int) {
 			(*c)++
 			if arr[j] > key {
 				arr[j+1] = arr[j]
-				(*s)++ // swap
 				j--
 			} else {
 				break
 			}
 		}
 		arr[j+1] = key
-		(*s)++ // swap
 	}
 }
 
@@ -56,7 +55,8 @@ func medianOfMedians(arr []int, s *int, c *int) int {
 		medians = append(medians, findMedianInFive(slice, s, c))
 	}
 
-	return medianOfMedians(medians, s, c)
+	return selectFind(medians, len(medians)/2+1, s, c) //+1 ze wzgledu na indeksowanie od 1 w selectFind
+
 }
 
 func selectFind(arr []int, k int, s *int, c *int) int {
@@ -109,7 +109,7 @@ func selectFind(arr []int, k int, s *int, c *int) int {
 
 func main() {
 	s := 0
-	c := 0
+	comp := 0
 
 	input, err := io.ReadAll(os.Stdin)
 	if err != nil {
@@ -145,8 +145,9 @@ func main() {
 		numbers = append(numbers, num)
 	}
 
-	a := selectFind(numbers, n, &s, &c)
-
+	startTime := time.Now()
+	a := selectFind(numbers, n, &s, &comp)
+	c := time.Since(startTime).Microseconds()
 	fmt.Println("s =", s)
 	fmt.Println("c =", c)
 	fmt.Println("znaleziony element:", a)

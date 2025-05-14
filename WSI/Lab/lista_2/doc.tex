@@ -1,0 +1,50 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage[polish]{babel}
+\usepackage{amsmath}
+\usepackage{tikz}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+\usepackage{hyperref}
+\usepackage{float}
+\usepackage{graphicx}
+
+\title{Wstęp do sztucznej inteligencji 2}
+\author{Wojciech Typer}
+\date{}
+
+\begin{document}
+\maketitle
+\textbf{Heurystyki: } \newline
+\begin{itemize}
+    \item Manhattan distance - suma różnicy współrzędnych
+    \item Ilość liczb na swoim miejscu
+\end{itemize} 
+Jak możemy się domyślać, odległość Manhattan jest znacznie lepszą funkcją oceny heurystycznej niż liczba elementów na swoim miejscu - 
+wynika to z faktu, że liczba elementów na swoim miejscu nie uwzględnia odległości między nimi. \par
+\vspace{2\baselineskip}
+\textbf{Algorytm A*} \newline
+
+Algorytm A* jest algorytmem znajdującym najkrótszą ścieżkę w grafie. W kontekście naszego zadania działa on następująco:
+\begin{itemize}
+    \item Na początku tworzymy dwie struktury danych: HashMape i Kolejkę priorytetową, opartą głównie na kopcu binarnym.
+    \item W HashMapie przechowujemy stany planszy i koszta dotarcia do nich.
+    \item W kolejce priorytetowej przechowujemy stany planszy do odwiedzenia, oraz sumę szacowanego kosztu dotarcia do celu i kosztu dotarcia do stanu obecnego.
+    \item Na początku kolejki priorytetowej umieszczamy stany, których szacowany koszt dotarcia do celu jest najmniejszy.
+    \item Dla aktualnie rozpatrywanego stanu generujemy wszystkie możliwe ruchy. Nowe stany są dodawane do kolejki priorytetowej tylko wtedy, gdy nie odwiedziliśmy ich wcześniej, lub gdy znaleziony koszt dojścia do nich jest niższy niż poprzednio zapisany.
+    \item Algorytm kończy działanie, gdy osiągnięty zostanie stan końcowy (wszystkie elementy na swoim miejscu). Jeśli kolejka się wyczerpie przed znalezieniem rozwiązania, oznacza to, że nie istnieje ścieżka do celu.
+\end{itemize}
+\newpage
+\textbf{Przykładowy stan początkowy i koszt dojścia do celu: }
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.7\textwidth]{/home/wojteq18/Obrazy/Screenshots/Screenshot From 2025-05-13 12-27-18.png}
+    \label{fig:example_image}
+\end{figure}
+\vspace{1\baselineskip}
+
+
+
+\end{document}

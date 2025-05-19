@@ -1377,16 +1377,68 @@ x_k =
         \end{algorithmic}
     \end{algorithm}
     \end{center}
-    
-        
+    \newpage
+    \textbf{Kopiec binarny} \par
+    \begin{itemize}
+        \item Pełne drzewo binarne przetrzymywane w tablicy
+    \end{itemize}
+    \vspace{2\baselineskip}
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=0.8\textwidth]{/home/wojteq18/Pobrane/zdjecia/kp.jpg}
+        \label{fig:example_image}
+    \end{figure}
+    \textbf{Własność kopca (maksymalnego)} \par
+    \begin{itemize}
+        \item $\forall i$ A[parent[i]] > A[i]
+        \item Wysokość węzła = długość najdłuższej prostej ścieżki od tego węzła do liścia 
+    \end{itemize}
+    \vspace{1\baselineskip}
+    \begin{algorithm}[H]
+    \caption{Heapify}\label{alg:heapify}
+    \begin{algorithmic}[1]
+    \Procedure{Heapify}{a}
+        \State $largest \gets a$
+        \If{$2a \leq size$ \textbf{and} $H[2a] > H[largest]$}
+            \State $largest \gets 2a$
+        \EndIf
+        \If{$2a + 1 \leq size$ \textbf{and} $H[2a + 1] > H[largest]$}
+            \State $largest \gets 2a + 1$
+        \EndIf
+        \If{$largest \neq a$}
+            \State Zamień $H[largest]$ i $H[a]$
+            \State \Call{Heapify}{$largest$}
+        \EndIf
+    \EndProcedure
+    \end{algorithmic}
+    \end{algorithm}
+    \begin{center}
+            Złożoność obliczeniowa procedury Heapify wynosi: $O(log n)$ \par
+    \end{center}
+    \newpage
+    \textbf{Build Heap} \par
 
+    \begin{algorithm} [H]
+    \begin{algorithmic}[1] 
+    \Procedure{Build-Heap}{} 
+      \For{$i \gets \text{size} \text{ down to } 1$} 
+        \State \Call{Heapify}{i} 
+      \EndFor
+    \EndProcedure
+  \end{algorithmic}
+\end{algorithm}
+\vspace{1\baselineskip}
+Fakt: W n- elementowym kopcu binarnym mamy co najwyżej \par
+$\lceil \frac{n}{2^{h-1}} \rceil$ węzłów o wysokości h \par
+\vspace{2\baselineskip}
 
-    
-    
-    
-    
-
-
-
-
+\textbf{Kolejka priorytetowa} \par
+\begin{itemize}
+    \item Insert (Q, x)
+    \item Maximum (Q)
+    \item ExtractMax (Q) - zwraca element o największym priorytecie i usuwa go z Q
+    \item Increase / Decrease Key (Q, x ,y)
+    \item Delete (Q, x)
+    \item Union (Q1, Q2) - łączy dwie kolejki priorytetowe w jedną
+\end{itemize}
 \end{document} 

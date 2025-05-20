@@ -1441,4 +1441,98 @@ $\lceil \frac{n}{2^{h-1}} \rceil$ węzłów o wysokości h \par
     \item Delete (Q, x)
     \item Union (Q1, Q2) - łączy dwie kolejki priorytetowe w jedną
 \end{itemize}
+
+\begin{table}[H]
+\centering
+\begin{tabular}{lccc}
+\toprule
+\textbf{Procedure} & \textbf{Binary Heap} & \textbf{Binomial Heap} & \textbf{Fibonacci Heap} \\
+\midrule
+Insert        & $O(\log n)$ & $O(\log n)$ & $O(1)$      \\
+Maximum       & $O(1)$      & $O(\log n)$ & $O(1)$      \\
+ExtractMax    & $O(\log n)$ & $O(\log n)$ & $O(\log n)$ \\
+IncreaseKey   & $O(\log n)$ & $O(\log n)$ & $O(1)$      \\
+DecreaseKey   & $O(\log n)$ & $O(\log n)$ & $O(1)$      \\
+Delete        & $O(\log n)$ & $O(\log n)$ & $O(\log n)$ \\
+Union         & $O(n)$      & $O(\log n)$ & $O(1)$      \\
+\bottomrule
+\end{tabular}
+\end{table}
+\begin{center}
+    Złożoności obliczeniowe w przypadku kopca Fibonacciego zostały podane \par
+    jako wartości zamortyzowane - koszt operacji jest średnią z wielu kosztów, \par
+    pojedyncze wartości mogą być czasem wolniejsze
+\end{center}
+\newpage
+\begin{center}
+    \textbf {Graf} \par
+    \vspace{1\baselineskip}
+    G = (V, E) \par
+    V $\rightarrow$ zbiór wierzchołków {1..n} \par
+    E $\in \{\{i, j\}: i,j \in V, i \neq j\}$ \par
+\end{center} \par
+W grafie nieskierowanym nie rozróżniamy i i j, traktujemy to jako zbiór. \par
+W grafie skierowanym i i j traktujemy jako parę, więc kolejność jest istotna. \par
+W oznaczeniach będziemy używać: $|V| = n \text{ i } |E| = m$ \par
+\vspace{1\baselineskip}
+     \begin{figure}[H]
+        \centering
+        \includegraphics[width=0.3\textwidth]{/home/wojteq18/Pobrane/zdjecia/ls.png}
+        \label{fig:example_image}
+    \end{figure} \par
+\begin{center}
+    Powyższa grafika to lista sąsiedztwa, jest to reprezentacja grafu, \par
+    umożliwiająca jego obróbkę z użyciem programów komputerowych. \par
+\end{center}
+\vspace{1\baselineskip}
+\textbf{Złożoność pamięciowa: } O(n  + m) = O(|V| + |E|) - wielkość grafu \par
+\vspace{1\baselineskip}
+\newpage
+Następnym sposobem reprezentacji grafu jest macierz sąsiedztwa: \par
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.5\textwidth]{/home/wojteq18/Obrazy/Screenshots/Screenshot From 2025-05-20 12-01-56.png}
+    \label{fig:example_image}
+\end{figure} \par
+\vspace{1\baselineskip}
+
+\begin{algorithm}[H]
+\caption{Explore}
+\begin{algorithmic}[1]
+\Procedure{Explore}{G, v}
+    \State $visited(v) \gets$ true
+    \State \Call{Previsit}{v}
+    \For{each $(v, u) \in E$}
+        \If{not $visited(u)$}
+            \State \Call{Explore}{G, u}
+        \EndIf
+    \EndFor
+    \State \Call{Postvisit}{v}
+\EndProcedure
+\end{algorithmic}
+\end{algorithm}
+\begin{center}
+    Powyższa procedura przeszukuje graf w głąb, dzięki niej \par
+    Możemy dotrzec do wszystkich wierzchołków z danego wierzchołka \par
+\end{center}
+\vspace{1\baselineskip}
+\begin{algorithm}[H]
+\caption{DFS (Depth First Search)}
+\begin{algorithmic}[1]
+\Procedure{DFS}{G}
+    \For{each $v \in V$}
+        \State $visited(v) \gets$ false
+    \EndFor
+    \For{each $v \in V$}
+        \If{not $visited(v)$}
+            \State \Call{Explore}{G, v}
+        \EndIf
+    \EndFor
+\EndProcedure
+\end{algorithmic}
+\end{algorithm}
+\begin{center}
+    Przeszukanie grafu w głąb (DFS) \par
+\end{center}
+
 \end{document} 

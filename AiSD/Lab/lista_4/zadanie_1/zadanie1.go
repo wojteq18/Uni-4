@@ -15,44 +15,6 @@ type BST struct {
 	Root *BSTNode
 }
 
-func (bst *BST) printLevels() {
-	if bst.Root == nil {
-		fmt.Println("Tree is empty")
-		return
-	}
-
-	type NodeLevel struct {
-		Node  *BSTNode
-		Level int
-	}
-
-	queue := []NodeLevel{{bst.Root, 0}}
-	currentLevel := 0
-
-	fmt.Printf("Level %d: ", currentLevel)
-
-	for len(queue) > 0 {
-		nl := queue[0]
-		queue = queue[1:]
-
-		if nl.Level != currentLevel {
-			currentLevel = nl.Level
-			fmt.Printf("\nLevel %d: ", currentLevel)
-		}
-
-		fmt.Printf("%d ", nl.Node.Value)
-
-		if nl.Node.Left != nil {
-			queue = append(queue, NodeLevel{nl.Node.Left, nl.Level + 1})
-		}
-		if nl.Node.Right != nil {
-			queue = append(queue, NodeLevel{nl.Node.Right, nl.Level + 1})
-		}
-	}
-
-	fmt.Println()
-}
-
 func (bst *BST) Height() int {
 	if bst.Root == nil {
 		return 0

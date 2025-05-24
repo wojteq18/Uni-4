@@ -1,9 +1,7 @@
 mod board;
 
-use std::io::{BufReader, BufRead, Write};
+use std::io::{Read, Write}; //odczyt i zapis w gnieździe sieciowym
 use std::net::TcpStream;
-use std::thread;
-use std::sync::{Arc, Mutex};
 use board::{set_board, set_move, print_board};
 
 fn main() -> std::io::Result<()> {
@@ -14,10 +12,11 @@ fn main() -> std::io::Result<()> {
     }
     let ip_adress = args[1].clone();
     let port = args[2].clone();
-    let player_number  = args[3].clone();
+    let player_number_str  = args[3].clone();
     let username = args[4].clone();
     let _deepness = args[5].clone();
 
+    let player_number: usize = player_number_str.parse().expect("Numer gracza musi byc liczba calkowita!");
     let final_adress = format!("{}:{}", ip_adress, port);
     
     set_board(); // Inicjalizacja planszy
@@ -30,29 +29,47 @@ fn main() -> std::io::Result<()> {
     println!("Połączono z serwerem");
 
     //Wysyałanie identyfikacji
-    let ident = format!("{} {}\n", player_number, username);
-    stream.write_all(ident.as_bytes())?;
+    let mut buffer = [0; 16];
+    let bytes_read = stream.read(&mut buffer)?;
+    let server_msg = String::from_utf8_lossy(&buffer[..bytes_read]);
+    if server_msg.trim() == "700" {
+        let ident = format!("{} {}", player_number, username);
+        stream.write_all(ident.as_bytes())?;
+        stream.flush()?;
+    }
 
-    let mut reader = BufReader::new(stream.try_clone()?);
-    let stdin = std::io::stdin();
+
 
     while !end_game {
-        let mut server_msg = String::new();
-        reader.read_line(&mut server_msg)?;
+        let mut buffer = [0; 16]; // Utwórz bufor podobny do tego w C
+        let bytes_read = match stream.read(&mut buffer) {
+            Ok(0) => {
+                println!("Serwer zakończył połączenie.");
+                break;
+            }
+            Ok(n) => n,
+            Err(e) => {
+                eprintln!("Błąd odczytu z serwera: {}", e);
+                break;
+            }
+        };
 
-        if server_msg.trim().is_empty() {
-            println!("Serwer zakończył połączenie");
-            break;
+        // Konwertuj tylko odczytane bajty na string, usuwając puste bajty (null bytes)
+        let server_msg = String::from_utf8_lossy(&buffer[..bytes_read]); //konwertuje format bajtów na string, usuwa niepotrzebne znaki
+        let server_msg = server_msg.trim_matches('\u{0}').trim();
+
+        if server_msg.is_empty() {
+            continue;
         }
 
-        println!("Serwer: {}", server_msg.trim());
+        println!("Serwer: {}", server_msg);
 
-        let num: i32 = server_msg.trim().parse().unwrap_or(-1);
+        let num: i32 = server_msg.parse().unwrap_or(-1);
         let move_code = num % 100;
         let msg_code = num / 100;
 
         if move_code != 0 {
-            set_move(move_code as usize, 3 - player_number.parse::<usize>().unwrap());
+            set_move(move_code as usize, 3 - player_number);
             print_board();
         }
 
@@ -61,14 +78,19 @@ fn main() -> std::io::Result<()> {
             std::io::stdout().flush()?;
 
             let mut input = String::new();
-            stdin.lock().read_line(&mut input)?;
+            std::io::stdin().read_line(&mut input)?;
             let input = input.trim();
 
-            let mv: usize = input.parse().unwrap_or(0);
-            set_move(mv, player_number.parse().unwrap());
-            print_board();
+            if let Ok(mv) = input.parse::<usize>() {
+                set_move(mv, player_number);
+                print_board();
 
-            write!(stream, "{}", mv)?;
+                // Wyślij dane do serwera i upewnij się, że zostały wysłane (flush)
+                stream.write_all(input.as_bytes())?;
+                stream.flush()?;
+            } else {
+                println!("Nieprawidłowy format ruchu.");
+            }
         } else {
             end_game = true;
             match msg_code {

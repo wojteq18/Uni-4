@@ -23,6 +23,8 @@ const (
 	BoardHeight = 4
 )
 
+var MacTicket = 0
+
 // zmienne potrzebne do algorytmu Piekarnianego
 var Flag [NrOfProcess]int32
 var Number [NrOfProcess]int32
@@ -34,6 +36,9 @@ func findMax(arr []int32) int32 {
 		if val > maxVal {
 			maxVal = val
 		}
+	}
+	if maxVal > int32(MacTicket) {
+		MacTicket = int(maxVal)
 	}
 	return maxVal
 }
@@ -95,7 +100,7 @@ func printer() {
 		fmt.Printf("%s;", state)
 	}
 
-	fmt.Println("EXTRA_LABEL;")
+	fmt.Println("EXTRA_LABEL = ;", MacTicket)
 }
 
 type Process struct {
@@ -179,7 +184,7 @@ func process(id int, symbol rune, seed int) {
 	}
 	//Jesli proces zakończy działanie w sekcji krytycznej
 	if state == CriticalSection {
-		state = ExitProtocol
+		state = LocalSection
 		storeTrace()
 	}
 	reportChannel <- traces

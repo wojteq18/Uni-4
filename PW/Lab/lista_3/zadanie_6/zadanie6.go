@@ -148,7 +148,7 @@ func process(id int, symbol rune, seed int) {
 		storeTrace()
 	}
 	if state == CriticalSection {
-		state = ExitProtocol
+		state = LocalSection
 		storeTrace()
 	}
 	reportChannel <- traces

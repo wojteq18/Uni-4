@@ -11,7 +11,7 @@ import (
 var WaitGroup sync.WaitGroup
 
 const (
-	NrOfProcess = 5
+	NrOfProcess = 15
 
 	MinSteps = 50
 	MaxSteps = 100
@@ -26,7 +26,6 @@ const (
 // zmienne potrzebne do algorytmu Piekarnianego
 var Flag [NrOfProcess]int32
 var Number [NrOfProcess]int32
-var Choosing [NrOfProcess]int32
 
 func findMax(arr []int32) int32 {
 	maxVal := atomic.LoadInt32(&arr[0])
@@ -106,6 +105,15 @@ type Process struct {
 }
 
 func process(id int, symbol rune, seed int) {
+	defer func() {
+		if atomic.LoadInt32(&Flag[id]) != 0 {
+			atomic.StoreInt32(&Flag[id], 0)
+		}
+		if atomic.LoadInt32(&Number[id]) != 0 {
+			atomic.StoreInt32(&Number[id], 0)
+		}
+	}()
+
 	defer WaitGroup.Done()
 	r := rand.New(rand.NewSource(int64(seed)))
 
@@ -141,25 +149,24 @@ func process(id int, symbol rune, seed int) {
 		time.Sleep(delay)
 		state = ProcessState((int(state) + 1) % BoardHeight)
 		if state == EntryProtocol {
-			atomic.StoreInt32(&Choosing[id], 1)
-			atomic.StoreInt32(&Number[id], 1+findMax(Number[:]))
-			atomic.StoreInt32(&Choosing[id], 0)
 			atomic.StoreInt32(&Flag[id], 1)
+			atomic.StoreInt32(&Number[id], 1+findMax(Number[:]))
+			atomic.StoreInt32(&Flag[id], 0)
 
 			for j := 0; j < NrOfProcess; j++ {
 				if j != id {
 					// Czekaj, aż proces j skończy wybierać swój numer
-					for atomic.LoadInt32(&Choosing[j]) == 1 {
+					for atomic.LoadInt32(&Flag[j]) == 1 {
+						fmt.Println("Process", id, "waiting for process", j, "to finish choosing number")
 						time.Sleep(1 * time.Millisecond)
 					}
 
 					// Czekaj tylko jeśli proces j próbuje wejść do sekcji krytycznej (Number[j] > 0)
 					// i ma niższy numer lub równy, ale niższy ID
-					for atomic.LoadInt32(&Flag[j]) == 1 &&
-						atomic.LoadInt32(&Number[j]) > 0 &&
+					for atomic.LoadInt32(&Number[j]) != 0 &&
 						((atomic.LoadInt32(&Number[j]) < atomic.LoadInt32(&Number[id])) ||
 							(atomic.LoadInt32(&Number[j]) == atomic.LoadInt32(&Number[id]) && j < id)) {
-						time.Sleep(1 * time.Millisecond)
+						time.Sleep(10 * time.Millisecond)
 					}
 				}
 			}
@@ -170,11 +177,16 @@ func process(id int, symbol rune, seed int) {
 		}
 		storeTrace()
 	}
+	//Jesli proces zakończy działanie w sekcji krytycznej
+	if state == CriticalSection {
+		state = ExitProtocol
+		storeTrace()
+	}
 	reportChannel <- traces
 }
 
 func main() {
-	fmt.Println("Poczatkoa tablica: ", Flag)
+	//fmt.Println("Poczatkoa tablica: ", Flag)
 	WaitGroup.Add(1)
 	go printer()
 	symbols := []rune{'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O'}

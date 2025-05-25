@@ -94,6 +94,11 @@ type Process struct {
 }
 
 func process(id int, symbol rune, seed int) {
+	defer func() {
+		atomic.StoreInt32(&flag[id], 0)
+		atomic.StoreInt32(&turn, int32(1-id))
+	}()
+
 	defer WaitGroup.Done()
 	r := rand.New(rand.NewSource(int64(seed)))
 
@@ -146,6 +151,10 @@ func process(id int, symbol rune, seed int) {
 			atomic.StoreInt32(&flag[id], 0)
 			atomic.StoreInt32(&turn, int32(1-id))
 		}
+		storeTrace()
+	}
+	if state == CriticalSection {
+		state = ExitProtocol
 		storeTrace()
 	}
 	reportChannel <- traces

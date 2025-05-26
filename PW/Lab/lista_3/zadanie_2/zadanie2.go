@@ -23,22 +23,20 @@ const (
 	BoardHeight = 4
 )
 
-var MacTicket = 0
+var ticketMutex sync.Mutex
+var maxTicket int32 = 0
 
 // zmienne potrzebne do algorytmu Piekarnianego
 var Flag [NrOfProcess]int32
 var Number [NrOfProcess]int32
 
-func findMax(arr []int32) int32 {
-	maxVal := atomic.LoadInt32(&arr[0])
-	for i := 1; i < len(arr); i++ {
+func findMaxAtomic(arr []int32) int32 {
+	maxVal := int32(0)
+	for i := range arr {
 		val := atomic.LoadInt32(&arr[i])
 		if val > maxVal {
 			maxVal = val
 		}
-	}
-	if maxVal > int32(MacTicket) {
-		MacTicket = int(maxVal)
 	}
 	return maxVal
 }
@@ -100,7 +98,7 @@ func printer() {
 		fmt.Printf("%s;", state)
 	}
 
-	fmt.Println("EXTRA_LABEL = ;", MacTicket)
+	fmt.Println("EXTRA_LABEL = ;", maxTicket)
 }
 
 type Process struct {
@@ -110,15 +108,6 @@ type Process struct {
 }
 
 func process(id int, symbol rune, seed int) {
-	defer func() {
-		if atomic.LoadInt32(&Flag[id]) != 0 {
-			atomic.StoreInt32(&Flag[id], 0)
-		}
-		if atomic.LoadInt32(&Number[id]) != 0 {
-			atomic.StoreInt32(&Number[id], 0)
-		}
-	}()
-
 	defer WaitGroup.Done()
 	r := rand.New(rand.NewSource(int64(seed)))
 
@@ -149,41 +138,56 @@ func process(id int, symbol rune, seed int) {
 
 	nrOfSteps := MinSteps + r.Intn(MaxSteps-MinSteps+1)
 
-	for i := 0; i < nrOfSteps; i++ {
-		delay := MinDelay + time.Duration(r.Int63n(int64(MaxDelay-MinDelay)))
-		time.Sleep(delay)
-		state = ProcessState((int(state) + 1) % BoardHeight)
-		if state == EntryProtocol {
-			atomic.StoreInt32(&Flag[id], 1)
-			atomic.StoreInt32(&Number[id], 1+findMax(Number[:]))
-			atomic.StoreInt32(&Flag[id], 0)
+	for i := 0; i < (nrOfSteps/4)-1; i++ {
+		//Local Section
+		state = LocalSection
+		storeTrace()
+		time.Sleep(MinDelay + time.Duration(r.Int63n(int64(MaxDelay-MinDelay))))
 
-			for j := 0; j < NrOfProcess; j++ {
-				if j != id {
-					// Czekaj, aż proces j skończy wybierać swój numer
-					for atomic.LoadInt32(&Flag[j]) == 1 {
-						fmt.Println("Process", id, "waiting for process", j, "to finish choosing number")
-						time.Sleep(1 * time.Millisecond)
-					}
+		//Entry Protocol
+		state = EntryProtocol
+		storeTrace()
+		atomic.StoreInt32(&Flag[id], 1)
+		ticketMutex.Lock()
+		newTicket := findMaxAtomic(Number[:]) + 1
+		atomic.StoreInt32(&Number[id], newTicket)
+		if newTicket > maxTicket {
+			atomic.StoreInt32(&maxTicket, newTicket)
+		}
+		ticketMutex.Unlock()
+		atomic.StoreInt32(&Flag[id], 0)
 
-					// Czekaj tylko jeśli proces j próbuje wejść do sekcji krytycznej (Number[j] > 0)
-					// i ma niższy numer lub równy, ale niższy ID
-					for atomic.LoadInt32(&Number[j]) != 0 &&
-						((atomic.LoadInt32(&Number[j]) < atomic.LoadInt32(&Number[id])) ||
-							(atomic.LoadInt32(&Number[j]) == atomic.LoadInt32(&Number[id]) && j < id)) {
-						time.Sleep(10 * time.Millisecond)
-					}
+		for j := 0; j < NrOfProcess; j++ {
+			if j != id {
+				// Czekaj, aż proces j skończy wybierać swój numer
+				for atomic.LoadInt32(&Flag[j]) == 1 {
+					fmt.Println("Process", id, "waiting for process", j, "to finish choosing number")
+					time.Sleep(1 * time.Millisecond)
+				}
+
+				// Czekaj tylko jeśli proces j próbuje wejść do sekcji krytycznej (Number[j] > 0)
+				// i ma niższy numer lub równy, ale niższy ID
+				for atomic.LoadInt32(&Number[j]) != 0 &&
+					((atomic.LoadInt32(&Number[j]) < atomic.LoadInt32(&Number[id])) ||
+						(atomic.LoadInt32(&Number[j]) == atomic.LoadInt32(&Number[id]) && j < id)) {
+					time.Sleep(10 * time.Millisecond)
 				}
 			}
 		}
-		if state == ExitProtocol {
-			atomic.StoreInt32(&Flag[id], 0)
-			atomic.StoreInt32(&Number[id], 0)
-		}
+
+		//Critical Section
+		state = CriticalSection
 		storeTrace()
+		time.Sleep(MinDelay + time.Duration(r.Int63n(int64(MaxDelay-MinDelay))))
+
+		//Exit Protocol
+		state = ExitProtocol
+		storeTrace()
+		atomic.StoreInt32(&Flag[id], 0)
+		atomic.StoreInt32(&Number[id], 0)
 	}
-	//Jesli proces zakończy działanie w sekcji krytycznej
-	if state == CriticalSection {
+
+	if state != LocalSection {
 		state = LocalSection
 		storeTrace()
 	}
@@ -191,7 +195,6 @@ func process(id int, symbol rune, seed int) {
 }
 
 func main() {
-	//fmt.Println("Poczatkoa tablica: ", Flag)
 	WaitGroup.Add(1)
 	go printer()
 	symbols := []rune{'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O'}

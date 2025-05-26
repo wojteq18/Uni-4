@@ -1534,5 +1534,29 @@ Następnym sposobem reprezentacji grafu jest macierz sąsiedztwa: \par
 \begin{center}
     Przeszukanie grafu w głąb (DFS) \par
 \end{center}
+\vspace{1\baselineskip}
+
+\textbf{Własność 1: } $u, v \in V$: pre(v) < pre(u) < post(u) < post(v) \par
+$u, v \in V$: pre(v) < post(v) < pre(u) < post(u)  \par
+\textbf{Własność 2}: $(u, v) \in E$ Tree / forward edge: pre(u) < pre(v) < post(v) < post(u) \par
+Backedge: pre(v) < pre(u) < post(u) < post(v) \par
+Cross edge: pre(v) < post(v) < pre(u) < post(u) \par
+\vspace{1\baselineskip}
+\textbf{Własność 3}: W grafie skierowanym istenie cykl wtedy, gdy DFS wykryje back edge \par
+\vspace{1\baselineskip}
+\textbf{Sortowanie topologiczne skierowanych grafów acykicznych (dags)} \par
+Input: $G=(V,E) \rightarrow$ acykiczny, skierowany \par
+Output: $(V, \prec) \rightarrow$ porządek topologiczny \par
+\begin{itemize}
+    \item Wykonujemy DFS, zapisująć pre i post
+    \item Zwróć wierzchołki w malejącym porządku po post()
+\end{itemize}
+Złożoność obliczeniowa: DFS: O(|V| + |E|); punkt drugi: O(|V| log|V|) \par
+\vspace{1\baselineskip}
+W grafie skierowanym g+ (V, E) powiemy, że wierzchołki
+$u, v \in V$ \par są połączone, jeśli istnieje śnieżka z u do v i z v do u
+
+
+
 
 \end{document} 

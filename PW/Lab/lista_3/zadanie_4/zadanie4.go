@@ -153,7 +153,7 @@ func process(id int, symbol rune, seed int) {
 		}
 		storeTrace()
 	}
-	if state == CriticalSection {
+	if state != LocalSection {
 		state = LocalSection
 		storeTrace()
 	}

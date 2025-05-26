@@ -3,6 +3,63 @@ use rand::Rng;
 use crate::board::WIN_MOVES;
 use crate::board::LOSE_MOVES;
 
+struct GameState {
+    my_fields: Vec<u32>,
+    enemy_fields: Vec<u32>,
+    available_fields: Vec<u32>,
+    depth: u32,
+    maximizing_player: bool,
+}
+
+//funkcja oceny heurytycznej
+fn evaluate_state(my_fields: &Vec<u32>, enemy_fields: &Vec<u32>) -> i32 {
+    let mut score = 0;
+
+    //Sprawdzamy warunki natychmiastowej wygranej dla nas
+    if let Some(_win_move) = try_win(my_fields, enemy_fields) {
+        score += 10000;
+    }
+
+    //Sprawdzamy warunki natychmiastowej przegranej dla przeciwnika
+    if let Some(_lose_move) = try_win(enemy_fields, my_fields) {
+        score -= 10000;
+    }
+
+    // Logika tworzenia lini3- elementowych
+    for line in LOSE_MOVES.iter() {
+        let in_my_line = line.iter().filter(|x| my_fields.contains(x)).count();
+        let in_enemy_line = line.iter().filter(|x| enemy_fields.contains(x)).count();
+
+        if in_my_line == 3 {
+            score -= 1000; // Trzy pola zajęte przez mnie - przergana
+        }
+
+        if in_enemy_line == 3 {
+            score += 1000; // Trzy pola zajęte przez przeciwnika - wygrana
+        }
+
+        //nagradzaj rozwój 2- elementowych linii
+        match (in_my_line, in_enemy_line) {
+            (2, 0) => score += 500,
+            (0, 2) => score -= 500,
+            _ => (),
+        }
+        return score;
+    }
+
+    //Ogólna ocena pozycji
+    score += (my_fields.len() as i32 - enemy_fields.len() as i32) * 50;
+    return score;
+}
+
+fn minmax(state: &GameState) -> i32 {
+    if state.depth == 0 || state.available_fields.is_empty() {
+        return 11
+    }
+    //TO BE CONTINUED
+    return 43;
+}
+
 pub fn all_fields() -> Vec<u32> {
     let mut fields = Vec::new();
     fields.extend([

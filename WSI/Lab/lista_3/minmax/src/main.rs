@@ -84,8 +84,6 @@ fn main() -> std::io::Result<()> {
         }
 
         if msg_code == 0 || msg_code == 6 {
-            //print!("Twój ruch: ");
-            //std::io::stdout().flush()?;
             match try_win(&my_fields, &enemy_fields) {
                 Some(win_move) => {
                     my_fields.push(win_move);
@@ -112,21 +110,6 @@ fn main() -> std::io::Result<()> {
                     }
                 }     
             }
-            
-            /*let mut input = String::new();
-            std::io::stdin().read_line(&mut input)?;
-            let input = input.trim();
-
-            if let Ok(mv) = input.parse::<usize>() {
-                set_move(mv, player_number);
-                print_board();
-
-                // Wyślij dane do serwera i upewnij się, że zostały wysłane (flush)
-                stream.write_all(input.as_bytes())?;
-                stream.flush()?;
-            } else {
-                println!("Nieprawidłowy format ruchu.");
-            }*/
         } else {
             end_game = true;
             match msg_code {
@@ -139,6 +122,5 @@ fn main() -> std::io::Result<()> {
             }
         }
     }
-
     Ok(())
 }

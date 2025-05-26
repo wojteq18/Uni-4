@@ -16,11 +16,11 @@ procedure  Mutex_Template is
   Min_Delay : constant Duration := 0.01;
   Max_Delay : constant Duration := 0.05;
 
-  type Boolean_Array is array (Integer range <>) of Boolean;
+type Boolean_Array is array (Integer range <>) of Boolean;
 type Integer_Array is array (Integer range <>) of Integer;
 
 
-protected Bakery is
+package Bakery is
    procedure Set_Choosing(I: Integer; Val: Boolean);
    function Is_Choosing(I: Integer) return Boolean;
 
@@ -37,7 +37,7 @@ private
    Max_Used_Ticket : Integer := 0;
 end Bakery;
 
-protected body Bakery is
+package body Bakery is
    procedure Set_Choosing(I: Integer; Val: Boolean) is
    begin
       Choosing(I) := Val;

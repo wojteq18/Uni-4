@@ -4,7 +4,7 @@ mod bot;
 use std::io::{Read, Write}; //odczyt i zapis w gnieździe sieciowym
 use std::net::TcpStream;
 use board::{set_board, set_move, print_board};
-use bot::{all_fields, delete_field, random_field, try_win, check_lose};
+use bot::{all_fields, delete_field, random_field, check_lose, choose_best_move};
 
 fn main() -> std::io::Result<()> {
     let mut all_fields = all_fields(); // Inicjalizacja wszystkich pól
@@ -20,7 +20,7 @@ fn main() -> std::io::Result<()> {
     let port = args[2].clone();
     let player_number_str  = args[3].clone();
     let username = args[4].clone();
-    let _deepness = args[5].clone();
+    let deepness = args[5].clone();
 
     let player_number: usize = player_number_str.parse().expect("Numer gracza musi byc liczba calkowita!");
     let final_adress = format!("{}:{}", ip_adress, port);
@@ -47,7 +47,7 @@ fn main() -> std::io::Result<()> {
 
 
     while !end_game {
-        let mut buffer = [0; 16]; // Utwórz bufor podobny do tego w C
+        let mut buffer = [0; 16];
         let bytes_read = match stream.read(&mut buffer) {
             Ok(0) => {
                 println!("Serwer zakończył połączenie.");
@@ -84,7 +84,7 @@ fn main() -> std::io::Result<()> {
         }
 
         if msg_code == 0 || msg_code == 6 {
-            match try_win(&my_fields, &enemy_fields) {
+            match choose_best_move(&my_fields, &enemy_fields, &all_fields, deepness.parse::<u32>().unwrap_or(2)) {
                 Some(win_move) => {
                     my_fields.push(win_move);
                     delete_field(&mut all_fields, win_move);

@@ -52,13 +52,78 @@ fn evaluate_state(my_fields: &Vec<u32>, enemy_fields: &Vec<u32>) -> i32 {
     return score;
 }
 
-fn minmax(state: &GameState) -> i32 {
+fn minmax(state: &GameState, depth: i32, mut alpha: i32, mut beta: i32) -> (i32, Option<u32>) {
     if state.depth == 0 || state.available_fields.is_empty() {
-        return 11
+        return (evaluate_state(&state.my_fields, &state.enemy_fields), None);
     }
-    //TO BE CONTINUED
-    return 43;
+    let mut best_move = None;
+    let mut best_value; //na początku moży być to max int albo mni int 
+    if state.maximizing_player {
+        best_value = i32::MIN;
+    } else {
+        best_value = i32::MAX;
+    }
+
+    for &mv in state.available_fields.iter() {
+        let new_state = GameState {
+            my_fields: if state.maximizing_player {
+                let mut fields = state.my_fields.clone();
+                fields.push(mv);
+                fields
+            } else {
+                state.my_fields.clone()
+            },
+            enemy_fields: if !state.maximizing_player {
+                let mut fields = state.enemy_fields.clone();
+                fields.push(mv);
+                fields
+            } else {
+                state.enemy_fields.clone()
+            },
+            available_fields: state.available_fields.iter().filter(|&&x| x != mv).cloned().collect(),
+            depth: state.depth - 1,
+            maximizing_player: !state.maximizing_player,
+        };
+        let (current_value, _) = minmax(&new_state, depth - 1, alpha, beta);
+        
+        if state.maximizing_player {
+            if current_value > best_value {
+                best_value = current_value;
+                best_move = Some(mv);
+                alpha = alpha.max(best_value); //najlepsze, dotychczas gwarantowane minimum
+            }
+        } else {
+            if current_value < best_value {
+                best_value = current_value;
+                best_move = Some(mv);
+                beta = beta.min(best_value); //najlepsze, dotychczas gwarantowane maksimum
+            }
+        }
+        if beta <= alpha {
+            break; //przycinanie alfa-beta
+        }
+    }
+
+    return (best_value, best_move);
 }
+
+pub fn choose_best_move(my_fields: &Vec<u32>, enemy_fields: &Vec<u32>, available_fields: &Vec<u32>, depth: u32) -> Option<u32> {
+    let game_state = GameState {
+        my_fields: my_fields.clone(),
+        enemy_fields: enemy_fields.clone(),
+        available_fields: available_fields.clone(),
+        depth,
+        maximizing_player: true, // Zakładamy, że to my gramy
+    };
+
+    let (best_value, best_move) = minmax(&game_state, depth as i32, i32::MIN, i32::MAX);
+    if best_value > 0 {
+        return best_move;
+    } else {
+        return None;
+    }
+}
+
 
 pub fn all_fields() -> Vec<u32> {
     let mut fields = Vec::new();

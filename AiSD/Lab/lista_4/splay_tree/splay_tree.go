@@ -1,7 +1,11 @@
 package main
 
 import (
+	"bufio"
 	"fmt"
+	"os"
+	"strconv"
+	"strings"
 )
 
 type STNode struct {
@@ -101,6 +105,7 @@ func (st *SplayTree) Splay(value int) {
 }
 
 func (st *SplayTree) Insert(value int) {
+	fmt.Println("Insert ", value)
 	x := st.root
 	if x == nil {
 		st.root = &STNode{value: value}
@@ -128,6 +133,52 @@ func (st *SplayTree) Insert(value int) {
 		}
 	}
 	st.Splay(value)
+}
+
+func (st *SplayTree) Delete(value int) {
+	fmt.Println("Delete ", value)
+	node := st.FindNode(value)
+	if node == nil {
+		return
+	}
+
+	st.Splay(value)
+
+	leftSubtree := node.left
+	rightSubtree := node.right
+
+	if leftSubtree != nil {
+		leftSubtree.parent = nil
+	}
+
+	if rightSubtree != nil {
+		rightSubtree.parent = nil
+	}
+
+	//Łączymy dwa poddrzewa
+	st.Join(leftSubtree, rightSubtree)
+}
+
+func (st *SplayTree) Join(left, right *STNode) *STNode {
+	if left == nil {
+		return right
+	}
+
+	if right == nil {
+		return left
+	}
+
+	maxNode := left
+	for maxNode.right != nil {
+		maxNode = maxNode.right
+	}
+
+	st.root = maxNode
+	st.Splay(maxNode.value)
+
+	st.root.right = right
+	right.parent = st.root
+	return st.root
 }
 
 func (st *SplayTree) Print() {
@@ -164,13 +215,45 @@ func (st *SplayTree) Print() {
 }
 
 func main() {
-	st := &SplayTree{}
-	for i := 0; i < 15; i++ {
-		st.Insert(i)
+	scanner := bufio.NewScanner(os.Stdin)
+	if !scanner.Scan() {
+		fmt.Println("Brak danych wejściowych.")
+		return
 	}
-	//sst.Splay(7)
-	st.Print()
-	fmt.Println("====================================================================")
-	st.Insert(15)
-	st.Print()
+
+	input := scanner.Text()
+	parts := strings.SplitN(input, " ", 2)
+	if len(parts) != 2 {
+		fmt.Println("Podaj dane w formacie: insertowane_liczby usuwane_liczby")
+		return
+	}
+
+	insertStrs := strings.Split(parts[0], ",")
+	deleteStrs := strings.Split(parts[1], ",")
+
+	st := &SplayTree{}
+
+	// Insertuj
+	for _, s := range insertStrs {
+		num, err := strconv.Atoi(strings.TrimSpace(s))
+		if err != nil {
+			fmt.Printf("Błąd parsowania liczby do wstawienia: %v\n", s)
+			continue
+		}
+		st.Insert(num)
+		st.Print()
+		fmt.Println()
+	}
+
+	// Usuwaj
+	for _, s := range deleteStrs {
+		num, err := strconv.Atoi(strings.TrimSpace(s))
+		if err != nil {
+			fmt.Printf("Błąd parsowania liczby do usunięcia: %v\n", s)
+			continue
+		}
+		st.Delete(num)
+		st.Print()
+		fmt.Println()
+	}
 }

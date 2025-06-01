@@ -1,7 +1,11 @@
 package main
 
 import (
+	"bufio"
 	"fmt"
+	"os"
+	"strconv"
+	"strings"
 )
 
 type BSTNode struct {
@@ -47,6 +51,7 @@ func (bst *BST) Height() int {
 }
 
 func (bst *BST) Insert(value int) {
+	fmt.Println("Insert ", value)
 	x := bst.Root
 	if x == nil {
 		bst.Root = &BSTNode{Value: value}
@@ -102,6 +107,7 @@ func (bst *BST) Search(value int) *BSTNode {
 }
 
 func (bst *BST) Delete(value int) {
+	fmt.Println("Delete ", value)
 	if bst.Root == nil {
 		return
 	}
@@ -254,17 +260,45 @@ func (bst *BST) Print() {
 }
 
 func main() {
-	bst := &BST{}
-	bst.Insert(10)
-	bst.Insert(5)
-	bst.Insert(15)
-	bst.Insert(3)
-	bst.Insert(2)
-	bst.Insert(1)
-	bst.Insert(4)
+	scanner := bufio.NewScanner(os.Stdin)
+	if !scanner.Scan() {
+		fmt.Println("Brak danych wejściowych.")
+		return
+	}
 
-	bst.Print()
-	bst.Delete(3)
-	fmt.Println("Nowe drzewo:")
-	bst.Print()
+	input := scanner.Text()
+	parts := strings.SplitN(input, " ", 2)
+	if len(parts) != 2 {
+		fmt.Println("Podaj dane w formacie: insertowane_liczby usuwane_liczby")
+		return
+	}
+
+	insertStrs := strings.Split(parts[0], ",")
+	deleteStrs := strings.Split(parts[1], ",")
+
+	bst := &BST{}
+
+	// Insertuj
+	for _, s := range insertStrs {
+		num, err := strconv.Atoi(strings.TrimSpace(s))
+		if err != nil {
+			fmt.Printf("Błąd parsowania liczby do wstawienia: %v\n", s)
+			continue
+		}
+		bst.Insert(num)
+		bst.Print()
+		fmt.Println()
+	}
+
+	// Usuwaj
+	for _, s := range deleteStrs {
+		num, err := strconv.Atoi(strings.TrimSpace(s))
+		if err != nil {
+			fmt.Printf("Błąd parsowania liczby do usunięcia: %v\n", s)
+			continue
+		}
+		bst.Delete(num)
+		bst.Print()
+		fmt.Println()
+	}
 }

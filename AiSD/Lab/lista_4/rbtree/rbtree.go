@@ -1,7 +1,11 @@
 package main
 
 import (
+	"bufio"
 	"fmt"
+	"os"
+	"strconv"
+	"strings"
 )
 
 type RBNode struct {
@@ -46,6 +50,7 @@ func (rbtree *RBTree) findSuccessor(node *RBNode) *RBNode {
 }
 
 func (rbtree *RBTree) Insert(value int) {
+	fmt.Println("Insert ", value)
 	//Pierwszy element - korzeń
 	if rbtree.Root == nil {
 		rbtree.Root = &RBNode{Value: value, Color: 'B'}
@@ -159,244 +164,176 @@ func (rbtree *RBTree) rightRotate(node *RBNode) {
 	node.Parent = y
 }
 
-func (rbtree *RBTree) Delete(value int) {
-	if rbtree.Root == nil {
-		return
-	}
-
-	node := rbtree.Search(value)
+// Pomocnicza funkcja do pobierania koloru węzła (nil jest traktowany jako czarny)
+func getNodeColor(node *RBNode) rune {
 	if node == nil {
-		return
+		return 'B'
+	}
+	return node.Color
+}
+
+func (rbtree *RBTree) Delete(value int) {
+	fmt.Println("Delete ", value)
+	nodeToDelete := rbtree.Search(value)
+	if nodeToDelete == nil {
+		return // Węzeł nie znaleziony
 	}
 
-	//usuwany element jest korzeniem
-	if rbtree.Root == node {
-		if node.Left == nil && node.Right == nil {
-			rbtree.Root = nil
-			return
-		} else if node.Left == nil {
-			rbtree.Root = node.Right
-			rbtree.Root.Parent = nil
-			if node.Color == 'B' {
-				rbtree.fixDelete(rbtree.Root)
-			}
-			return
-		} else if node.Right == nil {
-			rbtree.Root = node.Left
-			rbtree.Root.Parent = nil
-			if node.Color == 'B' {
-				rbtree.fixDelete(rbtree.Root)
-			}
-			return
+	var y *RBNode // Węzeł, który faktycznie zostanie usunięty lub przesunięty
+	var x *RBNode // Dziecko węzła y, które zajmie jego miejsce
+	var yOriginalColor rune
+
+	// Krok 1: Znajdź węzeł 'y', który zostanie usunięty ze struktury drzewa.
+	// Jeśli nodeToDelete ma dwoje dzieci, 'y' będzie jego następnikiem.
+	// W przeciwnym razie 'y' to sam nodeToDelete.
+	if nodeToDelete.Left == nil || nodeToDelete.Right == nil {
+		y = nodeToDelete
+	} else {
+		y = rbtree.findSuccessor(nodeToDelete)
+	}
+	yOriginalColor = y.Color
+
+	// Krok 2: 'x' to jedyne dziecko 'y' (lub nil, jeśli 'y' nie ma dzieci).
+	if y.Left != nil {
+		x = y.Left
+	} else {
+		x = y.Right
+	}
+
+	// xParent to rodzic 'y'. Będzie on rodzicem 'x' po usunięciu 'y'.
+	// Jest to kluczowe dla fixDelete, zwłaszcza gdy x jest nil.
+	xParent := y.Parent
+
+	// Krok 3: Usuń 'y' ze struktury drzewa, zastępując go przez 'x'.
+	if x != nil {
+		x.Parent = y.Parent
+	}
+
+	if y.Parent == nil { // Jeśli 'y' był korzeniem
+		rbtree.Root = x
+	} else { // Jeśli 'y' nie był korzeniem
+		if y == y.Parent.Left {
+			y.Parent.Left = x
 		} else {
-			succesor := rbtree.findSuccessor(node)
-			originalColor := succesor.Color
-			node.Value = succesor.Value
-
-			var child *RBNode = nil
-			if succesor.Right != nil {
-				child = succesor.Right
-			}
-
-			if succesor.Parent != nil {
-				if succesor == succesor.Parent.Left {
-					succesor.Parent.Left = child
-				} else {
-					succesor.Parent.Right = child
-				}
-			} else {
-				rbtree.Root = child
-			}
-
-			if child != nil {
-				child.Parent = succesor.Parent
-			}
-
-			if originalColor == 'B' {
-				rbtree.fixDelete(child)
-			}
-			return
+			y.Parent.Right = x
 		}
 	}
 
-	//usuwany element jest liściem
-	if node.Left == nil && node.Right == nil {
-		originalColor := node.Color
-		if node.Parent != nil {
-			if node == node.Parent.Left {
-				node.Parent.Left = nil
-			} else if node == node.Parent.Right {
-				node.Parent.Right = nil
-			}
-		}
-		if originalColor == 'B' {
-			rbtree.fixDelete(node)
-		}
-		return
+	// Krok 4: Jeśli 'y' był następnikiem nodeToDelete, skopiuj dane z 'y' do nodeToDelete.
+	if y != nodeToDelete {
+		nodeToDelete.Value = y.Value
+		// Kolor nodeToDelete nie zmienia się tutaj, tylko jego wartość.
+		// Balansowanie zależy od oryginalnego koloru 'y'.
 	}
 
-	//usuwany element ma jedno dziecko
-	if node.Left != nil && node.Right == nil {
-		originalColor := node.Color
-		if node.Parent != nil {
-			if node == node.Parent.Left {
-				node.Parent.Left = node.Left
-			} else if node == node.Parent.Right {
-				node.Parent.Right = node.Left
-			}
-		}
-		node.Left.Parent = node.Parent
-		if originalColor == 'B' {
-			rbtree.fixDelete(node.Left)
-		}
-		return
-	}
-	if node.Left == nil && node.Right != nil {
-		originalColor := node.Color
-		if node.Parent != nil {
-			if node == node.Parent.Left {
-				node.Parent.Left = node.Right
-			} else if node == node.Right.Parent {
-				node.Parent.Right = node.Right
-			}
-		}
-		node.Right.Parent = node.Parent
-		if originalColor == 'B' {
-			rbtree.fixDelete(node.Right)
-		}
-		return
-	}
-
-	//usuwany element ma dwoje dzieci
-	if node.Left != nil && node.Right != nil {
-		successor := rbtree.findSuccessor(node)
-		originalColor := successor.Color
-		node.Value = successor.Value
-
-		var child *RBNode = nil
-		if successor.Right != nil {
-			child = successor.Right
-		}
-
-		if successor.Parent != nil {
-			if successor == successor.Parent.Left {
-				successor.Parent.Left = child
-			} else {
-				successor.Parent.Right = child
-			}
-		} else {
-			rbtree.Root = child
-		}
-
-		if child != nil {
-			child.Parent = successor.Parent
-		}
-		if originalColor == 'B' {
-			rbtree.fixDelete(child)
-		}
-		return
+	// Krok 5: Jeśli usunięty węzeł 'y' był czarny, mogło dojść do naruszenia własności drzewa.
+	if yOriginalColor == 'B' {
+		// 'x' to węzeł, który zajął miejsce 'y'.
+		// 'xParent' to rodzic nowej pozycji 'x' (były rodzic 'y').
+		rbtree.fixDelete(x, xParent)
 	}
 }
 
-func (rbtree *RBTree) fixDelete(node *RBNode) {
-	if node == nil {
-		return
-	}
+func (rbtree *RBTree) fixDelete(x *RBNode, xParent *RBNode) {
+	var sibling *RBNode
 
-	//jeśli node jest cerwony, zamień na czarny
-	if node.Color == 'R' {
-		node.Color = 'B'
-		return
-	}
-
-	if node.Parent == nil {
-		return
-	}
-
-	if node.Parent.Left == node {
-		sibling := node.Parent.Right
-		//Brat węzła x jest czerwony
-		if sibling != nil && sibling.Color == 'R' {
-			sibling.Color = 'B'
-			node.Parent.Color = 'R'
-			rbtree.leftRotate(node.Parent)
-			sibling = node.Parent.Right
+	for x != rbtree.Root && getNodeColor(x) == 'B' {
+		if xParent == nil {
+			break
 		}
 
-		//Brat węzła x jest czarny i obydwoje dzieci są czarne
-		if sibling != nil && sibling.Color == 'B' &&
-			(sibling.Left == nil || sibling.Left.Color == 'B') &&
-			(sibling.Right == nil || sibling.Right.Color == 'B') {
-			sibling.Color = 'R'
-			if node.Parent.Color == 'B' {
-				rbtree.fixDelete(node.Parent)
-			} else {
-				node.Parent.Color = 'B'
-			}
-		} else {
-			//Brat węzła x jest czarny, prawe dziecko brata jest czarne, lewe czerwone
-			if sibling != nil && (sibling.Right == nil || sibling.Right.Color == 'B') {
-				if sibling.Left != nil {
-					sibling.Left.Color = 'B'
+		if x == xParent.Left { // 'x' jest lewym dzieckiem (lub nil w miejscu lewego dziecka)
+			sibling = xParent.Right
+
+			if getNodeColor(sibling) == 'R' { // Przypadek 1: Brat jest czerwony
+				if sibling != nil {
+					sibling.Color = 'B'
 				}
-				sibling.Color = 'R'
-				rbtree.rightRotate(sibling)
-				sibling = node.Parent.Right
+				xParent.Color = 'R'
+				rbtree.leftRotate(xParent)
+				sibling = xParent.Right // Brat się zmienił, zaktualizuj
 			}
 
-			//Brat węzła x jest czarny, prawe dziecko brata jest czerwone
-			if sibling != nil {
-				sibling.Color = node.Parent.Color
-				node.Parent.Color = 'B'
-				if sibling.Right != nil {
+			if (sibling == nil || getNodeColor(sibling.Left) == 'B') &&
+				(sibling == nil || getNodeColor(sibling.Right) == 'B') {
+				if sibling != nil {
+					sibling.Color = 'R'
+				}
+				x = xParent // Przesuń problem w górę
+				if x != nil {
+					xParent = x.Parent
+				} else {
+					xParent = nil
+				} // Zaktualizuj xParent dla nowego x
+			} else { // Brat jest czarny, przynajmniej jedno dziecko czerwone
+				// Przypadek 3: Brat jest czarny, jego prawe dziecko jest czarne (lewe dziecko musi być czerwone)
+				if sibling != nil && getNodeColor(sibling.Right) == 'B' { // sibling.Left musi być czerwone
+					if sibling.Left != nil {
+						sibling.Left.Color = 'B'
+					}
+					sibling.Color = 'R'
+					rbtree.rightRotate(sibling)
+					sibling = xParent.Right // Brat się zmienił
+				}
+				// Przypadek 4: Brat jest czarny, jego prawe dziecko jest czerwone
+				if sibling != nil {
+					sibling.Color = getNodeColor(xParent)
+				}
+				xParent.Color = 'B'
+				if sibling != nil && sibling.Right != nil {
 					sibling.Right.Color = 'B'
 				}
-				rbtree.leftRotate(node.Parent)
+				rbtree.leftRotate(xParent)
+				x = rbtree.Root // Aby zakończyć pętlę
 			}
-		}
-	} else {
-		sibling := node.Parent.Left
+		} else { // Symetryczny przypadek: x == xParent.Right (lub nil i był prawym dzieckiem)
+			sibling = xParent.Left
 
-		//brat węzła x jest czerwony
-		if sibling != nil && sibling.Color == 'R' {
-			sibling.Color = 'B'
-			node.Parent.Color = 'R'
-			rbtree.rightRotate(node.Parent)
-			sibling = node.Parent.Left
-		}
-
-		//brat węzła x jest czarny i obydwoje dzieci są czarne
-		if sibling != nil && sibling.Color == 'B' &&
-			(sibling.Left == nil || sibling.Left.Color == 'B') &&
-			(sibling.Right == nil || sibling.Right.Color == 'B') {
-			sibling.Color = 'R'
-			if node.Parent.Color == 'B' {
-				rbtree.fixDelete(node.Parent)
-			} else {
-				node.Parent.Color = 'B'
-			}
-		} else {
-
-			//brat węzła x jest czarny, lewe dziecko brata jest czarne, prawe czerwone
-			if sibling != nil && (sibling.Left == nil || sibling.Left.Color == 'B') {
-				if sibling.Right != nil {
-					sibling.Right.Color = 'B'
+			if getNodeColor(sibling) == 'R' { // Przypadek 1
+				if sibling != nil {
+					sibling.Color = 'B'
 				}
-				sibling.Color = 'R'
-				rbtree.leftRotate(sibling)
-				sibling = node.Parent.Left
+				xParent.Color = 'R'
+				rbtree.rightRotate(xParent)
+				sibling = xParent.Left
 			}
 
-			//brat węzła x jest czarny, lewe dziecko brata jest czerwone
-			if sibling != nil {
-				sibling.Color = node.Parent.Color
-				node.Parent.Color = 'B'
-				if sibling.Left != nil {
+			if (sibling == nil || getNodeColor(sibling.Left) == 'B') &&
+				(sibling == nil || getNodeColor(sibling.Right) == 'B') { // Przypadek 2
+				if sibling != nil {
+					sibling.Color = 'R'
+				}
+				x = xParent
+				if x != nil {
+					xParent = x.Parent
+				} else {
+					xParent = nil
+				}
+			} else {
+				// Przypadek 3: Brat jest czarny, jego lewe dziecko jest czarne (prawe dziecko musi być czerwone)
+				if sibling != nil && getNodeColor(sibling.Left) == 'B' { // sibling.Right musi być czerwone
+					if sibling.Right != nil {
+						sibling.Right.Color = 'B'
+					}
+					sibling.Color = 'R'
+					rbtree.leftRotate(sibling)
+					sibling = xParent.Left
+				}
+				// Przypadek 4: Brat jest czarny, jego lewe dziecko jest czerwone
+				if sibling != nil {
+					sibling.Color = getNodeColor(xParent)
+				}
+				xParent.Color = 'B'
+				if sibling != nil && sibling.Left != nil {
 					sibling.Left.Color = 'B'
 				}
-				rbtree.rightRotate(node.Parent)
+				rbtree.rightRotate(xParent)
+				x = rbtree.Root
 			}
 		}
+	}
+	if x != nil {
+		x.Color = 'B' //korzeń musi być czarny
 	}
 }
 
@@ -470,14 +407,43 @@ func (bst *RBTree) Print() {
 }
 
 func main() {
-	rbtree := &RBTree{}
-	values := []int{1, 2, 3, 4, 5, 6, 7, 8, 9}
-	for _, value := range values {
-		rbtree.Insert(value)
+	scanner := bufio.NewScanner(os.Stdin)
+	if !scanner.Scan() {
+		fmt.Println("Brak danych wejściowych.")
+		return
 	}
 
-	rbtree.Print()
-	fmt.Println("Height of the tree:", rbtree.Height())
-	rbtree.Delete(2)
-	rbtree.Print()
+	input := scanner.Text()
+	parts := strings.SplitN(input, " ", 2)
+	if len(parts) != 2 {
+		fmt.Println("Podaj dane w formacie: insertowane_liczby usuwane_liczby")
+		return
+	}
+
+	insertStrs := strings.Split(parts[0], ",")
+	deleteStrs := strings.Split(parts[1], ",")
+
+	rbtree := &RBTree{}
+
+	for _, s := range insertStrs {
+		num, err := strconv.Atoi(strings.TrimSpace(s))
+		if err != nil {
+			fmt.Printf("Błąd parsowania liczby do wstawienia: %v\n", s)
+			continue
+		}
+		rbtree.Insert(num)
+		rbtree.Print()
+		fmt.Println()
+	}
+
+	for _, s := range deleteStrs {
+		num, err := strconv.Atoi(strings.TrimSpace(s))
+		if err != nil {
+			fmt.Printf("Błąd parsowania liczby do usunięcia: %v\n", s)
+			continue
+		}
+		rbtree.Delete(num)
+		rbtree.Print()
+		fmt.Println()
+	}
 }

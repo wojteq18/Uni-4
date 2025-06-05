@@ -4,7 +4,7 @@ mod bot;
 use std::io::{Read, Write}; //odczyt i zapis w gnieździe sieciowym
 use std::net::TcpStream;
 use board::{set_board, set_move, print_board};
-use bot::{all_fields, delete_field, random_field, check_lose, choose_best_move};
+use bot::{all_fields, delete_field, random_field, check_lose, choose_best_move, try_win};
 
 fn main() -> std::io::Result<()> {
     let mut all_fields = all_fields(); // Inicjalizacja wszystkich pól
@@ -84,7 +84,19 @@ fn main() -> std::io::Result<()> {
         }
 
         if msg_code == 0 || msg_code == 6 {
-            match choose_best_move(&my_fields, &enemy_fields, &all_fields, deepness.parse::<u32>().unwrap_or(2)) {
+            match try_win(&my_fields, &enemy_fields) {
+                Some(win_move) => {
+                    my_fields.push(win_move);
+                    delete_field(&mut all_fields, win_move);
+                    set_move(win_move as usize, player_number);
+                    print_board();
+                    stream.write_all(win_move.to_string().as_bytes())?;
+                    stream.flush()?;
+                }
+                None => {}
+            }
+            // Jeśli nie ma ruchu wygrywającego, wybierz najlepszy ruch
+            match choose_best_move(&my_fields, &enemy_fields, &all_fields, deepness.parse::<u32>().unwrap_or(2), player_number) {
                 Some(win_move) => {
                     my_fields.push(win_move);
                     delete_field(&mut all_fields, win_move);

@@ -11,13 +11,18 @@ struct GameState {
     maximizing_player: bool,
 }
 
+
+//fn is_three_in_a_row(fields: &Vec<u32>, line: &[u32; 4]) -> {
+
+//}
+
 //funkcja oceny heurytycznej
 fn evaluate_state(my_fields: &Vec<u32>, enemy_fields: &Vec<u32>) -> i32 {
     let mut score = 0;
 
     //Sprawdzamy warunki natychmiastowej wygranej dla nas
     if let Some(_win_move) = try_win(my_fields, enemy_fields) {
-        score += 10000;
+        score += 100000;
     }
 
     //Sprawdzamy warunki natychmiastowej przegranej dla przeciwnika
@@ -31,11 +36,11 @@ fn evaluate_state(my_fields: &Vec<u32>, enemy_fields: &Vec<u32>) -> i32 {
         let in_enemy_line = line.iter().filter(|x| enemy_fields.contains(x)).count();
 
         if in_my_line == 3 {
-            score -= 1000; // Trzy pola zajęte przez mnie - przergana
+            score -= 5000; // Trzy pola zajęte przez mnie - przergana
         }
 
         if in_enemy_line == 3 {
-            score += 1000; // Trzy pola zajęte przez przeciwnika - wygrana
+            score += 5000; // Trzy pola zajęte przez przeciwnika - wygrana
         }
 
         //nagradzaj rozwój 2- elementowych linii
@@ -44,11 +49,7 @@ fn evaluate_state(my_fields: &Vec<u32>, enemy_fields: &Vec<u32>) -> i32 {
             (0, 2) => score -= 500,
             _ => (),
         }
-        return score;
     }
-
-    //Ogólna ocena pozycji
-    score += (my_fields.len() as i32 - enemy_fields.len() as i32) * 50;
     return score;
 }
 
@@ -57,7 +58,7 @@ fn minmax(state: &GameState, depth: i32, mut alpha: i32, mut beta: i32) -> (i32,
         return (evaluate_state(&state.my_fields, &state.enemy_fields), None);
     }
     let mut best_move = None;
-    let mut best_value; //na początku moży być to max int albo mni int 
+    let mut best_value; //na początku moży być to max int albo min int 
     if state.maximizing_player {
         best_value = i32::MIN;
     } else {
@@ -107,13 +108,13 @@ fn minmax(state: &GameState, depth: i32, mut alpha: i32, mut beta: i32) -> (i32,
     return (best_value, best_move);
 }
 
-pub fn choose_best_move(my_fields: &Vec<u32>, enemy_fields: &Vec<u32>, available_fields: &Vec<u32>, depth: u32) -> Option<u32> {
+pub fn choose_best_move(my_fields: &Vec<u32>, enemy_fields: &Vec<u32>, available_fields: &Vec<u32>, depth: u32, player_number: usize) -> Option<u32> {
     let game_state = GameState {
         my_fields: my_fields.clone(),
         enemy_fields: enemy_fields.clone(),
         available_fields: available_fields.clone(),
         depth,
-        maximizing_player: true, // Zakładamy, że to my gramy
+        maximizing_player: player_number == 1, // Zakładamy, że to my gramy
     };
 
     let (best_value, best_move) = minmax(&game_state, depth as i32, i32::MIN, i32::MAX);
@@ -179,6 +180,8 @@ fn check_tree(my_fields: &Vec<u32>, enemy_fields: &Vec<u32>, win_move: [u32; 4])
     (false, 0)
 }
 
+
+//fn check_for_four_completed(pl)
 pub fn check_lose(my_fields: &Vec<u32>, player_move: u32) -> bool {
     for lose_move in LOSE_MOVES.iter() {
         let mut count = 0;

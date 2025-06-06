@@ -84,16 +84,24 @@ fn main() -> std::io::Result<()> {
         }
 
         if msg_code == 0 || msg_code == 6 {
-            match try_win(&my_fields, &enemy_fields) {
-                Some(win_move) => {
-                    my_fields.push(win_move);
-                    delete_field(&mut all_fields, win_move);
-                    set_move(win_move as usize, player_number);
-                    print_board();
-                    stream.write_all(win_move.to_string().as_bytes())?;
-                    stream.flush()?;
-                }
-                None => {}
+            if let Some(win_move) = try_win(&my_fields, &enemy_fields) {
+                my_fields.push(win_move);
+                delete_field(&mut all_fields, win_move);
+                set_move(win_move as usize, player_number);
+                print_board();
+                stream.write_all(win_move.to_string().as_bytes())?;
+                stream.flush()?;
+                continue; // Jeśli udało się wygrać, kontynuuj
+            }
+
+            if let Some(block_move) = try_win(&enemy_fields, &my_fields) {
+                my_fields.push(block_move);
+                delete_field(&mut all_fields, block_move);
+                set_move(block_move as usize, player_number);
+                print_board();
+                stream.write_all(block_move.to_string().as_bytes())?;
+                stream.flush()?;
+                continue; // Jeśli udało się zablokować ruch przeciwnika, kontynuuj
             }
             // Jeśli nie ma ruchu wygrywającego, wybierz najlepszy ruch
             match choose_best_move(&my_fields, &enemy_fields, &all_fields, deepness.parse::<u32>().unwrap_or(2), player_number) {

@@ -1,7 +1,7 @@
 use rand::Rng;
 
-use crate::board::WIN_MOVES;
-use crate::board::LOSE_MOVES;
+use crate::board::{WIN_MOVES, LOSE_MOVES, BEST_FIELD, WORST_FIELDS, SECOND_WORST_FIELDS, SECOND_BEST_FIELDS,
+BEST_FIELD_SCORE, SECOND_BEST_SCORE, SECOND_WORST_SCORE, WORST_SCORE};
 
 struct GameState {
     my_fields: Vec<u32>,
@@ -34,17 +34,12 @@ fn evaluate_state(my_fields: &Vec<u32>, enemy_fields: &Vec<u32>) -> i32 {
 
     let mut score = 0;
 
-    let worst_fields: [u32; 4] = [11, 15, 51, 55];
-    let second_worst_fields: [u32; 12] = [12, 13, 14, 21, 25, 31, 35, 41, 45, 52, 53, 54];
-    let second_best_fields: [u32; 8] = [22, 23, 24, 32, 34, 42, 43, 44];
-    let best_field: u32 = 33;
-
     if try_win(my_fields, enemy_fields).is_some() {
-        score += 50040; // Nagroda za możliwość wygranej
+        score += 20000; // Nagroda za możliwość wygranej
     }
 
     if try_win(enemy_fields, my_fields).is_some() {
-        score -= 50040; // Kara za możliwość przegranej
+        score -= 20000; // Kara za możliwość przegranej
     }
 
     for line4 in WIN_MOVES.iter() {
@@ -53,11 +48,11 @@ fn evaluate_state(my_fields: &Vec<u32>, enemy_fields: &Vec<u32>) -> i32 {
 
         if my_markers_in_line4 == 2 && enemy_markers_in_line4 == 0 {
             // Dwa moje symbole i dwa puste pola w linii do wygranej
-            score += 10000;
+            score += 7000;
         }
         if enemy_markers_in_line4 == 2 && my_markers_in_line4 == 0 {
             // Dwa symbole przeciwnika i dwa puste pola w linii do jego wygranej
-            score -= 10000;
+            score -= 7000;
         }
     }
     
@@ -68,27 +63,39 @@ fn evaluate_state(my_fields: &Vec<u32>, enemy_fields: &Vec<u32>) -> i32 {
         if my_markers_in_line3 == 2 && enemy_markers_in_line3 == 0 {
              let empty_spots_count = line3.iter().filter(|f| !my_fields.contains(f) && !enemy_fields.contains(f)).count();
              if empty_spots_count == 1 { // Dokładnie jedno puste miejsce do utworzenia trójki
-                score += 50;
+                score += 500;
              }
         }
         if enemy_markers_in_line3 == 2 && my_markers_in_line3 == 0 {
             let empty_spots_count = line3.iter().filter(|f| !my_fields.contains(f) && !enemy_fields.contains(f)).count();
             if empty_spots_count == 1 {
-                score -= 50;
+                score -= 500;
             }
         }
     }
 
-    let my_worst_fields = my_fields.iter().filter(|&&f| worst_fields.contains(&f)).count();
-    let my_second_worst_fields = my_fields.iter().filter(|&&f| second_worst_fields.contains(&f)).count();
-    let my_second_best_fields = my_fields.iter().filter(|&&f| second_best_fields.contains(&f)).count();
+    // Ocena moich pól
+    let my_worst_fields = my_fields.iter().filter(|&&f| WORST_FIELDS.contains(&f)).count();
+    let my_second_worst_fields = my_fields.iter().filter(|&&f| SECOND_WORST_FIELDS.contains(&f)).count();
+    let my_second_best_fields = my_fields.iter().filter(|&&f| SECOND_BEST_FIELDS.contains(&f)).count();
 
-    if my_fields.contains(&best_field) {
-        score += 1000;
+    if my_fields.contains(&BEST_FIELD.clone()) {
+        score += BEST_FIELD_SCORE;
     }
-    score += (my_worst_fields as i32) * 300;
-    score += (my_second_worst_fields as i32) * 500;
-    score += (my_second_best_fields as i32) * 800;
+    score += (my_worst_fields as i32) * WORST_SCORE;
+    score += (my_second_worst_fields as i32) * SECOND_WORST_SCORE;
+    score += (my_second_best_fields as i32) * SECOND_BEST_SCORE;
+
+    // Ocena pól przeciwnika
+    let enemy_worst_fields = enemy_fields.iter().filter(|&&f| WORST_FIELDS.contains(&f)).count();
+    let enemy_second_worst_fields = enemy_fields.iter().filter(|&&f| SECOND_WORST_FIELDS.contains(&f)).count();
+    let enemy_second_best_fields = enemy_fields.iter().filter(|&&f| SECOND_BEST_FIELDS.contains(&f)).count();
+    if enemy_fields.contains(&BEST_FIELD.clone()) {
+        score -= BEST_FIELD_SCORE;
+    }
+    score -= (enemy_worst_fields as i32) * WORST_SCORE;
+    score -= (enemy_second_worst_fields as i32) * SECOND_WORST_SCORE;
+    score -= (enemy_second_best_fields as i32) * SECOND_BEST_SCORE;
 
     score
 }

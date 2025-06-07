@@ -68,7 +68,17 @@ pub(crate) const LOSE_MOVES: [[u32; 3]; 48] = [
     [35, 44, 53],
 ];
 
+//oceny ,,mocy" poszczególnych pól
+pub(crate) const BEST_FIELD: u32 = 33;
+pub(crate) const WORST_FIELDS: [u32; 4] = [11, 15, 51, 55];
+pub(crate) const SECOND_WORST_FIELDS: [u32; 12] = [12, 13, 14, 21, 25, 31, 35, 41, 45, 52, 53, 54];
+pub(crate) const SECOND_BEST_FIELDS: [u32; 8] = [22, 23, 24, 32, 34, 42, 43, 44];
 
+//wagi pól
+pub(crate) const BEST_FIELD_SCORE: i32 = 500;
+pub(crate) const SECOND_BEST_SCORE: i32 = 250;
+pub(crate) const SECOND_WORST_SCORE: i32 = -100; 
+pub(crate) const WORST_SCORE: i32 = -300; 
 
 
 pub fn set_board() {

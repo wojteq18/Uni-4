@@ -104,7 +104,7 @@ fn main() -> std::io::Result<()> {
                 continue; // Jeśli udało się zablokować ruch przeciwnika, kontynuuj
             }
             // Jeśli nie ma ruchu wygrywającego, wybierz najlepszy ruch
-            match choose_best_move(&my_fields, &enemy_fields, &all_fields, deepness.parse::<u32>().unwrap_or(2), player_number) {
+            match choose_best_move(&my_fields, &enemy_fields, &all_fields, deepness.parse::<u32>().unwrap_or(2)) {
                 Some(win_move) => {
                     my_fields.push(win_move);
                     delete_field(&mut all_fields, win_move);

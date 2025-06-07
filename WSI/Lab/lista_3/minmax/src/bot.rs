@@ -25,21 +25,26 @@ fn evaluate_state(my_fields: &Vec<u32>, enemy_fields: &Vec<u32>) -> i32 {
     }
 
     if check_for_three_completed(my_fields) {
-        return -5000
+        return -50000
     }
 
     if check_for_three_completed(enemy_fields) {
-        return 5000;
+        return 50000;
     }
 
     let mut score = 0;
 
+    let worst_fields: [u32; 4] = [11, 15, 51, 55];
+    let second_worst_fields: [u32; 12] = [12, 13, 14, 21, 25, 31, 35, 41, 45, 52, 53, 54];
+    let second_best_fields: [u32; 8] = [22, 23, 24, 32, 34, 42, 43, 44];
+    let best_field: u32 = 33;
+
     if try_win(my_fields, enemy_fields).is_some() {
-        score += 5000; // Nagroda za możliwość wygranej
+        score += 50040; // Nagroda za możliwość wygranej
     }
 
     if try_win(enemy_fields, my_fields).is_some() {
-        score -= 5000; // Kara za możliwość przegranej
+        score -= 50040; // Kara za możliwość przegranej
     }
 
     for line4 in WIN_MOVES.iter() {
@@ -48,11 +53,11 @@ fn evaluate_state(my_fields: &Vec<u32>, enemy_fields: &Vec<u32>) -> i32 {
 
         if my_markers_in_line4 == 2 && enemy_markers_in_line4 == 0 {
             // Dwa moje symbole i dwa puste pola w linii do wygranej
-            score += 200;
+            score += 10000;
         }
         if enemy_markers_in_line4 == 2 && my_markers_in_line4 == 0 {
             // Dwa symbole przeciwnika i dwa puste pola w linii do jego wygranej
-            score -= 200;
+            score -= 10000;
         }
     }
     
@@ -73,6 +78,17 @@ fn evaluate_state(my_fields: &Vec<u32>, enemy_fields: &Vec<u32>) -> i32 {
             }
         }
     }
+
+    let my_worst_fields = my_fields.iter().filter(|&&f| worst_fields.contains(&f)).count();
+    let my_second_worst_fields = my_fields.iter().filter(|&&f| second_worst_fields.contains(&f)).count();
+    let my_second_best_fields = my_fields.iter().filter(|&&f| second_best_fields.contains(&f)).count();
+
+    if my_fields.contains(&best_field) {
+        score += 1000;
+    }
+    score += (my_worst_fields as i32) * 300;
+    score += (my_second_worst_fields as i32) * 500;
+    score += (my_second_best_fields as i32) * 800;
 
     score
 }
@@ -149,13 +165,13 @@ fn minmax(state: &GameState, depth: i32, mut alpha: i32, mut beta: i32) -> (i32,
     return (best_value, best_move);
 }
 
-pub fn choose_best_move(my_fields: &Vec<u32>, enemy_fields: &Vec<u32>, available_fields: &Vec<u32>, depth: u32, player_number: usize) -> Option<u32> {
+pub fn choose_best_move(my_fields: &Vec<u32>, enemy_fields: &Vec<u32>, available_fields: &Vec<u32>, depth: u32) -> Option<u32> {
     let game_state = GameState {
         my_fields: my_fields.clone(),
         enemy_fields: enemy_fields.clone(),
         available_fields: available_fields.clone(),
         depth,
-        maximizing_player: player_number == 1, // Zakładamy, że to my gramy
+        maximizing_player: true, // Zakładamy, że to my gramy
     };
 
     let (_best_value, best_move) = minmax(&game_state, depth as i32, i32::MIN, i32::MAX);

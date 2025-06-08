@@ -35,11 +35,11 @@ fn evaluate_state(my_fields: &Vec<u32>, enemy_fields: &Vec<u32>) -> i32 {
     let mut score = 0;
 
     if try_win(my_fields, enemy_fields).is_some() {
-        score += 20000; // Nagroda za możliwość wygranej
+        score += 40000; // Nagroda za możliwość wygranej
     }
 
     if try_win(enemy_fields, my_fields).is_some() {
-        score -= 20000; // Kara za możliwość przegranej
+        score -= 40000; // Kara za możliwość przegranej
     }
 
     for line4 in WIN_MOVES.iter() {
@@ -63,13 +63,13 @@ fn evaluate_state(my_fields: &Vec<u32>, enemy_fields: &Vec<u32>) -> i32 {
         if my_markers_in_line3 == 2 && enemy_markers_in_line3 == 0 {
              let empty_spots_count = line3.iter().filter(|f| !my_fields.contains(f) && !enemy_fields.contains(f)).count();
              if empty_spots_count == 1 { // Dokładnie jedno puste miejsce do utworzenia trójki
-                score += 500;
+                score -= 1000;
              }
         }
         if enemy_markers_in_line3 == 2 && my_markers_in_line3 == 0 {
             let empty_spots_count = line3.iter().filter(|f| !my_fields.contains(f) && !enemy_fields.contains(f)).count();
             if empty_spots_count == 1 {
-                score -= 500;
+                score += 1000;
             }
         }
     }

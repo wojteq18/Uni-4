@@ -1,0 +1,185 @@
+output:
+=== Rozpoczęcie symulacji CSMA/CD ===
+Medium (rozmiar 10):
+Węzły: Node 1@2, Node 2@8
+========================================
+
+--- Krok 0 ---
+Medium:  0  0  0  0  0  0  0  0  2  0
+  Node 1@2: idle
+  Node 2@8: transmitting
+
+--- Krok 1 ---
+Medium:  0  0  1  0  0  0  0  2  2  2
+  Node 1@2: transmitting
+  Node 2@8: transmitting
+
+--- Krok 2 ---
+Medium:  0  1  1  1  0  0  2  2  2  2
+  Node 1@2: transmitting
+  Node 2@8: transmitting
+
+--- Krok 3 ---
+Medium:  1  1  1  1  1  2  2  2  2  2
+  Node 1@2: transmitting
+  Node 2@8: transmitting
+
+--- Krok 4 ---
+Medium:  1  1  1  1 -1 -1  2  2  2  2
+  Node 1@2: transmitting
+  Node 2@8: transmitting
+
+--- Krok 5 ---
+Medium:  1  1  1 -1 -1 -1 -1  2  2  2
+  Node 1@2: transmitting
+  Node 2@8: transmitting
+  ⚠️  Node 1: collision! backoff=0
+
+--- Krok 6 ---
+Medium:  1  1 -1 -1 -1 -1 -1 -1  2  2
+  Node 1@2: waiting (backoff: 0)
+  Node 2@8: transmitting
+  ⚠️  Node 2: collision! backoff=0
+
+--- Krok 7 ---
+Medium:  1 -1 -1 -1 -1 -1 -1 -1 -1  2
+  Node 1@2: idle
+  Node 2@8: waiting (backoff: 0)
+
+--- Krok 8 ---
+Medium: -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+  Node 1@2: idle
+  Node 2@8: idle
+
+--- Krok 9 ---
+Medium: -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+  Node 1@2: idle
+  Node 2@8: idle
+
+--- Krok 10 ---
+Medium: -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+  Node 1@2: idle
+  Node 2@8: idle
+
+--- Krok 11 ---
+Medium: -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+  Node 1@2: idle
+  Node 2@8: idle
+
+--- Krok 12 ---
+Medium: -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+  Node 1@2: idle
+  Node 2@8: idle
+
+--- Krok 13 ---
+Medium: -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+  Node 1@2: idle
+  Node 2@8: idle
+
+--- Krok 14 ---
+Medium: -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+  Node 1@2: idle
+  Node 2@8: idle
+
+--- Krok 15 ---
+Medium: -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+  Node 1@2: idle
+  Node 2@8: idle
+
+--- Krok 16 ---
+Medium: -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+  Node 1@2: idle
+  Node 2@8: idle
+
+--- Krok 17 ---
+Medium: -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+  Node 1@2: idle
+  Node 2@8: idle
+
+--- Krok 18 ---
+Medium: -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+  Node 1@2: idle
+  Node 2@8: idle
+
+--- Krok 19 ---
+Medium:  0  0  0  0  0  0  0  0  0  0
+  Node 1@2: idle
+  Node 2@8: idle
+
+--- Krok 20 ---
+Medium:  0  0  0  0  0  0  0  0  0  0
+  Node 1@2: idle
+  Node 2@8: idle
+
+--- Krok 21 ---
+Medium:  0  0  0  0  0  0  0  0  2  0
+  Node 1@2: idle
+  Node 2@8: transmitting
+
+--- Krok 22 ---
+Medium:  0  0  0  0  0  0  0  2  2  2
+  Node 1@2: idle
+  Node 2@8: transmitting
+
+--- Krok 23 ---
+Medium:  0  0  1  0  0  0  2  2  2  2
+  Node 1@2: transmitting
+  Node 2@8: transmitting
+
+--- Krok 24 ---
+Medium:  0  1  1  1  0  2  2  2  2  2
+  Node 1@2: transmitting
+  Node 2@8: transmitting
+
+--- Krok 25 ---
+Medium:  1  1  1  1 -1  2  2  2  2  2
+  Node 1@2: transmitting
+  Node 2@8: transmitting
+
+--- Krok 26 ---
+Medium:  1  1  1 -1 -1 -1  2  2  2  2
+  Node 1@2: transmitting
+  Node 2@8: transmitting
+  ⚠️  Node 1: collision! backoff=1
+
+--- Krok 27 ---
+Medium:  1  1 -1 -1 -1 -1 -1  2  2  2
+  Node 1@2: waiting (backoff: 1)
+  Node 2@8: transmitting
+
+--- Krok 28 ---
+Medium:  1 -1 -1 -1 -1 -1 -1 -1  2  2
+  Node 1@2: idle
+  Node 2@8: transmitting
+  ⚠️  Node 2: collision! backoff=1
+
+--- Krok 29 ---
+Medium: -1 -1 -1 -1 -1 -1 -1 -1 -1  2
+  Node 1@2: idle
+  Node 2@8: waiting (backoff: 1)
+
+=== Podsumowanie ===
+Udane transmisje: 0
+Wykryte kolizje: 4
+
+
+INTERPRETACJA:
+Krok 0: Pierwsza transmisja:
+Symulacja się rozpoczęła. Widzimy sygnał węzła 2 na pozycji 8 - 2@8
+
+Krok 1: Sygnał węzła 2 zaczął się rozchodzić (jest na pozycjach 7, 8, 9), ale nie dotarł jeszcze do węzła 1. Węzeł 1 nasłuchuje medium, widzi 0 i interpretuje to jako wolne. On również decyduje się na transmisję. Teraz oba węzły nadają jednocześnie, nie wiedząc o sobie.
+
+Krok 2-3: Sygnały z obu węzłów rozprzestrzeniają sie po medium, zbliżając się do siebie.
+
+Krok 4: Kolizja - fale sygnałów się spotkały. Program oznaczył kolizję jako -1.
+
+Krok 5-6: Detekcja kolizji przez węzły - ala kolizji (-1) zaczęła się rozprzestrzeniać z powrotem w kierunku węzłów.
+Najpierw dotarła do Węzła 1, który "usłyszał" sygnał inny niż swój własny
+i natychmiast przerwał transmisję, uruchamiając procedurę backoff
+(oczekiwania). Krok później to samo stało się z Węzłem 2.
+
+Krok 7 - 18: Echo kolizji - fale kolizji. Potrzeba czasu, aż ich ttl spadną do zera.
+
+Krok 19: Medium czyste
+
+Krok 20-29: Cykl się powtarza

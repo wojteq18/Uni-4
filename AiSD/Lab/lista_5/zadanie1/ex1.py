@@ -17,32 +17,41 @@ def generate_graph(n):
     return edges        
 
 def prim_algorithm(n, edges):
+
+    # Tworzymy listę sąsiedztwa z wagami
     graph = [[] for _ in range(n)]
     for edge in edges:
-        graph[edge.u].append((edge.weight, edge.v))
-        graph[edge.v].append((edge.weight, edge.u))
+        graph[edge.u].append((edge.v, edge.weight))
+        graph[edge.v].append((edge.u, edge.weight))
 
-    visited = [False] * n
-    min_heap = [(0.0, 0, -1)] # waga, obecny wierzchołek, poprzedni wierzchołek
-    mst_edges = []
+    cost = [float('inf')] * n
+    prev = [None] * n
+    in_mst = [False] * n
+    cost[0] = 0.0  # dowolny wierzchołek startowy
+
+    # Kolejka priorytetowa: (waga, wierzchołek)
+    heap = [(0.0, 0)]
     total_weight = 0.0
+    mst_edges = []
 
-    while min_heap:
-        weight, current, previous = heapq.heappop(min_heap)
-
-        if visited[current]:
+    while heap:
+        curr_cost, u = heapq.heappop(heap)
+        if in_mst[u]:
             continue
+        in_mst[u] = True
+        total_weight += curr_cost
 
-        visited[current] = True
-        if previous != -1:
-            mst_edges.append((previous, current, weight))
-            total_weight += weight
+        if prev[u] is not None:
+            mst_edges.append((prev[u], u, curr_cost))
 
-        for w, v in graph[current]:
-            if not visited[v]:
-                heapq.heappush(min_heap, (w, v, current))
+        for v, w in graph[u]:
+            if not in_mst[v] and w < cost[v]:
+                cost[v] = w
+                prev[v] = u
+                heapq.heappush(heap, (w, v))
 
-    return  mst_edges, total_weight      
+    return mst_edges, total_weight
+  
 
 def kruskal_algorithm(n, edges):
     parent = list(range(n))

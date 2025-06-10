@@ -1,7 +1,6 @@
-import heapq
 import random
-import time
 from collections import defaultdict
+import heapq
 
 class Edge:
     def __init__(self, u, v, weight):
@@ -17,36 +16,38 @@ def generate_graph(n):
             edges.append(Edge(i, j, weight))
     return edges        
 
-def kruskal_algorithm(n, edges):
-    parent = list(range(n))
-    rank = [0] * n
+def prim_algorithm(n, edges):
 
-    def find(x):
-        if parent[x] != x:
-            parent[x] = find(parent[x])
-        return parent[x]
-
-    def union(x, y):
-        root_x = find(x)
-        root_y = find(y)
-        if root_x != root_y:
-            if rank[root_x] > rank[root_y]:
-                parent[root_y] = root_x
-            elif rank[root_x] < rank[root_y]:
-                parent[root_x] = root_y
-            else:
-                parent[root_y] = root_x
-                rank[root_x] += 1
-
-    edges.sort(key=lambda e: e.weight) #sortowanie po krawędziach według wagi
-    mst_edges = []
-    total_weight = 0.0
-
+    graph = [[] for _ in range(n)]
     for edge in edges:
-        if find(edge.u) != find(edge.v):
-            union(edge.u, edge.v)
-            mst_edges.append((edge.u, edge.v, edge.weight))
-            total_weight += edge.weight
+        graph[edge.u].append((edge.v, edge.weight))
+        graph[edge.v].append((edge.u, edge.weight))
+
+    cost = [float('inf')] * n
+    prev = [None] * n
+    in_mst = [False] * n
+    cost[0] = 0.0  # dowolny wierzchołek startowy
+
+    # Kolejka priorytetowa: (waga, wierzchołek)
+    heap = [(0.0, 0)]
+    total_weight = 0.0
+    mst_edges = []
+
+    while heap:
+        curr_cost, u = heapq.heappop(heap)
+        if in_mst[u]:
+            continue
+        in_mst[u] = True
+        total_weight += curr_cost
+
+        if prev[u] is not None:
+            mst_edges.append((prev[u], u, curr_cost))
+
+        for v, w in graph[u]:
+            if not in_mst[v] and w < cost[v]:
+                cost[v] = w
+                prev[v] = u
+                heapq.heappush(heap, (w, v))
 
     return mst_edges, total_weight
 
@@ -57,14 +58,48 @@ def build_adjecency_list(edges):
         graph[v].append(u)
     return graph    
 
+def distance(node, parent, graph, time):
+    times = []
+    for neighbor in graph[node]:
+        if neighbor != parent:
+            distance(neighbor, node, graph, time)
+            times.append(time[neighbor])
 
-graph = generate_graph(10)  
-mst_edges, _ = kruskal_algorithm(10, graph)
+    times.sort(reverse=True)
+    max_time = 0
+    for i, t in enumerate(times): #dla liści ta pętla sie nie wykonuje
+        max_time = max(max_time, t + i + 1) #t -> czas do poinformowania swojego całego poddrzewa, i -> numer kolejki w posortowanej liście
 
-graph = build_adjecency_list(mst_edges)
+    time[node] = max_time  
 
-for i in range (len(graph)):
-    print(f"Node {i}: ", end="")
-    for neighbor in graph[i]:
-        print(f"{neighbor} ", end="")
-    print()
+def simulation(graph, root):
+    time = {}
+    distance(root, -1, graph, time)
+    return time[root]          
+
+
+
+
+n_min = 100
+n_max = 5000
+step = 100
+rep = 4
+
+for n in range(n_min, n_max + 1, step):
+    max_value = 0
+    min_value = float('inf')
+    for _ in range(rep):
+        edges = generate_graph(n)
+        st_edges, _ = prim_algorithm(n, edges)
+        graph = build_adjecency_list(st_edges)
+        random_root = random.randint(0, n - 1) #losowy wierzchołek jako korzeń
+        rounds = simulation(graph, random_root)
+        print(f"n={n}, rounds: {rounds}, root: {random_root}")
+        if max_value < rounds:
+            max_value = rounds
+
+        if min_value > rounds:
+            min_value = rounds
+
+    print(f"n={n}, max rounds: {max_value}")        
+    print(f"n={n}, min rounds: {min_value}")

@@ -58,7 +58,7 @@ class Medium:
 
 class Node: # Reprezentacje ojedynczego węzła sieciowego
     def __init__(self, node_id: int, position: int, medium: Medium,
-                 transmit_prob: float = 0.3,
+                 transmit_prob: float = 1.0,
                  transmit_duration: Optional[int] = None):
         self.id = node_id # Unikalne id węzła
         self.position = position # indeks w medium
@@ -71,6 +71,7 @@ class Node: # Reprezentacje ojedynczego węzła sieciowego
         self.collision_count = 0 # Ile kolizji dotychczas w tej transmisji
         self.backoff_timer = 0 # Ile kroków jeszcze czeka węzeł przed ponowną próbą
         self.new_transmission = False  # Flaga nowej transmisji
+        self.jam_timer = 0
 
     def sense(self) -> bool: #Czy medium pod wezlem jest wolne
         return self.medium.get_cells()[self.position] == 0
@@ -84,13 +85,19 @@ class Node: # Reprezentacje ojedynczego węzła sieciowego
 
     def handle_collision(self):
         self.collision_count += 1
-        self.state = 'waiting'
-        k = min(self.collision_count, 10)
-        self.backoff_timer = random.randint(0, 2**k - 1)
+        self.state = 'jaming'
+        self.jam_timer = self.transmit_duration // 4
         self.transmit_timer = 0
-        print(f"  ⚠️  Node {self.id}: collision! backoff={self.backoff_timer}")
+        #print(f"  ⚠️  Node {self.id}: collision! backoff={self.backoff_timer}")
 
     def update(self) -> Optional[str]: # Gdy dojdzie do 0, wracamy do idle
+        if self.state == 'jaming':
+            self.jam_timer -= 1
+            if self.jam_timer <= 0:
+                self.state = 'waiting'
+                k = min(self.collision_count, 10)  # Maksymalna liczba kolizji
+                self.backoff_timer = random.randint(0, 2 ** k - 1)  # Backoff w zakresie [0, 2^k - 1]
+            return 'jaming'    
         if self.state == 'waiting':
             self.backoff_timer -= 1
             if self.backoff_timer <= 0:
@@ -105,7 +112,7 @@ class Node: # Reprezentacje ojedynczego węzła sieciowego
             
             self.transmit_timer -= 1
             if self.transmit_timer <= 0:
-                print(f"  ✅  Node {self.id}: transmission completed")
+               # print(f"  ✅  Node {self.id}: transmission completed")
                 self.state = 'idle'
                 self.collision_count = 0
                 return 'success'
@@ -133,8 +140,13 @@ class Simulation:
         for node in self.nodes:
             node.attempt_transmit()
             if node.new_transmission:
-                tx_positions.append((node.id, node.position, node.transmit_duration))
-                node.new_transmission = False
+                base_ttl = node.transmit_duration
+                tx_positions.append((node.id, node.position, base_ttl))
+                node.new_transmission = False  # Reset flagi po próbie transmisji
+            elif node.state == 'jaming':
+                jam_ttl = self.medium.size
+                tx_positions.append((-1, node.position, jam_ttl))
+
 
         # Krok 2: Propagacja w medium
         self.medium.propagate(tx_positions)
@@ -153,11 +165,11 @@ class Simulation:
         self.stats['successes'] += successes
 
         # Logowanie
-        print(f"\n--- Krok {step_num} ---")
+        #print(f"\n--- Krok {step_num} ---")
         print("Medium:", self.medium)
         for node in self.nodes:
             state = f"{node.state} (backoff: {node.backoff_timer})" if node.state == 'waiting' else node.state
-            print(f"  Node {node.id}@{node.position}: {state}")
+           # print(f"  Node {node.id}@{node.position}: {state}")
 
     def run(self):
         print("=== Rozpoczęcie symulacji CSMA/CD ===")
@@ -174,12 +186,13 @@ class Simulation:
 
 def main():
     sim = Simulation(
-        num_steps=36,
-        medium_size=5,
-        node_positions=[2, 4],
-        seed=421
+        num_steps=15000,
+        medium_size=15,
+        node_positions=[4, 8],
+        seed=44432412
     )
     sim.run()
 
 if __name__ == "__main__":
     main()
+

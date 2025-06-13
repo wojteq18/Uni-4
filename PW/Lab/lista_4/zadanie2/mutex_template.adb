@@ -37,7 +37,7 @@ procedure Mutex_Szymanski is -- Zmieniono nazwę procedury, aby pasowała do pli
   -- << TUTAJ DEKLARACJA NOWEGO TYPU TABLICOWEGO >>
   type Flags_Array_Internal_Type is array (0 .. Nr_Of_Processes - 1) of Integer range 0 .. 4;
 
-  protected Flags_Manager is
+  package Flags_Manager is
     procedure Set_Flag(Process_Index : Integer; Value : Integer);
     function Get_Flag(Process_Index : Integer) return Integer;
   private
@@ -45,7 +45,7 @@ procedure Mutex_Szymanski is -- Zmieniono nazwę procedury, aby pasowała do pli
     Flags_Array : Flags_Array_Internal_Type := (others => 0);
   end Flags_Manager;
 
-  protected body Flags_Manager is
+  package body Flags_Manager is
     procedure Set_Flag(Process_Index : Integer; Value : Integer) is
     begin
       Flags_Array(Process_Index) := Value;
@@ -195,7 +195,6 @@ procedure Mutex_Szymanski is -- Zmieniono nazwę procedury, aby pasowała do pli
       Flags_Manager.Set_Flag(Process_Data.Id, 1);
       Change_State_And_Trace(Entry_Protocol_1);
 
-      -- Step 2: await (∀k: Flag[k] < 3)
       loop -- Await loop
         declare
           Must_Still_Wait_S2 : Boolean := False;
@@ -215,7 +214,6 @@ procedure Mutex_Szymanski is -- Zmieniono nazwę procedury, aby pasowała do pli
       Flags_Manager.Set_Flag(Process_Data.Id, 3);
       Change_State_And_Trace(Entry_Protocol_3);
 
-      -- Step 4: if (∃k ≠ id: Flag[k] = 1) then { Flag[id] := 2; await (Flag[k] ≠ 4); }
       declare
         Found_With_Flag_1_S4 : Boolean := False;
         Idx_K_S4             : Integer := -1;
@@ -242,11 +240,9 @@ procedure Mutex_Szymanski is -- Zmieniono nazwę procedury, aby pasowała do pli
         end if;
       end; -- End declare block for Step 4
 
-      -- Step 5: Flag[id] := 4 (unconditionally after step 4 logic)
       Flags_Manager.Set_Flag(Process_Data.Id, 4);
       Change_State_And_Trace(Entry_Protocol_4);
 
-      -- Step 6: await (∀k < id: Flag[k] < 2)
       loop -- Await loop
         declare
           Must_Still_Wait_S6 : Boolean := False;
@@ -262,7 +258,6 @@ procedure Mutex_Szymanski is -- Zmieniono nazwę procedury, aby pasowała do pli
         end;
       end loop; -- End await loop for Step 6
 
-      -- Step 7: await (∀k > id: Flag[k] < 2 ∨ Flag[k] > 3) (i.e., wait if Flag[k] = 2 or Flag[k] = 3)
       loop -- Await loop
         declare
           Must_Still_Wait_S7 : Boolean := False;
@@ -290,10 +285,6 @@ procedure Mutex_Szymanski is -- Zmieniono nazwę procedury, aby pasowała do pli
       Change_State_And_Trace(Exit_Protocol);
       Flags_Manager.Set_Flag(Process_Data.Id, 0); -- Szymański's exit is just setting flag to 0
 
-      -- Back to LOCAL_SECTION (implicitly handled by Change_State_And_Trace at start of next loop iteration)
-      -- Explicitly trace the return to Local_Section for clarity if preferred, or ensure it's traced at loop start
-      -- Current code will trace Local_Section at the beginning of the next iteration.
-      -- To match Go version's exact end-of-loop tracing:
       Change_State_And_Trace(Local_Section);
 
     end loop;

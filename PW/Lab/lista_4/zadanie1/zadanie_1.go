@@ -13,8 +13,8 @@ var WaitGroup sync.WaitGroup
 const (
 	NrOfProcess = 15
 
-	MinSteps = 50
-	MaxSteps = 100
+	MinSteps = 30
+	MaxSteps = 70
 
 	MinDelay = 10 * time.Millisecond
 	MaxDelay = 50 * time.Millisecond
@@ -125,7 +125,7 @@ func process(id int, symbol rune, seed int) {
 
 	nrOfSteps := MinSteps + r.Intn(MaxSteps-MinSteps+1)
 
-	for i := 0; i < (nrOfSteps/7)-1; i++ {
+	for i := 0; i < (nrOfSteps / 7); i++ {
 		state = LocalSection
 		storeTrace()
 		time.Sleep(MinDelay + time.Duration(r.Int63n(int64(MaxDelay-MinDelay))))
@@ -143,6 +143,9 @@ func process(id int, symbol rune, seed int) {
 					keepWaiting = true
 					break
 				}
+			}
+			if !keepWaiting {
+				break
 			}
 			time.Sleep(1 * time.Millisecond)
 		}
@@ -167,10 +170,9 @@ func process(id int, symbol rune, seed int) {
 			state = Entry_Protocol2
 			storeTrace()
 			atomic.StoreInt32(&Flag[id], 2)
-			fmt.Println("Byłem w entry protocol 2!!!")
+			//fmt.Println("Byłem w entry protocol 2!!!")
 
 			for atomic.LoadInt32(&Flag[idx]) == 4 {
-				//ched()
 				time.Sleep(1 * time.Millisecond)
 			}
 		}
@@ -187,37 +189,40 @@ func process(id int, symbol rune, seed int) {
 					break
 				}
 			}
+			if waiting == false {
+				break
+			}
 			time.Sleep(1 * time.Millisecond)
 		}
 
 		keepWaiting = true
 		for keepWaiting {
-			keepWaiting = false
-			for k := id + 1; k < NrOfProcess; k++ { // Iterate k from i+1 to N-1
+			processNeedToWait := false
+			for k := id + 1; k < NrOfProcess; k++ {
 				if fk := atomic.LoadInt32(&Flag[k]); fk == 2 || fk == 3 {
-					// fmt.Printf("Process %d: Waiting because Flag[%d] = %d (higher ID) (Jestem 9/10)\n", id, k, fk)
-					keepWaiting = true
-					//runtime.Gosched()
-					time.Sleep(MinDelay / 10)
+					processNeedToWait = true
 					break
 				}
+			}
+			if !processNeedToWait {
+				keepWaiting = false
+			} else {
+				time.Sleep(1 * time.Millisecond)
+				keepWaiting = true
 			}
 		}
 		state = CriticalSection
 		storeTrace()
+		time.Sleep(2 * time.Millisecond)
 
 		state = ExitProtocol
-		atomic.StoreInt32(&Flag[id], 0)
 		storeTrace()
+		atomic.StoreInt32(&Flag[id], 0)
 
-		//state = ProcessState((int(state) + 1) % BoardHeight)
-		//storeTrace()
-		fmt.Println("Curent state1:", state)
 		state = LocalSection
 		storeTrace()
-		fmt.Println("Curent state1:", state)
-
 	}
+
 	reportChannel <- traces
 }
 

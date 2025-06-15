@@ -128,7 +128,7 @@ func process(id int, symbol rune, seed int) {
 	for i := 0; i < (nrOfSteps / 7); i++ {
 		state = LocalSection
 		storeTrace()
-		time.Sleep(MinDelay + time.Duration(r.Int63n(int64(MaxDelay-MinDelay))))
+		time.Sleep(1 * time.Millisecond)
 
 		state = Entry_Protocol1
 		storeTrace()
@@ -218,6 +218,7 @@ func process(id int, symbol rune, seed int) {
 		state = ExitProtocol
 		storeTrace()
 		atomic.StoreInt32(&Flag[id], 0)
+		time.Sleep(2 * time.Millisecond)
 
 		state = LocalSection
 		storeTrace()

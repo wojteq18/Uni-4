@@ -5,7 +5,7 @@ with Ada.Real_Time; use Ada.Real_Time;
 with Ada.Strings.Unbounded; use Ada.Strings.Unbounded;
 with Ada.Integer_Text_IO; use Ada.Integer_Text_IO;
 
-procedure Mutex_Szymanski is -- Zmieniono nazwę procedury, aby pasowała do pliku
+procedure Mutex_Szymanski is
 
   -- Processes
   Nr_Of_Processes : constant Integer := 15;
@@ -34,14 +34,12 @@ procedure Mutex_Szymanski is -- Zmieniono nazwę procedury, aby pasowała do pli
 
   Seeds : Seed_Array_Type(1 .. Nr_Of_Processes) := Make_Seeds(Nr_Of_Processes);
 
-  -- << TUTAJ DEKLARACJA NOWEGO TYPU TABLICOWEGO >>
   type Flags_Array_Internal_Type is array (0 .. Nr_Of_Processes - 1) of Integer range 0 .. 4;
 
   package Flags_Manager is
     procedure Set_Flag(Process_Index : Integer; Value : Integer);
     function Get_Flag(Process_Index : Integer) return Integer;
   private
-    -- << UŻYCIE NAZWANEGO TYPU >>
     Flags_Array : Flags_Array_Internal_Type := (others => 0);
   end Flags_Manager;
 
@@ -58,7 +56,6 @@ procedure Mutex_Szymanski is -- Zmieniono nazwę procedury, aby pasowała do pli
   end Flags_Manager;
 
 
-  -- Types, procedures and functions
   type Position_Type is record
     X : Integer range 0 .. Board_Width - 1;
     Y : Integer range 0 .. Board_Height - 1;
@@ -71,7 +68,7 @@ procedure Mutex_Szymanski is -- Zmieniono nazwę procedury, aby pasowała do pli
     Symbol     : Character;
   end record;
 
-  type Trace_Array_Type is array (0 .. Max_Steps) of Trace_Type; -- Increased size slightly just in case
+  type Trace_Array_Type is array (0 .. Max_Steps) of Trace_Type; 
 
   type Traces_Sequence_Type is record
     Last        : Integer := -1;
@@ -117,13 +114,13 @@ procedure Mutex_Szymanski is -- Zmieniono nazwę procedury, aby pasowała do pli
       Integer'Image(Board_Height) & " "
       );
     for I in Process_State'Range loop
-      Put(Process_State'Image(I) & ";"); -- Use 'Image for enum
+      Put(Process_State'Image(I) & ";"); 
     end loop;
     Put_Line("EXTRA_LABEL;");
   end Printer;
 
 
-  type Process_Info_Type is record -- Renamed from Process_Type to avoid conflict
+  type Process_Info_Type is record 
     Id       : Integer;
     Symbol   : Character;
     Position : Position_Type;
@@ -131,7 +128,7 @@ procedure Mutex_Szymanski is -- Zmieniono nazwę procedury, aby pasowała do pli
 
 
   task type Process_Task_Type is
-    entry Init(Id : Integer; Seed_Val : Integer; Symb : Character); -- Renamed params
+    entry Init(Id : Integer; Seed_Val : Integer; Symb : Character); 
     entry Start;
   end Process_Task_Type;
 
@@ -183,14 +180,12 @@ procedure Mutex_Szymanski is -- Zmieniono nazwę procedury, aby pasowała do pli
       null;
     end Start;
 
-    -- Consistent loop iterations with Go example (approx. 7 stages per CS entry)
     for Step in 0 .. (Nr_Of_Steps / 7) - 1 loop
 
       -- LOCAL_SECTION
       Change_State_And_Trace(Local_Section); -- Ensure state is traced
       delay Min_Delay + (Max_Delay - Min_Delay) * Duration(Ada.Numerics.Float_Random.Random(G));
 
-      -- ENTRY_PROTOCOL - Szymański's Algorithm
       -- Step 1: Flag[id] := 1
       Flags_Manager.Set_Flag(Process_Data.Id, 1);
       Change_State_And_Trace(Entry_Protocol_1);
@@ -231,9 +226,8 @@ procedure Mutex_Szymanski is -- Zmieniono nazwę procedury, aby pasowała do pli
         if Found_With_Flag_1_S4 then
           Flags_Manager.Set_Flag(Process_Data.Id, 2);
           Change_State_And_Trace(Entry_Protocol_2);
-          -- Ada.Text_IO.Put_Line("Process " & Process_Data.Id'Image & " was in Entry_Protocol_2!!!"); -- Debug
 
-          loop -- Await Flag(Idx_K_S4) /= 4
+          loop 
             exit when Flags_Manager.Get_Flag(Idx_K_S4) /= 4;
             delay Small_Yield_Delay;
           end loop;
@@ -283,7 +277,7 @@ procedure Mutex_Szymanski is -- Zmieniono nazwę procedury, aby pasowała do pli
 
       -- EXIT_PROTOCOL
       Change_State_And_Trace(Exit_Protocol);
-      Flags_Manager.Set_Flag(Process_Data.Id, 0); -- Szymański's exit is just setting flag to 0
+      Flags_Manager.Set_Flag(Process_Data.Id, 0); 
 
       Change_State_And_Trace(Local_Section);
 
@@ -294,7 +288,7 @@ procedure Mutex_Szymanski is -- Zmieniono nazwę procedury, aby pasowała do pli
 
 
   Process_Tasks : array (0 .. Nr_Of_Processes - 1) of Process_Task_Type;
-  Symbol_Counter : Character := 'A'; -- Renamed from Symbol to avoid conflict
+  Symbol_Counter : Character := 'A'; 
 
 begin
   for I in Process_Tasks'Range loop
